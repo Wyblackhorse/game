@@ -1,0 +1,16 @@
+{
+	"reg.btntitle":"Register",
+	"reg.account.place":"Please enter the username",
+	"reg.pass.place":"Please set your password",
+	"reg.passconfirm.place":"Please enter the password again",
+	"reg.invitecode.place":"Please enter the invitation code",
+	"reg.vercode.place":"Verification code",
+	
+	"login.account.place":"Please enter the username",
+	"login.pass.place":"Please enter the password",
+	"login.vercode.place":"Verification code",
+	"login.btntitle":"Log in",
+	"login.downtitle":"Customer Service App Download",
+	"login.chattitle":"24HCustomer Service",
+	"login.apptitle":"App Download"
+}

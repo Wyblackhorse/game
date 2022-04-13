@@ -1,0 +1,35 @@
+{
+	"easycom": {
+		// 下载安装方式
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path" : "pages/login/login",
+			"style" :
+			{
+			    "navigationBarTitleText": "",
+			    "navigationBarBackgroundColor":"#FFFFFF",
+			    "enablePullDownRefresh": false
+			    ,"app-plus": {
+					//下面这句代码完美解决软键盘把fixed顶起问题
+					"softinputMode": "adjustResize",
+			    	"titleNView": false,
+			    		//app页面不显示滚动条
+			    		"scrollIndicator": "none"
+			    }
+			}
+		}
+	    
+		    
+		
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+		// ,"maxWidth":"750"
+	}
+}

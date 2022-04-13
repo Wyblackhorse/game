@@ -1,0 +1,16 @@
+{
+	"reg.btntitle":"注册",
+	"reg.account.place":"请输入账号",
+	"reg.pass.place":"请设置密码",
+	"reg.passconfirm.place":"请再次输入密码",
+	"reg.invitecode.place":"请输入邀请码",
+	"reg.vercode.place":"请输入验证码",
+	
+	"login.account.place":"请输入账号",
+	"login.pass.place":"请输入密码",
+	"login.vercode.place":"请输入验证码",
+	"login.btntitle":"登录",
+	"login.downtitle":"客服App下载",
+	"login.chattitle":"24H客服",
+	"login.apptitle":"App下载"
+}
