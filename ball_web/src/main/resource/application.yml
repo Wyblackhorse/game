@@ -1,0 +1,56 @@
+server:
+  port: 10100
+  cache:
+    type: redis
+#静态资源路径
+static:
+  file: classpath:/statis/
+spring:
+  thymeleaf:
+    mode: LEGACYHTML5
+    prefix: classpath:/templates/
+  datasource:
+    druid:
+      #TODO 配置mysql
+#      url: "jdbc:mysql://192.168.101.33:3306/ball?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true"
+#      username: "wx_ser"
+      url: "jdbc:mysql://192.168.101.33:3306/shiro?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8"
+      username: "shiroshiro"
+      password: "zp4JiweJ7EF6pE42"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      #连接池配置
+      min-idle: 5
+      initial-size: 5
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      #监控
+      filter:
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: true
+
+  redis:
+    database: 0
+    #TODO 配置redis
+    host: 192.168.101.33
+    port: 6379
+    timeout: 3000ms
+  #
+logging:
+  level:
+    root: info
+    com.oxo.ball.mapper: debug
+#some-comfig:
+#  #客户端通过这个端口连接
+#  tcp-port: 10011
+#  test: 1
