@@ -10,13 +10,18 @@ import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.PasswordUtil;
 import com.oxo.ball.utils.RedisUtil;
+import com.oxo.ball.utils.VerifyCodeUtils;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * @author flooming
@@ -36,9 +41,21 @@ public class PlayerAuthController {
 
 
     @PostMapping("/regist")
-    public BaseResponse regist(@RequestBody BallPlayer ballPlayer) {
+    public BaseResponse regist( BallPlayer ballPlayer) {
         BaseResponse response = playerService.registPlayer(ballPlayer);
         return response;
+    }
+
+    /**
+     * 获取验证码方法
+     */
+    @GetMapping("/verify_code")
+    public void getVerifyCode(@RequestParam("verifyKey") String verifyKey,HttpServletResponse response) throws IOException {
+        playerService.getVerifyCode(verifyKey,response);
+    }
+    @GetMapping("/verify_code_check")
+    public BaseResponse checkVerifyCode(@RequestParam("verifyKey") String verifyKey,@RequestParam("code") String code) {
+        return playerService.checkVerifyCode(verifyKey,code);
     }
 
     @PostMapping("/logout")

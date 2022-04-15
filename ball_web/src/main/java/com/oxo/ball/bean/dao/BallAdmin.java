@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -32,6 +34,8 @@ public class BallAdmin extends BaseDAO implements Serializable {
     @JsonIgnore
     @TableField("admin_password")
     private String password;
+    @NotNull
+    @Size(min=5,max=10,message = "昵称长度在5-10")
     private String nickname;
     private String token;
     private String googleCode;

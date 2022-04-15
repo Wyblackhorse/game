@@ -16,8 +16,7 @@ import lombok.*;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
 @TableName("ball_player")
 @Builder
 @AllArgsConstructor

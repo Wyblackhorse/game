@@ -9,15 +9,20 @@ import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dto.req.AuthLoginRequest;
 import com.oxo.ball.bean.dto.resp.AuthLoginResponse;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallPlayerMapper;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.PasswordUtil;
 import com.oxo.ball.utils.RedisUtil;
+import com.oxo.ball.utils.VerifyCodeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -108,5 +113,29 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
             userBean.setToken(hget.toString());
         }
         return new BaseResponse<>(userBean);
+    }
+
+    @Override
+    public void getVerifyCode(String verifyKey, HttpServletResponse response) throws IOException {
+        //使用验证码工具类生成4位验证码
+        String code = VerifyCodeUtils.generateVerifyCode(4);
+        //将验证码放入redis
+        redisUtil.hset(RedisKeyContant.VERIFY_KEY,verifyKey,code,60);
+        //将验证码放入图片
+        ServletOutputStream outputStream = response.getOutputStream();
+        response.setContentType("image/png");//响应类型
+        VerifyCodeUtils.outputImage(220,60,outputStream,code);
+    }
+
+    @Override
+    public BaseResponse checkVerifyCode(String verifyKey,String code) {
+        Object hget = redisUtil.hget(RedisKeyContant.VERIFY_KEY, verifyKey);
+        if(hget == null){
+            return BaseResponse.failedWithMsg("验证码已过期~");
+        }
+        if(hget.equals(code)){
+            return BaseResponse.successWithMsg("");
+        }
+        return BaseResponse.failedWithMsg("验证码不正确~");
     }
 }

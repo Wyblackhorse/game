@@ -44,6 +44,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addInterceptor(authenticationPlayInterceptor())
                 .addPathPatterns("/player/**")
                 .excludePathPatterns("/player/auth/login",
+                        "/player/auth/verify_code",
+                        "/player/auth/verify_code_check",
                         "/player/auth/regist");
     }
 
