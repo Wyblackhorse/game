@@ -29,7 +29,8 @@
 				<view class="logo">
 					<image src="../../static/images/logo2.svg" mode=""></image>
 				</view>
-				<view class="loginContent">
+				<!-- 登录页面 -->
+				<view class="loginContent" v-if="loginStatus">
 					<view class="">
 						<view class="item">
 							<view class="loginImage">
@@ -61,7 +62,7 @@
 										@input="inputUserPass"
 									/>
 								</view>
-								<view class="hidePassImg" @click="loginSeePassClick">
+								<view class="hidePassImg" @click="loginSeePassClick('login')">
 									<image :src="srcImg" mode=""></image>
 								</view>
 							</view>
@@ -88,10 +89,10 @@
 						</view>
 					</view>
 			
-					<view :class="changeBtnColor ?'loginBtn active': 'loginBtn'">
+					<view :class="changeBtnColor ?'loginBtn active': 'loginBtn'" @click="loginBigBtn">
 						{{$t('login.btntitle')}}
 					</view>
-					<view class="regBtn">
+					<view class="regBtn" @click="changeLoginRegView">
 						{{$t('reg.btntitle')}}
 					</view>
 					<view class="container">
@@ -126,6 +127,108 @@
 						</view>
 					</view>
 				</view>
+				
+				<!-- 注册页面 -->
+				<view class="loginContent" v-if="!loginStatus">
+					<view class="">
+						<view class="item">
+							<view class="loginImage">
+								<image src="../../static/images/account.svg" mode=""></image>
+							</view>
+							<view class="mainInput">
+								<input 
+									type="text" 
+									value="" 
+									:placeholder="$t('reg.account.place')"
+									v-model="regAccount"
+									@input="regChangeInput"
+								/>
+							</view>
+						</view>
+						<view class="item">
+							<view class="loginImage">
+								<image src="../../static/images/password.svg" mode=""></image>
+							</view>
+							<view class="type">
+								<view class="mainInput">
+									<input 
+										type="pass" 
+										value="" 
+										:placeholder="$t('reg.pass.place')" 
+										:password="passwordRegBool" 
+										maxlength="20"
+										v-model="regPassword"
+										@input="regChangeInput"
+									/>
+								</view>
+								<view class="hidePassImg" @click="loginSeePassClick('reg')">
+									<image :src="srcRegImg" mode=""></image>
+								</view>
+							</view>
+						</view>
+						<view class="item">
+							<view class="loginImage">
+								<image src="../../static/images/password.svg" mode=""></image>
+							</view>
+							<view class="type">
+								<view class="mainInput">
+									<input 
+										type="pass" 
+										value="" 
+										:placeholder="$t('reg.passconfirm.place')" 
+										:password="passwordConfirmBool" 
+										maxlength="20"
+										v-model="regConfirmPassword"
+										@input="regChangeInput"
+									/>
+								</view>
+								<view class="hidePassImg" @click="loginSeePassClick('regConf')">
+									<image :src="srcConfImg" mode=""></image>
+								</view>
+							</view>
+						</view>
+						<view class="item">
+							<view class="loginImage">
+								<image src="../../static/images/inviteicon.svg" mode=""></image>
+							</view>
+							<view class="mainInput">
+								<input 
+									type="text" 
+									value="" 
+									:placeholder="$t('reg.invitecode.place')"
+									v-model="regInviteCode"
+									@input="regChangeInput"
+								/>
+							</view>
+						</view>
+						<view class="item">
+							<view class="loginImage">
+								<image src="../../static/images/verification.svg" mode=""></image>
+							</view>
+							<view class="type">
+								<view class="mainInput">
+									<input 
+										type="text" 
+										value="" 
+										:placeholder="$t('login.vercode.place')" 
+										maxlength="6"
+										v-model="regImgCode"
+										@input="regChangeInput"
+									/>
+								</view>
+								<view class="inviteImg" @click="getCodeData">
+									<image :src="vercodeImg" mode=""></image>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="loginSmallBtn" @click="changeLoginRegView">
+						{{$t('login.btntitle')}}
+					</view>	
+					<view :class="changeRegBtnColor ?'loginBtn regBigBtn active': 'loginBtn regBigBtn'" @click="loginRegfBigBtn">
+						{{$t('reg.btntitle')}}
+					</view>
+				</view>
 			</view>
 		</view>
 		
@@ -143,7 +246,11 @@
 		data() {
 			return {
 				srcImg:'../../static/images/nosee.svg',
+				srcRegImg:'../../static/images/nosee.svg',
+				srcConfImg:'../../static/images/nosee.svg',
 				passwordBool:true,
+				passwordRegBool:true,
+				passwordConfirmBool:true,
 				loginAccount:'',
 				loginPassword:'',
 				loginVercode:'',
@@ -255,8 +362,14 @@
 					  url:"../../static/images/lang_it.svg"
 					},
 				],
+				loginStatus:false,
+				regAccount:'',
+				regPassword:'',
+				regConfirmPassword:'',
+				regInviteCode:'',
+				regImgCode:'',
+				changeRegBtnColor:false,
 				
-
 				
 				// 状态栏高度，H5中，此值为0，因为H5不可操作状态栏
 				statusBarHeight: uni.getSystemInfoSync().statusBarHeight,
@@ -264,14 +377,12 @@
 				navbarHeight: 0,
 				loginText:'登录',
 				loginDesc:'请填写账号密码进行登录',
-				loginStatus:'login',
+
 				tabLoginText:'切换注册',
 			
 				loginVercodehash:'',
 				verifyCodeImg:'',
-				regAccount:'',
-				regPassword:'',
-				regConfirmPassword:'',
+				
 				regNickName:'',
 				regQqNum:'',
 				regCode:'',
@@ -343,51 +454,77 @@
 			
 		},
 		methods: {
-			loginSeePassClick(){  //显示密码和隐藏密码
-				if(this.passwordBool){//如果为真，则代表现在密码是隐藏状态,需改变图片为开眼状态
-					this.srcImg = '../../static/images/see.svg'
-				}else{//否则为闭眼状态
-					this.srcImg ='../../static/images/nosee.svg'
+			loginSeePassClick(str){  //显示密码和隐藏密码(3个共用)
+				let imgLeftName = "../../static/images/see.svg"
+				let imgRightName = "../../static/images/nosee.svg"
+				switch (str) {
+				  case 'login':  //登录页面中密码的显示
+					//如果为真，则代表现在密码是隐藏状态,需改变图片为开眼状态
+					this.srcImg = this.passwordBool ? imgLeftName:imgRightName
+					this.passwordBool = !this.passwordBool;
+				    break;
+				  case 'reg':  //注册页面中密码的显示
+					this.srcRegImg = this.passwordRegBool ? imgLeftName:imgRightName
+					this.passwordRegBool = !this.passwordRegBool;
+					break;
+				  case 'regConf':  //注册页面中确认密码的显示
+					this.srcConfImg = this.passwordConfirmBool ? imgLeftName:imgRightName
+					this.passwordConfirmBool = !this.passwordConfirmBool;
+				    break;
+				  default:
+				   
 				}
-			
-				this.passwordBool = !this.passwordBool;
 			},
-			inputUserPass(){
+			inputUserPass(){ //登录页面输入框改变监听事件
 				if(this.loginAccount && this.loginPassword && this.loginVercode){
 					this.changeBtnColor =  true
 				}else{
 					this.changeBtnColor =  false
 				}
 			},
-			showLangsClick(){
+			regChangeInput(){
+				if(this.regAccount && this.regPassword && this.regConfirmPassword && this.regInviteCode && this.regImgCode){
+					this.changeRegBtnColor =  true
+				}else{
+					this.changeRegBtnColor =  false
+				}
+			},
+			showLangsClick(){  //显示或者隐藏语言列表点击事件
 				this.LangsBool = !this.LangsBool
 				
-				let currLangLists = this.langList
+				let currLangLists = [...this.langList]
 				let obj = {};
-				currLangLists.filter((subitem,index)=>{
-					// console.log("subitem.type.toLowerCase()",this.currSelectLang.toLowerCase());
-					if(subitem.type === this.currSelectLang){
-							subitem.status = 1
+				currLangLists.filter((item,index)=>{
+					// console.log("item.type.toLowerCase()",this.currSelectLang.toLowerCase());
+					if(item.type === this.currSelectLang){
+							item.status = 1
 					}else{
-						subitem.status = 0
+						item.status = 0
 					}
-					return subitem
-				})
-				
-				currLangLists.forEach((item,index)=>{
+					
 					if(item.status === 1){
 						obj = item;
 						currLangLists.splice(index,1)
-						return;
+						// return;
 					}
-				 
+										
+					return item
 				})
+				
+				// currLangLists.forEach((item,index)=>{
+				// 	if(item.status === 1){
+				// 		obj = item;
+				// 		currLangLists.splice(index,1)
+				// 		return;
+				// 	}
+				 
+				// })
 				 
 				currLangLists.unshift(obj);
-				// console.log(currLangLists);
+				this.langList = currLangLists
 
 			},
-			setLangClick(item){
+			setLangClick(item){  //选择某个语言进行设置的点击方法
 				
 				// console.log("item",item);
 				// e的参数zh-Hans // en 这种应用能重启生效 要不然用this.$i18n.locale = 'zh-Hans'
@@ -401,8 +538,16 @@
 				this.currSelectLangImg = item.url
 				this.LangsBool = false
 				
-				
-				
+			},
+			loginRegfBigBtn(){ //注册点击事件
+				if(this.loginStatus){ //点击登录页面中登录按钮
+					
+				}else{//注册
+					
+				}
+			},
+			changeLoginRegView(){ //切换登录和注册视图点击事件
+				this.loginStatus = !this.loginStatus
 			},
 			
 			async getCodeData(){ //获取验证码方法
@@ -1020,6 +1165,19 @@
 		color: #fff;
 	}
 	
+	.loginSmallBtn{
+		line-height: 16px;
+		margin: 20px 0;
+		font-size: 12px;
+		font-weight: 700;
+		color: #ffb300;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
 	
+	.regBigBtn{
+		margin-top: 20px;
+	}
 	
 </style>
