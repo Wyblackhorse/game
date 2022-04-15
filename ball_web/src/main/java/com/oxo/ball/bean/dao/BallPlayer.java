@@ -1,5 +1,6 @@
 package com.oxo.ball.bean.dao;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.oxo.ball.bean.dao.BaseDAO;
@@ -193,6 +194,12 @@ public class BallPlayer extends BaseDAO {
      * 提现次数
      */
     private Integer reflectTimes;
+
+    /**
+     *  二次密码
+     */
+    @TableField
+    private String twoPassword ;
 
 
 }

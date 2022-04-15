@@ -71,8 +71,27 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
     @Override
     public BaseResponse registPlayer(BallPlayer ballPlayer) {
         try {
+
+            //TODO 先判断验证码是否正确
+
+
+
+            //检查数据库里面是否有用户名
             ballPlayer = findByUsername(ballPlayer.getUsername());
-            return BaseResponse.failedWithMsg(2,"账号已存在~");
+            if (ballPlayer!=null){
+                return BaseResponse.failedWithMsg(-101,"账号已存在~");
+            }
+
+            //判断两次密码是否相等
+            if (! ballPlayer.getPassword().equals(ballPlayer.getTwoPassword()) ){
+                return BaseResponse.failedWithMsg(-101,"两次密码不对");
+            }
+
+
+
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -35,7 +35,7 @@ public class PlayerAuthController {
     }
 
 
-    @PostMapping("/regist")
+    @PostMapping("/regist")  //playerService
     public BaseResponse regist(@RequestBody BallPlayer ballPlayer) {
         BaseResponse response = playerService.registPlayer(ballPlayer);
         return response;

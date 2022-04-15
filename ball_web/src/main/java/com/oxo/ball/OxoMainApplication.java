@@ -13,5 +13,18 @@ public class OxoMainApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OxoMainApplication.class, args);
+
     }
+
+
+
+
+
+    public String randString(int len) {
+        String str = "123456789qwertyuiopasdfghjklzxcvbnmQWETY";
+        return str;
+    }
+
+
+
 }
