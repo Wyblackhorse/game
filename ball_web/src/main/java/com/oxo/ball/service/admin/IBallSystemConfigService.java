@@ -2,6 +2,7 @@ package com.oxo.ball.service.admin;
 
 import com.oxo.ball.bean.dao.BallSystemConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * <p>
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-04-13
  */
 public interface IBallSystemConfigService extends IService<BallSystemConfig> {
+    BallSystemConfig getSystemConfig();
 
+    void init();
 }

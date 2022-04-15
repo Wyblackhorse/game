@@ -14,6 +14,21 @@ import java.io.Serializable;
 public class BaseResponse<T> implements Serializable {
     private static final long serialVersionUID = -5565210554130093478L;
 
+    /**
+     * 登录时密码错误次数
+     */
+    public static final int FAIL_LOGIN_ERROR_COUNT = 101;
+    /**
+     * 登录时密码输入错误上限,不能再次请求
+     */
+    public static final int FAIL_LOGIN_ERROR_MAX = 102;
+    /**
+     * 表单请求时字段格式未通过验证
+     */
+    public static final int FAIL_FORM_SUBMIT = 103;
+
+
+
     public static BaseResponse SUCCESS = new BaseResponse(StatusCodes.OK, null);
 
 
@@ -45,5 +60,11 @@ public class BaseResponse<T> implements Serializable {
     }
     public static BaseResponse failedWithMsg(int code,String msg){
         return new BaseResponse(code,msg);
+    }
+    public static <T>BaseResponse failedWithData(T data){
+        return new BaseResponse(StatusCodes.INTERNAL_SERVER_ERROR,data);
+    }
+    public static <T>BaseResponse failedWithData(int code,T data){
+        return new BaseResponse(code,data);
     }
 }

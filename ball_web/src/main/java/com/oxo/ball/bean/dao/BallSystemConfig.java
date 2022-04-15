@@ -1,10 +1,12 @@
 package com.oxo.ball.bean.dao;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -14,15 +16,20 @@ import lombok.Setter;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
 @TableName("ball_system_config")
-public class BallSystemConfig extends BaseDAO {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BallSystemConfig implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
+
     /**
-     * 注册是否需要验证码 1需要 2不需要
+     * 注册是否需要邀请码 1需要 2不需要
      */
     private Integer registerIfNeedVerificationCode;
 

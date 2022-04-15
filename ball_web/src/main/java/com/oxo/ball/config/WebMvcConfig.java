@@ -46,6 +46,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/player/auth/login",
                         "/player/auth/verify_code",
                         "/player/auth/verify_code_check",
+                        "/player/auth/sys_config",
                         "/player/auth/regist");
     }
 
@@ -53,7 +54,13 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         logger.info("静态资源目录配置为:"+staticFile);
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/",staticFile);
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/",staticFile);
+        //swagger-config
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);
     }
 

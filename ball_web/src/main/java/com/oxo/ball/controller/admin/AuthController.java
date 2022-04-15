@@ -3,6 +3,7 @@ package com.oxo.ball.controller.admin;
 import com.oxo.ball.bean.dao.BallAdmin;
 import com.oxo.ball.bean.dto.req.AuthEditPwdRequest;
 import com.oxo.ball.bean.dto.req.AuthLoginRequest;
+import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
 import com.oxo.ball.bean.dto.resp.AuthLoginResponse;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.service.admin.AuthService;
