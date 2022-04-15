@@ -6,7 +6,13 @@ import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
 import java.sql.Blob;
 
+import com.oxo.ball.bean.valid.Create;
 import lombok.*;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 
 /**
  * <p>
@@ -31,11 +37,17 @@ public class BallPlayer extends BaseDAO {
     /**
      * 用户名
      */
+    @NotEmpty
+    @Size(min=5,max=16,message = "用户名长度为5-16")
+    @Pattern(regexp = "\\w+",message = "用户名必须是字母数字")
     private String username;
 
     /**
      * 密码
+     * create只是1个标识,当Valide里面指定了才会验证
+     * groups = {Default,Create}
      */
+    @Size(min=6,max=16,message = "密码长度为6-16",groups = {Default.class,Create.class})
     private String password;
 
     /**

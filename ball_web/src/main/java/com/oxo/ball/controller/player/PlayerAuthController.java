@@ -5,6 +5,7 @@ import com.oxo.ball.bean.dto.req.AuthEditPwdRequest;
 import com.oxo.ball.bean.dto.req.AuthLoginRequest;
 import com.oxo.ball.bean.dto.resp.AuthLoginResponse;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.bean.valid.Create;
 import com.oxo.ball.service.impl.player.PlayerAuthServiceImpl;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
@@ -14,6 +15,7 @@ import com.oxo.ball.utils.VerifyCodeUtils;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.groups.Default;
 import java.io.IOException;
 
 /**
@@ -40,8 +43,13 @@ public class PlayerAuthController {
     }
 
 
+    /**
+     *
+     * @param ballPlayer
+     * @return
+     */
     @PostMapping("/regist")
-    public BaseResponse regist( BallPlayer ballPlayer) {
+    public BaseResponse regist(@Validated({Create.class}) BallPlayer ballPlayer) {
         BaseResponse response = playerService.registPlayer(ballPlayer);
         return response;
     }
