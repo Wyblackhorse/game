@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.oxo.ball.service.AuthService.HAVE_NO_AUTH;
-import static com.oxo.ball.service.AuthService.TOKEN_INVALID;
+import static com.oxo.ball.service.admin.AuthService.HAVE_NO_AUTH;
+import static com.oxo.ball.service.admin.AuthService.TOKEN_INVALID;
 
 
 /**

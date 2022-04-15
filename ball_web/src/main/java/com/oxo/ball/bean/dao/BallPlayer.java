@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.annotation.Version;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
 import java.sql.Blob;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -19,6 +19,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("ball_player")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BallPlayer extends BaseDAO {
 
     private static final long serialVersionUID = 1L;

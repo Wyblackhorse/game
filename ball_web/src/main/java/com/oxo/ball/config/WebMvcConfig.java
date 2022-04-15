@@ -1,6 +1,7 @@
 package com.oxo.ball.config;
 
-import com.oxo.ball.auth.AuthInterceptor;
+import com.oxo.ball.auth.AdminAuthInterceptor;
+import com.oxo.ball.auth.PlayerAuthInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,12 +35,16 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor())
-                .addPathPatterns("/**").excludePathPatterns("/static/**"
+                .addPathPatterns("/ball/**").excludePathPatterns("/static/**"
                 ,"/auth/login"
                 ,"/auth/logout"
                 ,"/auth/userinfo"
                 ,"/test/**"
                 );
+        registry.addInterceptor(authenticationPlayInterceptor())
+                .addPathPatterns("/player/**")
+                .excludePathPatterns("/player/auth/login",
+                        "/player/auth/regist");
     }
 
 
@@ -51,7 +56,11 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     }
 
     @Bean
-    public AuthInterceptor authenticationInterceptor() {
-        return new AuthInterceptor();
+    public AdminAuthInterceptor authenticationInterceptor() {
+        return new AdminAuthInterceptor();
+    }
+    @Bean
+    public PlayerAuthInterceptor authenticationPlayInterceptor() {
+        return new PlayerAuthInterceptor();
     }
 }
