@@ -3,8 +3,8 @@ package com.oxo.ball.bean.dao;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -14,9 +14,11 @@ import lombok.Setter;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
 @TableName("ball_bet")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BallBet extends BaseDAO {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +54,7 @@ public class BallBet extends BaseDAO {
     private Long winningAmount;
 
     /**
-     * 1 未结算 2已结结算 3撤单  4回滚
+     * 1 未结算 2已结算 3撤单  4回滚
      */
     private Integer status;
 

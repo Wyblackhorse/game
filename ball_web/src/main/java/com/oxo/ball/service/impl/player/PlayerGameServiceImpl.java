@@ -58,7 +58,42 @@ public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame>
         SearchResponse<BallGame> response = new SearchResponse<>();
         Page<BallGame> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallGame> query = new QueryWrapper<>();
+        /**
+         * 过滤条件
+         * 一.未开始或者未结束赛事
+         *      status: 0 未开始,或者未结束
+         *      startTime: 0 全部 1今天 2明天
+         * 二.已结束赛事
+         * 1.全部赛事，直接按ID排序
+         *      status: 1已结束
+         *      startTime: 0 全部 1今天 2昨天
+         * 排序条件
+         * top 1.置顶
+         */
+        if(queryParam.getStartTime()==1){
+            //today
+            query.ge("start_time",TimeUtil.getDayBegin().getTime());
+            query.le("start_time",TimeUtil.getDayEnd().getTime());
+        }
+        if(queryParam.getStatus()==0){
+            //未开始,未
+            query.ne("status",3);
+            //未开始查明天
+            if(queryParam.getStartTime()==2){
+                query.ge("start_time",TimeUtil.getBeginDayOfTomorrow().getTime());
+                query.le("start_time",TimeUtil.getEndDayOfTomorrow().getTime());
+            }
+        }else{
+            query.eq("status",3);
+            //已结束查昨天
+            if(queryParam.getStartTime()==2){
+                query.ge("start_time",TimeUtil.getBeginDayOfYesterday().getTime());
+                query.le("start_time",TimeUtil.getEndDayOfYesterday().getTime());
+            }
+        }
+        //先ID降序再top升序
         query.orderByDesc("id");
+        query.orderByAsc("top");
         IPage<BallGame> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());

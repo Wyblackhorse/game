@@ -6,12 +6,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.oxo.ball.bean.dao.BallPlayer;
+import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.service.admin.IBallPlayerService;
 import com.oxo.ball.service.player.AuthPlayerService;
+import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -21,9 +24,9 @@ import java.util.List;
 @Service()
 public class PlayerAuthServiceImpl implements AuthPlayerService {
     @Autowired
-    IBallPlayerService ballPlayerService;
-    @Autowired
     RedisUtil redisUtil;
+    @Resource
+    IBasePlayerService basePlayerService;
 
     public static final String REDIS_PLAYER_AUTH_KEY = "ball_auth_player_user_rec";
 
@@ -58,7 +61,7 @@ public class PlayerAuthServiceImpl implements AuthPlayerService {
             return TOKEN_INVALID;
         }
 
-        BallPlayer user = ballPlayerService.getById(userId);
+        BallPlayer user = basePlayerService.findById(userId);
         if (user == null) {
             return TOKEN_INVALID;
         }

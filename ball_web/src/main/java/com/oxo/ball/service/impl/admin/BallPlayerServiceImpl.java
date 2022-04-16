@@ -21,8 +21,4 @@ import java.util.List;
 @Service
 public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer> implements IBallPlayerService {
 
-    @Resource
-    BallPlayerMapper mapper;
-
-
 }

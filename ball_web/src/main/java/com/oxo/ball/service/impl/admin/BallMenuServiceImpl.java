@@ -54,9 +54,12 @@ public class BallMenuServiceImpl implements BallMenuService {
 
     @Override
     public List<BallMenu> findAll() {
-        List<BallMenu> authList = ballMenuMapper.selectList(new QueryWrapper<>());
-        //
+        QueryWrapper<BallMenu> query = new QueryWrapper<>();
+        query.orderByAsc("is_menu");
+        List<BallMenu> authList = ballMenuMapper.selectList(query);
         return authList;
     }
+
+
 
 }

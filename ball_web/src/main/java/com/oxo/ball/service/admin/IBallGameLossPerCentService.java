@@ -1,7 +1,10 @@
 package com.oxo.ball.service.admin;
 
+import com.oxo.ball.bean.dao.BallGame;
 import com.oxo.ball.bean.dao.BallGameLossPerCent;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBallGameLossPerCentService extends IService<BallGameLossPerCent> {
 
+    List<BallGameLossPerCent> findByGameId(Long gameId);
+
+    BallGameLossPerCent findById(Long oddsId);
 }

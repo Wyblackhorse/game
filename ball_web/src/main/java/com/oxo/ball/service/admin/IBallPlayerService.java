@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-04-13
  */
 public interface IBallPlayerService extends IService<BallPlayer> {
+
 }

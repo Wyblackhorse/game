@@ -2,6 +2,9 @@ package com.oxo.ball.service.admin;
 
 import com.oxo.ball.bean.dao.BallBalanceChange;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oxo.ball.bean.dao.BallPlayer;
+import com.oxo.ball.bean.dto.req.player.BalanceChangeRequest;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBallBalanceChangeService extends IService<BallBalanceChange> {
 
+    SearchResponse<BallBalanceChange> search(BallPlayer currentUser, BalanceChangeRequest balanceChangeRequest, Integer pageNo, Integer pageSize);
 }

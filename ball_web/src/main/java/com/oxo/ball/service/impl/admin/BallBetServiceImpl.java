@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BallBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> implements IBallBetService {
-
+    
 }

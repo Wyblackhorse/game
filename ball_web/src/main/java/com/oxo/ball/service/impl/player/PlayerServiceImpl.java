@@ -2,9 +2,9 @@ package com.oxo.ball.service.impl.player;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
@@ -13,17 +13,17 @@ import com.oxo.ball.bean.dto.resp.AuthLoginResponse;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallPlayerMapper;
+import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.*;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,43 +48,23 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
 
     @Resource
     IBallSystemConfigService systemConfigService;
+    @Resource
+    IBasePlayerService basePlayerService;
+
+
 
     @Override
-    @Cacheable(value = "ball_player_by_id", key = "#id", unless = "#result == null")
-    public BallPlayer findById(Long id) {
-        return getById(id);
-    }
-
-    @Cacheable(value = "ball_player_by_username", key = "#username", unless = "#result == null")
-    @Override
-    public BallPlayer findByUsername(String username) {
-        QueryWrapper query = new QueryWrapper();
-        query.eq("username", username);
-        BallPlayer ballPlayer = getOne(query);
-        return ballPlayer;
-    }
-
-    @Override
-    @Cacheable(value = "ball_player_by_invitation_code", key = "#invitationCode", unless = "#result == null")
-    public BallPlayer findByInvitationCode(String invitationCode) {
-        QueryWrapper query = new QueryWrapper();
-        query.eq("invitation_code", invitationCode);
-        BallPlayer ballPlayer = getOne(query);
-        return ballPlayer;
-    }
-
-    @Override
-    public BallPlayer getCurrentUser(String token) {
+    public BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException {
         Long userId;
         try {
-            List<String> audience = JWT.decode(token).getAudience();
+            List<String> audience = JWT.decode(request.getHeader("token")).getAudience();
             userId = Long.parseLong(audience.get(0));
-            BallPlayer byId = getById(userId);
+            BallPlayer byId = basePlayerService.findById(userId);
             return byId;
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("内部错误");
+            throw new TokenInvalidedException();
         } catch (Exception ex) {
-            return null;
+            throw new RuntimeException("内部错误");
         }
     }
 
@@ -106,7 +86,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
             return baseResponse;
         }
         //检查数据库里面是否有用户名
-        BallPlayer ballPlayer = findByUsername(registRequest.getUsername());
+        BallPlayer ballPlayer = basePlayerService.findByUsername(registRequest.getUsername());
         if (ballPlayer != null) {
             return BaseResponse.failedWithMsg("账号已存在~");
         }
@@ -128,7 +108,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,errorList);
             } else {
                 //邀请码是否正确
-                BallPlayer parentPlayer = findByInvitationCode(registRequest.getInvitationCode());
+                BallPlayer parentPlayer = basePlayerService.findByInvitationCode(registRequest.getInvitationCode());
                 if (parentPlayer == null) {
                     List<Map<String, Object>> errorList = new ArrayList<>();
                     Map<String, Object> data = new HashMap<>();
@@ -142,16 +122,18 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 }
             }
         } else {
-            //TODO 当前没有指定要邀请码,查询系统配置的邀请码
+            //TODO 当前没有指定默认邀请码
         }
         BallPlayer save = BallPlayer.builder()
                 .username(registRequest.getUsername())
                 .password(PasswordUtil.genPasswordMd5(registRequest.getPassword()))
-                .invitationCode("")
+                .invitationCode(String.valueOf(TimeUtil.getRandomNum(123456,987654)))
                 .token("")
                 .theNewIp(ipAddress)
                 .theLastIp(ipAddress)
                 .superiorId(parentPlayerId)
+                //TODO 玩家注册送888888
+                .balance(888888*BigDecimalUtil.PLAYER_MONEY_UNIT)
                 .build();
         MapUtil.setCreateTime(save);
 
@@ -185,7 +167,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
         }
         BallPlayer ballPlayer = null;
         try {
-            ballPlayer = findByUsername(req.getUsername());
+            ballPlayer = basePlayerService.findByUsername(req.getUsername());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -248,4 +230,5 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
         }
         return BaseResponse.failedWithMsg("验证码不正确~");
     }
+
 }
