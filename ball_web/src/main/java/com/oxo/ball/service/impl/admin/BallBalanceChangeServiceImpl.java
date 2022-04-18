@@ -29,7 +29,9 @@ public class BallBalanceChangeServiceImpl extends ServiceImpl<BallBalanceChangeM
 
         Page<BallBalanceChange> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallBalanceChange> query = new QueryWrapper<>();
-        query.eq("player_id",currentUser.getId());
+        if(currentUser!=null){
+            query.eq("player_id",currentUser.getId());
+        }
         if(balanceChangeRequest.getType()!=null){
             query.eq("balanceChange_type",balanceChangeRequest.getType());
         }
@@ -42,5 +44,10 @@ public class BallBalanceChangeServiceImpl extends ServiceImpl<BallBalanceChangeM
         response.setTotalPage(pages.getPages());
         response.setResults(pages.getRecords());
         return response;
+    }
+
+    @Override
+    public boolean insert(BallBalanceChange balanceChange) {
+        return save(balanceChange);
     }
 }

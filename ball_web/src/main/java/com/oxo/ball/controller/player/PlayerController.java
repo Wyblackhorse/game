@@ -2,15 +2,18 @@ package com.oxo.ball.controller.player;
 
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallBalanceChange;
+import com.oxo.ball.bean.dao.BallBet;
 import com.oxo.ball.bean.dao.BallGame;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dto.req.player.BalanceChangeRequest;
 import com.oxo.ball.bean.dto.req.player.GameRequest;
+import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.player.AuthPlayerService;
+import com.oxo.ball.service.player.IPlayerBetService;
 import com.oxo.ball.service.player.IPlayerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +47,8 @@ public class PlayerController {
     IBasePlayerService basePlayerService;
     @Resource
     IBallBalanceChangeService ballBalanceChangeService;
+    @Resource
+    IPlayerBetService betService;
     @ApiOperation(
             value = "个人资料",
             notes = "个人资料" ,
@@ -71,5 +76,51 @@ public class PlayerController {
         BallPlayer currentUser = playerService.getCurrentUser(request);
         SearchResponse<BallBalanceChange> search = ballBalanceChangeService.search(currentUser,balanceChangeRequest, pageNo, pageSize);
         return BaseResponse.successWithData(search);
+    }
+
+    @ApiOperation(
+            value = "订单中心",
+            notes = "订单中心" ,
+            httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo",value = "页码"),
+            @ApiImplicitParam(name = "pageSize",value = "数量")
+    })
+    @PostMapping("bets")
+    public Object bets(PlayerBetRequest query,
+                        @RequestParam(defaultValue = "1")Integer pageNo,
+                        @RequestParam(defaultValue = "20") Integer pageSize,
+                        HttpServletRequest request) throws TokenInvalidedException {
+        BallPlayer currentUser = playerService.getCurrentUser(request);
+        SearchResponse<BallBet> search = betService.search(query,currentUser, pageNo, pageSize);
+        return BaseResponse.successWithData(search);
+    }
+    @ApiOperation(
+            value = "充值",
+            notes = "充值" ,
+            httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "money",value = "充值金额",required = true),
+    })
+    @PostMapping("recharge")
+    public Object recharge(Long money,
+                        HttpServletRequest request) throws TokenInvalidedException {
+        BallPlayer currentUser = playerService.getCurrentUser(request);
+        BaseResponse response = playerService.recharge(currentUser, money);
+        return BaseResponse.successWithData(response);
+    }
+    @ApiOperation(
+            value = "充值",
+            notes = "充值" ,
+            httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "money",value = "充值金额",required = true),
+    })
+    @PostMapping("withdrawal")
+    public Object withdrawal(Long money,
+                        HttpServletRequest request) throws TokenInvalidedException {
+        BallPlayer currentUser = playerService.getCurrentUser(request);
+        BaseResponse response = playerService.withdrawal(currentUser, money);
+        return BaseResponse.successWithData(response);
     }
 }

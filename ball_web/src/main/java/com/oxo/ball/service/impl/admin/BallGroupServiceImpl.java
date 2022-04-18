@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author flooming
@@ -56,6 +57,14 @@ public class BallGroupServiceImpl extends ServiceImpl<BallGroupMapper, BallGroup
         ballGroupMapper.addAuthOfRole(editBallGroup.getId(),editBallGroup.getAuthsId());
         ballGroupMapper.updateById(editBallGroup);
         return true;
+    }
+
+    @Override
+    @Cacheable(value = "ball_role_all", key = "'all'", unless = "#result == null")
+    public List<BallGroup> findAll() {
+        QueryWrapper query = new QueryWrapper();
+        query.eq("status",1);
+        return list(query);
     }
 
     @Override

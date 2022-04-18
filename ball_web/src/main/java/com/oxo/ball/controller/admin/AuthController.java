@@ -1,6 +1,7 @@
 package com.oxo.ball.controller.admin;
 
 import com.oxo.ball.bean.dao.BallAdmin;
+import com.oxo.ball.bean.dao.BallMenu;
 import com.oxo.ball.bean.dto.req.AuthEditPwdRequest;
 import com.oxo.ball.bean.dto.req.AuthLoginRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,8 +71,12 @@ public class AuthController {
     @GetMapping("userinfo")
     public BaseResponse getUserInfo(HttpServletRequest request){
         BallAdmin systemUser = sysUserSer.getCurrentUser(request.getHeader("token"));
-        List<String> pathsByRole = ballMenuService.findPathsByRole(systemUser.getRoleId());
-        return BaseResponse.successWithData(pathsByRole);
+        List<BallMenu> byRole = ballMenuService.findByRole(systemUser.getRoleId());
+        List<String> auths = new ArrayList<>();
+        for(BallMenu auth:byRole){
+            auths.add(auth.getPath());
+        }
+        return BaseResponse.successWithData(auths);
     }
 
     @PostMapping("/logout")

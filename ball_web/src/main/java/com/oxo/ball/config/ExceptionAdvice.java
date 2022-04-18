@@ -1,8 +1,10 @@
 package com.oxo.ball.config;
 
 import com.oxo.ball.auth.AuthException;
+import com.oxo.ball.auth.PlayerEnabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.service.player.AuthPlayerService;
 import io.undertow.util.StatusCodes;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -33,13 +35,16 @@ public class ExceptionAdvice {
         e.printStackTrace();
         return new BaseResponse(StatusCodes.INTERNAL_SERVER_ERROR, e.getMessage());
     }
-
     @ExceptionHandler(AuthException.class)
     @ResponseBody
     public BaseResponse exceptionHandler(AuthException e) {
         return new BaseResponse(HAVE_NO_AUTH, "没有权限");
     }
-
+    @ExceptionHandler(PlayerEnabledException.class)
+    @ResponseBody
+    public BaseResponse exceptionHandler(PlayerEnabledException e) {
+        return new BaseResponse(AuthPlayerService.PLAYER_INVALID, "账号已停用");
+    }
     @ExceptionHandler(TokenInvalidedException.class)
     @ResponseBody
     public BaseResponse exceptionHandler(TokenInvalidedException e) {

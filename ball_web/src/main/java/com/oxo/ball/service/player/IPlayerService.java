@@ -19,4 +19,7 @@ public interface IPlayerService extends IService<BallPlayer> {
     BaseResponse getVerifyCode() throws IOException;
     BaseResponse checkVerifyCode(String verifyKey,String code);
 
+    BaseResponse recharge(BallPlayer currentUser, Long money);
+
+    BaseResponse withdrawal(BallPlayer currentUser, Long money);
 }

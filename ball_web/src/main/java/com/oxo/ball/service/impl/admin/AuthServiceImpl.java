@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.oxo.ball.bean.dao.BallAdmin;
+import com.oxo.ball.bean.dao.BallMenu;
 import com.oxo.ball.service.admin.AuthService;
 import com.oxo.ball.service.admin.BallMenuService;
 import com.oxo.ball.service.admin.BallAdminService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,8 +78,12 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //TODO 判定是否具有访问权限
-        List<String> byRole = ballMenuService.findPathsByRole(user.getRoleId());
-        if(byRole.contains(path)){
+        List<BallMenu> byRole = ballMenuService.findByRole(user.getRoleId());
+        List<String> authPath = new ArrayList<>();
+        for(BallMenu ballMenu:byRole){
+            authPath.add(ballMenu.getPath());
+        }
+        if(authPath.contains(path)){
             return 1;
         }
 

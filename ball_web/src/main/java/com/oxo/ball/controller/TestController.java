@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oxo.ball.bean.dao.BallMenu;
 import com.oxo.ball.service.admin.BallMenuService;
+import com.oxo.ball.service.player.IPlayerBetService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,13 @@ public class TestController {
     @Resource
     BallMenuService ballMenuService;
 
+    @Resource
+    IPlayerBetService betService;
+
+    @GetMapping("orderno")
+    public Object orderNo(){
+        return betService.getDayOrderNo();
+    }
     @GetMapping("menu")
     public Object testMenu(){
         List<BallMenu> all = ballMenuService.findAll();

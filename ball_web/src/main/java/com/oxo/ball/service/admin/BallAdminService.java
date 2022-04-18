@@ -20,9 +20,8 @@ public interface BallAdminService {
     SearchResponse<BallAdmin> search(BallAdmin keyword, Integer pageNo, Integer pageSize);
     BallAdmin insert(SysUserInsertRequest sysUserRequest);
     Boolean delete(Long id);
-
-    Boolean editPwd(Long id, String pwd);
     Boolean edit(SysUserEditRequest sysUserEditRequest);
+    Boolean editPwd(Long id, String pwd);
     BallAdminMapper getMapper();
     BallAdmin getCurrentUser(String token);
     Long  getCurrentUserId(HttpServletRequest request);

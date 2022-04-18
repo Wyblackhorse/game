@@ -17,4 +17,5 @@ import com.oxo.ball.bean.dto.resp.SearchResponse;
 public interface IBallBalanceChangeService extends IService<BallBalanceChange> {
 
     SearchResponse<BallBalanceChange> search(BallPlayer currentUser, BalanceChangeRequest balanceChangeRequest, Integer pageNo, Integer pageSize);
+    boolean insert(BallBalanceChange balanceChange);
 }

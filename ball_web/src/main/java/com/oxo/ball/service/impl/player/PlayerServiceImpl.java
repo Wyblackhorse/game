@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oxo.ball.auth.TokenInvalidedException;
+import com.oxo.ball.bean.dao.BallBalanceChange;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
@@ -14,6 +15,7 @@ import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallPlayerMapper;
 import com.oxo.ball.service.IBasePlayerService;
+import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
@@ -50,6 +52,8 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
     IBallSystemConfigService systemConfigService;
     @Resource
     IBasePlayerService basePlayerService;
+    @Resource
+    IBallBalanceChangeService ballBalanceChangeService;
 
 
 
@@ -124,10 +128,18 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
         } else {
             //TODO 当前没有指定默认邀请码
         }
+        String invitationCode = "";
+        while (true){
+            invitationCode = String.valueOf(TimeUtil.getRandomNum(1234567, 9876543));
+            BallPlayer byInvitationCode = basePlayerService.findByInvitationCode(invitationCode);
+            if(byInvitationCode==null){
+                break;
+            }
+        }
         BallPlayer save = BallPlayer.builder()
                 .username(registRequest.getUsername())
                 .password(PasswordUtil.genPasswordMd5(registRequest.getPassword()))
-                .invitationCode(String.valueOf(TimeUtil.getRandomNum(123456,987654)))
+                .invitationCode(invitationCode)
                 .token("")
                 .theNewIp(ipAddress)
                 .theLastIp(ipAddress)
@@ -229,6 +241,73 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
             return BaseResponse.successWithMsg("");
         }
         return BaseResponse.failedWithMsg("验证码不正确~");
+    }
+
+    @Override
+    public BaseResponse recharge(BallPlayer currentUser, Long money) {
+        BallPlayer byId = basePlayerService.findById(currentUser.getId());
+        BallPlayer edit = BallPlayer.builder()
+                .balance(byId.getBalance()+money*BigDecimalUtil.PLAYER_MONEY_UNIT)
+                .build();
+        edit.setId(currentUser.getId());
+        while(true){
+            boolean b = basePlayerService.editAndClearCache(edit, byId);
+            if(b){
+                //插入账变
+                ballBalanceChangeService.insert(BallBalanceChange.builder()
+                        .playerId(byId.getId())
+                        .initMoney(byId.getBalance())
+                        .changeMoney(money*BigDecimalUtil.PLAYER_MONEY_UNIT)
+                        .dnedMoney(edit.getBalance())
+                        .remark("充值")
+                        .createdAt(System.currentTimeMillis())
+                        .balanceChangeType(1)
+                        .build());
+                return BaseResponse.successWithMsg("充值成功~");
+            }else{
+                //更新失败再次判定余额是否足够,
+                byId = basePlayerService.findById(currentUser.getId());
+                edit.setVersion(byId.getVersion());
+                edit.setBalance(byId.getBalance()+money*BigDecimalUtil.PLAYER_MONEY_UNIT);
+            }
+        }
+    }
+
+    @Override
+    public BaseResponse withdrawal(BallPlayer currentUser, Long money) {
+        BallPlayer byId = basePlayerService.findById(currentUser.getId());
+        money = money*BigDecimalUtil.PLAYER_MONEY_UNIT;
+        if(byId.getBalance()-money<0){
+            return BaseResponse.failedWithMsg("余额不足,不能提现");
+        }
+        BallPlayer edit = BallPlayer.builder()
+                .balance(byId.getBalance()-money)
+                .build();
+        edit.setId(currentUser.getId());
+        while(true){
+            boolean b = basePlayerService.editAndClearCache(edit, byId);
+            if(b){
+                //插入账变
+                ballBalanceChangeService.insert(BallBalanceChange.builder()
+                        .playerId(byId.getId())
+                        .initMoney(byId.getBalance())
+                        .changeMoney(money)
+                        .dnedMoney(edit.getBalance())
+                        .remark("提现")
+                        .createdAt(System.currentTimeMillis())
+                        .balanceChangeType(2)
+                        .build());
+                return BaseResponse.successWithMsg("提现成功~");
+            }else{
+                //更新失败再次判定余额是否足够,
+                byId = basePlayerService.findById(currentUser.getId());
+                if(byId.getBalance()-money<0){
+                    return BaseResponse.failedWithMsg("余额不足,不能提现");
+                }
+                edit.setVersion(byId.getVersion());
+                edit.setBalance(byId.getBalance()-money);
+            }
+        }
     }
 
 }

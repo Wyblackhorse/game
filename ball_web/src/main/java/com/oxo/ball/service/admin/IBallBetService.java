@@ -2,6 +2,7 @@ package com.oxo.ball.service.admin;
 
 import com.oxo.ball.bean.dao.BallBet;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBallBetService extends IService<BallBet> {
 
+    SearchResponse<BallBet> search(BallBet query, Integer pageNo, Integer pageSize);
 }

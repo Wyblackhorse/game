@@ -30,9 +30,7 @@ public class BallAdminController {
     }
     @GetMapping()
     public Object listAll(){
-        QueryWrapper query = new QueryWrapper();
-        query.eq("status",1);
-        List<BallGroup> list = ballGroupService.list(query);
+        List<BallGroup> list = ballGroupService.findAll();
         return BaseResponse.successWithData(list);
     }
 

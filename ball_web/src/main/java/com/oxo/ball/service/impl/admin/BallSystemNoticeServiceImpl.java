@@ -1,6 +1,10 @@
 package com.oxo.ball.service.impl.admin;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.oxo.ball.bean.dao.BallSystemNotice;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.mapper.BallSystemNoticeMapper;
 import com.oxo.ball.service.admin.IBallSystemNoticeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,5 +20,33 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BallSystemNoticeServiceImpl extends ServiceImpl<BallSystemNoticeMapper, BallSystemNotice> implements IBallSystemNoticeService {
+    @Override
+    public SearchResponse<BallSystemNotice> search(BallSystemNotice queryParam, Integer pageNo, Integer pageSize) {
+        SearchResponse<BallSystemNotice> response = new SearchResponse<>();
+        Page<BallSystemNotice> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<BallSystemNotice> query = new QueryWrapper<>();
+        IPage<BallSystemNotice> pages = page(page, query);
+        response.setPageNo(pages.getCurrent());
+        response.setPageSize(pages.getSize());
+        response.setTotalCount(pages.getTotal());
+        response.setTotalPage(pages.getPages());
+        response.setResults(pages.getRecords());
+        return response;
+    }
 
+    @Override
+    public BallSystemNotice insert(BallSystemNotice slideshow) {
+        boolean save = save(slideshow);
+        return slideshow;
+    }
+
+    @Override
+    public Boolean delete(Long id) {
+        return removeById(id);
+    }
+
+    @Override
+    public Boolean edit(BallSystemNotice slideshow) {
+        return updateById(slideshow);
+    }
 }

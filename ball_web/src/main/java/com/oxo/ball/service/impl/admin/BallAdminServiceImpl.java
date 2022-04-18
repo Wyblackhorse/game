@@ -65,6 +65,7 @@ public class BallAdminServiceImpl implements BallAdminService {
                 .roleId(sysUserRequest.getRoleId())
                 .nickname(sysUserRequest.getNickname())
                 .status(1)
+                .token("")
                 .build();
         build.setCreatedAt(System.currentTimeMillis());
         build.setUpdatedAt(0L);

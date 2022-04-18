@@ -1,5 +1,6 @@
 package com.oxo.ball.bean.dao;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 
@@ -53,7 +54,7 @@ public class BallPlayer extends BaseDAO {
     /**
      * 状态1正常 2封禁
      */
-    private Boolean status;
+    private Integer status;
 
     /**
      * 账号类型 1测试号 2正常号 3代理账号
@@ -195,15 +196,7 @@ public class BallPlayer extends BaseDAO {
      */
     private Integer reflectTimes;
 
-//    /**
-//     *  二次密码
-//     */
-//    @TableField(exist = false)
-//    private String twoPassword ;
-//    /**
-//     *  验证码
-//     */
-//    @TableField(exist = false)
-//    private String code ;
+    @TableField(exist = false)
+    private String editPwd;
 
 }

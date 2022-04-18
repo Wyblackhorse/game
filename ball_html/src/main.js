@@ -54,6 +54,9 @@ function formatTime(number, format) {
   if (number === 0) {
     return '--'
   }
+  if (isNaN(number)) {
+    return '--'
+  }
   const time = new Date(number)
   const newArr = []
   const formatArr = ['Y', 'M', 'D', 'h', 'm', 's', 'ms']
@@ -73,6 +76,12 @@ function formatTime(number, format) {
 }
 Vue.filter('formatDate', function(value) {
   return formatTime(value, 'Y-M-D h:m:s')
+})
+Vue.filter('balance', function(value) {
+  if (value == null || value === undefined) {
+    return 0
+  }
+  return value / 100
 })
 Vue.prototype.hasAuth = function(auth) {
   return store.getters.roles.includes(auth)

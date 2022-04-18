@@ -1,6 +1,7 @@
 package com.oxo.ball.controller.admin;
 
 import com.oxo.ball.bean.dao.BallGroup;
+import com.oxo.ball.bean.dao.BallMenu;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.service.admin.BallGroupService;
@@ -9,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/ball/group")
@@ -54,7 +57,12 @@ public class BallGroupController {
      */
     @GetMapping("edit")
     public Object getRoleAuth(@RequestParam Long roleId) {
-        return BaseResponse.successWithData(ballMenuService.findAuthIdByRole(roleId));
+        List<BallMenu> byRole = ballMenuService.findByRole(roleId);
+        List<Long> auths = new ArrayList<>();
+        for(BallMenu auth:byRole){
+            auths.add(auth.getId());
+        }
+        return BaseResponse.successWithData(auths);
     }
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){

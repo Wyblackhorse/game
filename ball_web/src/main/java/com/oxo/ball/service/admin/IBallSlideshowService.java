@@ -2,6 +2,7 @@ package com.oxo.ball.service.admin;
 
 import com.oxo.ball.bean.dao.BallSlideshow;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 /**
  * <p>
@@ -13,4 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBallSlideshowService extends IService<BallSlideshow> {
 
+    SearchResponse<BallSlideshow> search(BallSlideshow query, Integer pageNo, Integer pageSize);
+    BallSlideshow insert(BallSlideshow slideshow);
+    Boolean delete(Long id);
+    Boolean edit(BallSlideshow slideshow);
 }

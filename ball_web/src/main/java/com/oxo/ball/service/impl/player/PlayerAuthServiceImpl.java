@@ -66,6 +66,10 @@ public class PlayerAuthServiceImpl implements AuthPlayerService {
             return TOKEN_INVALID;
         }
 
+        if(user.getStatus()==PLAYER_INVALID){
+            return PLAYER_INVALID;
+        }
+
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
         try {
             jwtVerifier.verify(token);

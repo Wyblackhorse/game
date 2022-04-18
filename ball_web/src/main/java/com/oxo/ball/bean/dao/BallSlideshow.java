@@ -22,7 +22,7 @@ public class BallSlideshow extends BaseDAO {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 游戏id 
+     * 标题
      */
     private String name;
 

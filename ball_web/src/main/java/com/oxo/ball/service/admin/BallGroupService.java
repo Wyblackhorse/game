@@ -7,6 +7,8 @@ import com.oxo.ball.bean.dao.BallGroup;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.mapper.BallGroupMapper;
 
+import java.util.List;
+
 /**
  * @author flooming
  */
@@ -17,4 +19,6 @@ public interface BallGroupService extends IService<BallGroup> {
     Boolean delete(Long id);
 
     Boolean edit(BallGroup editBallGroup);
+
+    List<BallGroup> findAll();
 }

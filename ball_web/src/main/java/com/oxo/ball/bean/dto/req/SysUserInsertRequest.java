@@ -16,4 +16,6 @@ public class SysUserInsertRequest implements Serializable {
     private String password;
     private String nickname;
     private Long roleId;
+    private String remark;
+
 }

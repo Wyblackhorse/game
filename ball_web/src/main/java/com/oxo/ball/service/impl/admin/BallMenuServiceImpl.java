@@ -32,25 +32,25 @@ public class BallMenuServiceImpl implements BallMenuService {
         return sysUserDAO;
     }
 
-    @Override
-    public List<String> findPathsByRole(Long roleId) {
-        List<BallMenu> byRole = findByRole(roleId);
-        List<String> auths = new ArrayList<>();
-        for(BallMenu auth:byRole){
-            auths.add(auth.getPath());
-        }
-        return auths;
-    }
+//    @Override
+//    public List<String> findPathsByRole(Long roleId) {
+//        List<BallMenu> byRole = findByRole(roleId);
+//        List<String> auths = new ArrayList<>();
+//        for(BallMenu auth:byRole){
+//            auths.add(auth.getPath());
+//        }
+//        return auths;
+//    }
 
-    @Override
-    public List<Long> findAuthIdByRole(Long roleId) {
-        List<BallMenu> byRole = findByRole(roleId);
-        List<Long> auths = new ArrayList<>();
-        for(BallMenu auth:byRole){
-            auths.add(auth.getId());
-        }
-        return auths;
-    }
+//    @Override
+//    public List<Long> findAuthIdByRole(Long roleId) {
+//        List<BallMenu> byRole = findByRole(roleId);
+//        List<Long> auths = new ArrayList<>();
+//        for(BallMenu auth:byRole){
+//            auths.add(auth.getId());
+//        }
+//        return auths;
+//    }
 
     @Override
     public List<BallMenu> findAll() {

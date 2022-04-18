@@ -58,5 +58,10 @@ public class BallBet extends BaseDAO {
      */
     private Integer status;
 
-
+    /**
+     * 订单号-年-月-日+1000001
+     * yyyyMMdd
+     *
+     */
+    private Long orderNo;
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.oxo.ball.service.admin.AuthService.HAVE_NO_AUTH;
 import static com.oxo.ball.service.admin.AuthService.TOKEN_INVALID;
+import static com.oxo.ball.service.player.AuthPlayerService.PLAYER_INVALID;
 
 /**
  * @author flooming
@@ -30,6 +31,8 @@ public class PlayerAuthInterceptor implements HandlerInterceptor {
                 return true;
             case TOKEN_INVALID:
                 throw new TokenInvalidedException();
+            case PLAYER_INVALID:
+                throw new PlayerEnabledException();
             case HAVE_NO_AUTH:
                 throw new AuthException();
             default:

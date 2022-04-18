@@ -549,6 +549,7 @@ public class TimeUtil {
     public static final String TIME_YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
     public static final String TIME_YYYY_MM_DD = "yyyy-MM-dd";
     public static final String TIME_DB_YYYY_MM_DD = "yyyyMMdd";
+    public static final String TIME_DB_YY_MM_DD = "yyMMdd";
     public static final String TIME_TAG_YYYY_MM_DD = "MMdd";
     public static final String TIME_FILE_HHMMSS = "HHmmss";
 

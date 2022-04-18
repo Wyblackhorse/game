@@ -54,7 +54,7 @@ public class PlayerBetController {
             @ApiImplicitParam(name = "money",value = "下注金额",required = true)
     })
     @PostMapping
-    public Object index(@Validated BetRequest betRequest, HttpServletRequest request) throws TokenInvalidedException {
+    public Object bets(@Validated BetRequest betRequest, HttpServletRequest request) throws TokenInvalidedException {
         try {
             BallPlayer currentPlayer = playerService.getCurrentUser(request);
             BaseResponse baseResponse = betService.gameBet(betRequest,currentPlayer);
@@ -63,5 +63,6 @@ public class PlayerBetController {
         }
         return BaseResponse.failedWithMsg("下注失败~");
     }
+
 
 }

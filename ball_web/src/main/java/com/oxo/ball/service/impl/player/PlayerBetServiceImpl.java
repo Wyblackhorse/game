@@ -1,9 +1,15 @@
 package com.oxo.ball.service.impl.player;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oxo.ball.bean.dao.*;
 import com.oxo.ball.bean.dto.req.player.BetRequest;
+import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
+import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallBetMapper;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallGameLossPerCentService;
@@ -12,11 +18,14 @@ import com.oxo.ball.service.player.IPlayerBetService;
 import com.oxo.ball.service.player.IPlayerGameService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.BigDecimalUtil;
+import com.oxo.ball.utils.RedisUtil;
+import com.oxo.ball.utils.TimeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
+import java.util.Date;
 
 @Service
 public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> implements IPlayerBetService {
@@ -31,7 +40,8 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
     BasePlayerService basePlayerService;
     @Resource
     IBallBalanceChangeService ballBalanceChangeService;
-
+    @Resource
+    RedisUtil redisUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -93,11 +103,12 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
                 .handMoney(0L)
                 .winningAmount(0L)
                 .status(1)
+                .orderNo(Long.parseLong(TimeUtil.dateFormat(new Date(),TimeUtil.TIME_DB_YY_MM_DD)+getDayOrderNo()))
                 .build();
         save.setCreatedAt(System.currentTimeMillis());
         boolean isSucc = save(save);
         //TODO 下注后账变日志
-        ballBalanceChangeService.save(BallBalanceChange.builder()
+        ballBalanceChangeService.insert(BallBalanceChange.builder()
                 .playerId(player.getId())
                 .createdAt(System.currentTimeMillis())
                 .changeMoney(betRequest.getMoney())
@@ -114,5 +125,41 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
             throw new SQLException();
         }
         return BaseResponse.successWithMsg("下注成功~");
+    }
+
+
+    @Override
+    public SearchResponse<BallBet> search(PlayerBetRequest queryParam, BallPlayer ballPlayer, Integer pageNo, Integer pageSize) {
+        SearchResponse<BallBet> response = new SearchResponse<>();
+        Page<BallBet> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<BallBet> query = new QueryWrapper<>();
+        /**
+         * 过滤条件
+         * 一.玩家ID
+         */
+        query.eq("player_id",ballPlayer.getId());
+        //先ID降序再top升序
+        query.orderByDesc("id");
+        IPage<BallBet> pages = page(page, query);
+        response.setPageNo(pages.getCurrent());
+        response.setPageSize(pages.getSize());
+        response.setTotalCount(pages.getTotal());
+        response.setTotalPage(pages.getPages());
+        response.setResults(pages.getRecords());
+        return response;
+    }
+
+    @Override
+    public Long getDayOrderNo() {
+        if(redisUtil.get(RedisKeyContant.BET_ORDER_NO)==null){
+            redisUtil.set(RedisKeyContant.BET_ORDER_NO,1000000);
+        }
+        long incr = redisUtil.incr(RedisKeyContant.BET_ORDER_NO, 1);
+        return incr;
+    }
+
+    @Override
+    public void clearDayOrderNo() {
+        redisUtil.del(RedisKeyContant.BET_ORDER_NO);
     }
 }

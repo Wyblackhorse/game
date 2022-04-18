@@ -2,6 +2,7 @@ package com.oxo.ball.service.admin;
 
 import com.oxo.ball.bean.dao.BallGame;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBallGameService extends IService<BallGame> {
 
+    SearchResponse<BallGame> search(BallGame query, Integer pageNo, Integer pageSize);
 }
