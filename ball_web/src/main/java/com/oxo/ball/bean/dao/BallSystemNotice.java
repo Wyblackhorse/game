@@ -3,8 +3,8 @@ package com.oxo.ball.bean.dao;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -14,9 +14,11 @@ import lombok.Setter;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
 @TableName("ball_system_notice")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class BallSystemNotice extends BaseDAO {
 
     private static final long serialVersionUID = 1L;

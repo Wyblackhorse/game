@@ -43,6 +43,11 @@ public class BallSlideshowController {
         Boolean aBoolean = slideshowService.edit(ballPlayer);
         return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
     }
+    @PostMapping("status")
+    public Object status(@RequestBody BallSlideshow ballPlayer){
+        Boolean aBoolean = slideshowService.status(ballPlayer);
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+    }
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){
         Boolean delete = slideshowService.delete(id);

@@ -5,7 +5,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
       </el-button>
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-if="hasAuth('/ball/operation/notice/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
     </div>
@@ -25,32 +25,35 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号" width="300" min-width="150px" align="center">
+      <el-table-column label="标题" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="200" min-width="150px" align="center">
+      <el-table-column label="内容" align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="200" min-width="150px" align="center">
+      <el-table-column label="语言编码" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.language }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="200" min-width="150px" align="center">
+      <el-table-column label="状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.status }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/operation/notice/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="hasAuth('/ball/operation/notice/status')" :type="row.status == 1?'danger':'success'" size="mini" @click="changeStatus(row)">
+            {{row.status==1?'禁用':'启用'}}
+          </el-button>
+          <el-button v-if="hasAuth('/ball/operation/notice/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
         </template>
@@ -61,28 +64,18 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
+        <el-form-item label="内容" prop="content">
+          <el-input v-model="temp.content" type="textarea" />
         </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+        <el-form-item label="语言编码" prop="language">
+          <el-input v-model="temp.language" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button  @click="dialogFormVisible = false">
+        <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
@@ -135,26 +128,39 @@ export default {
     }
   },
   created() {
-    this.getRoles()
     this.getList()
   },
   methods: {
-    getRoles() {
-      request({
-        url: 'ball/admin',
-        method: 'get'
-      }).then((response) => {
-        if (response.code === 200) {
-          this.roles = response.data
-        }
-      }).catch(() => {
+    changeStatus(row) {
+      MessageBox.confirm('你确定要' + (row.status == 1 ? '禁用' : '启用') + '吗？', '提醒', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: '/ball/operation/notice/status',
+          method: 'post',
+          data: {
+            id: row.id,
+            status: (row.status == 2 ? 1 : 2)
+          }
+        }).then((response) => {
+          if (response.code === 200) {
+            this.$notify({
+              message: '修改成功',
+              type: 'success',
+              duration: 2 * 1000
+            })
+            row.status = (row.status == 2 ? 1 : 2)
+          }
+        })
       })
     },
     getList() {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/admin',
+        url: '/ball/operation/notice',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -187,10 +193,6 @@ export default {
     },
     resetTemp() { // 添加属性
       this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
       }
     },
     handleCreate() {
@@ -209,7 +211,7 @@ export default {
         // console.log(this.temp)
         if (valid) {
           request({
-            url: 'ball/admin/add',
+            url: '/ball/operation/notice/add',
             method: 'post',
             data: this.temp
           }).then((response) => {
@@ -240,7 +242,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/admin/edit',
+            url: '/ball/operation/notice/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -266,7 +268,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: 'ball/admin/del?id=' + ids,
+          url: '/ball/operation/notice/del?id=' + ids,
           method: 'get'
         }).then((response) => {
           if (response.code === 200) {

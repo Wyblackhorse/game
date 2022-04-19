@@ -318,7 +318,7 @@ export default {
       }
     },
     changeStatus(row) {
-      MessageBox.confirm('你确定要' + (row.status == 1 ? '禁用' : '启用') + '该账号吗吗？', '重要提醒', {
+      MessageBox.confirm('你确定要' + (row.status == 1 ? '禁用' : '启用') + '该账号吗？', '重要提醒', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

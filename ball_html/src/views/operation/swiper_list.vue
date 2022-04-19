@@ -25,32 +25,37 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标题" width="300" min-width="150px" align="center">
+      <el-table-column label="标题"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="语言编码" width="200" min-width="150px" align="center">
+      <el-table-column label="策略类型"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ policyTypes[row.policyType].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="图片地址" width="200" min-width="150px" align="center">
+      <el-table-column label="语言编码"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.language }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="200" min-width="150px" align="center">
+      <el-table-column label="图片地址"  align="center" show-overflow-tooltip>
+        <template slot-scope="{row}">
+          <span>{{ row.imageUrl }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.status==1?'显示':'不显示' }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/operation/swiper/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/operation/swiper/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/operation/swiper/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="hasAuth('/ball/operation/swiper/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
         </template>
@@ -61,24 +66,30 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+        <el-form-item label="标题" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+        <el-form-item label="策略类型" prop="password">
+          <el-select style="width: 320px;"  v-model="temp.policyType" clearable placeholder="角色">
             <el-option
-              v-for="item in roles"
+              v-for="item in policyTypes"
               :key="item.id"
               :label="item.name"
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="temp.policyType==1" label="存款策略ID">
+          <el-input v-model="temp.depositPolicyId" />
+        </el-form-item>
+        <el-form-item v-if="temp.policyType==2" label="返佣策略ID">
+          <el-input v-model="temp.commissionStrategyId" />
+        </el-form-item>
+        <el-form-item label="语言编码">
+          <el-input v-model="temp.language" />
+        </el-form-item>
+        <el-form-item label="图片地址">
+          <el-input v-model="temp.imageUrl" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -127,6 +138,7 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
+      policyTypes: [{ name: '存款策略', value: 1 }, { name: '返佣策略', value: 2 }],
       rules: {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
@@ -135,13 +147,12 @@ export default {
     }
   },
   created() {
-    this.getRoles()
     this.getList()
   },
   methods: {
     getRoles() {
       request({
-        url: 'ball/admin',
+        url: '/ball/operation/swiper',
         method: 'get'
       }).then((response) => {
         if (response.code === 200) {
@@ -154,7 +165,7 @@ export default {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/admin',
+        url: '/ball/operation/swiper',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -209,7 +220,7 @@ export default {
         // console.log(this.temp)
         if (valid) {
           request({
-            url: 'ball/admin/add',
+            url: '/ball/operation/swiper/add',
             method: 'post',
             data: this.temp
           }).then((response) => {
@@ -240,7 +251,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/admin/edit',
+            url: '/ball/operation/swiper/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -266,7 +277,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: 'ball/admin/del?id=' + ids,
+          url: '/ball/operation/swiper/del?id=' + ids,
           method: 'get'
         }).then((response) => {
           if (response.code === 200) {

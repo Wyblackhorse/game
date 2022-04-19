@@ -25,6 +25,9 @@ public class BallSystemNoticeServiceImpl extends ServiceImpl<BallSystemNoticeMap
         SearchResponse<BallSystemNotice> response = new SearchResponse<>();
         Page<BallSystemNotice> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallSystemNotice> query = new QueryWrapper<>();
+        if(queryParam.getStatus()!=null){
+            query.eq("status",queryParam.getStatus());
+        }
         IPage<BallSystemNotice> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());
@@ -36,6 +39,7 @@ public class BallSystemNoticeServiceImpl extends ServiceImpl<BallSystemNoticeMap
 
     @Override
     public BallSystemNotice insert(BallSystemNotice slideshow) {
+        slideshow.setStatus(1);
         boolean save = save(slideshow);
         return slideshow;
     }
@@ -48,5 +52,14 @@ public class BallSystemNoticeServiceImpl extends ServiceImpl<BallSystemNoticeMap
     @Override
     public Boolean edit(BallSystemNotice slideshow) {
         return updateById(slideshow);
+    }
+
+    @Override
+    public Boolean status(BallSystemNotice notice) {
+        BallSystemNotice edit = BallSystemNotice.builder()
+                .status(notice.getStatus())
+                .build();
+        edit.setId(notice.getId());
+        return updateById(edit);
     }
 }

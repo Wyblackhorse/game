@@ -1,10 +1,13 @@
 package com.oxo.ball.bean.dao;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Date;
+
+import com.oxo.ball.utils.TimeUtil;
+import lombok.*;
 
 /**
  * <p>
@@ -14,9 +17,11 @@ import lombok.Setter;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
 @TableName("ball_deposit_policy")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BallDepositPolicy extends BaseDAO {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +70,20 @@ public class BallDepositPolicy extends BaseDAO {
      * 协议
      */
     private String remark;
+
+
+    public String getStartStr() {
+        return TimeUtil.dateFormat(new Date(getStartTime()),TimeUtil.TIME_YYYY_MM_DD_HH_MM_SS);
+    }
+
+    public String getEndStr() {
+        return TimeUtil.dateFormat(new Date(getEndTime()),TimeUtil.TIME_YYYY_MM_DD_HH_MM_SS);
+    }
+
+    @TableField(exist = false)
+    private String start;
+    @TableField(exist = false)
+    private String end;
 
 
 }

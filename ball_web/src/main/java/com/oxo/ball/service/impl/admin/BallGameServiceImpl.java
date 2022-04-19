@@ -26,6 +26,9 @@ public class BallGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame> i
         SearchResponse<BallGame> response = new SearchResponse<>();
         Page<BallGame> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallGame> query = new QueryWrapper<>();
+        if(queryParam.getHot()!=null){
+            query.eq("hot",queryParam.getHot());
+        }
         //先ID降序再top升序
         query.orderByDesc("id");
         IPage<BallGame> pages = page(page, query);

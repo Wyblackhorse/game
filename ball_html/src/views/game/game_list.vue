@@ -4,9 +4,6 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
       </el-button>
-      <!--<el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
-      <!--{{ $t('table.add') }}-->
-      <!--</el-button>-->
     </div>
 
     <el-table
@@ -24,19 +21,44 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单号" align="center">
+      <el-table-column label="赛事ID" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orderNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="会员账号" align="center">
+      <el-table-column label="Logo" align="center">
         <template slot-scope="{row}">
           <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="赛事信息" align="center">
+      <el-table-column label="联盟名称" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gameinfo }}</span>
+          <span>{{ row.allianceName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="联盟Logo" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.allianceLogo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="主队名字" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.mainName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="主队Logo" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.mainLogo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="客队名字" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.guestName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="客队Logo" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.guestLogo }}</span>
         </template>
       </el-table-column>
       <el-table-column label="开赛时间" align="center">
@@ -44,42 +66,27 @@
           <span>{{ row.startTime|formatDate('y-M-d h:m:s') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开赛时间" align="center">
+      <el-table-column label="比分" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.finishTime|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.score }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下注信息" align="center">
+      <el-table-column label="赛事状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.remark }}</span>
+          <span>{{ row.gameStatus }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下注金额" align="center">
+      <el-table-column label="置顶状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.betMoney|balance }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="手续费" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.handMoney|balance }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="中奖金额" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.winningAmount|balance }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="结算状态" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span>{{ row.top }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="hasAuth('/ball/bets/info')" type="primary" size="mini" @click="betInfo(row)">
+          <el-button v-if="hasAuth('/ball/game/info')" type="primary" size="mini" @click="betInfo(row)">
             查看
           </el-button>
-          <el-button v-if="row.status ===1 && hasAuth('/ball/bets/undo')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="row.status ===1 && hasAuth('/ball/game/undo')" type="primary" size="mini" @click="handleUpdate(row)">
             撤单
           </el-button>
         </template>
@@ -171,7 +178,7 @@ export default {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/odds',
+        url: 'ball/game',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -204,44 +211,7 @@ export default {
     },
     resetTemp() { // 添加属性
       this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
       }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        // console.log(this.temp)
-        this.temp.rate = parseInt(this.temp.rate)
-        this.temp.type = parseInt(this.temp.type)
-        // console.log(this.temp)
-        if (valid) {
-          request({
-            url: 'ball/odds/add',
-            method: 'post',
-            data: this.temp
-          }).then((response) => {
-            if (response.code === 200) {
-              this.dialogFormVisible = false
-              this.list.unshift(response.data)
-              this.$message({
-                message: '添加成功',
-                type: 'success',
-                duration: 3 * 1000
-              })
-            }
-          })
-        }
-      })
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj

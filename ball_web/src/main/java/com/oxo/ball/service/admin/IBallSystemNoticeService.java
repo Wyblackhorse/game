@@ -17,4 +17,5 @@ public interface IBallSystemNoticeService extends IService<BallSystemNotice> {
     BallSystemNotice insert(BallSystemNotice notice);
     Boolean delete(Long id);
     Boolean edit(BallSystemNotice notice);
+    Boolean status(BallSystemNotice notice);
 }

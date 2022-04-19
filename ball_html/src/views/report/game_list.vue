@@ -25,32 +25,32 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号" width="300" min-width="150px" align="center">
+      <el-table-column label="账号"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="200" min-width="150px" align="center">
+      <el-table-column label="昵称"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="200" min-width="150px" align="center">
+      <el-table-column label="创建时间"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="200" min-width="150px" align="center">
+      <el-table-column label="更新时间"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
         </template>

@@ -110,11 +110,11 @@ public class PlayerController {
         return BaseResponse.successWithData(response);
     }
     @ApiOperation(
-            value = "充值",
-            notes = "充值" ,
+            value = "提现",
+            notes = "提现" ,
             httpMethod = "POST")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "money",value = "充值金额",required = true),
+            @ApiImplicitParam(name = "money",value = "提现金额",required = true),
     })
     @PostMapping("withdrawal")
     public Object withdrawal(Long money,

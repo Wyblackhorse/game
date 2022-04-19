@@ -26,6 +26,9 @@ public class BallSlideshowServiceImpl extends ServiceImpl<BallSlideshowMapper, B
         SearchResponse<BallSlideshow> response = new SearchResponse<>();
         Page<BallSlideshow> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallSlideshow> query = new QueryWrapper<>();
+        if(queryParam.getStatus()!=null){
+            query.eq("status",queryParam.getStatus());
+        }
         IPage<BallSlideshow> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());
@@ -49,5 +52,14 @@ public class BallSlideshowServiceImpl extends ServiceImpl<BallSlideshowMapper, B
     @Override
     public Boolean edit(BallSlideshow slideshow) {
         return updateById(slideshow);
+    }
+
+    @Override
+    public Boolean status(BallSlideshow slideshow) {
+        BallSlideshow edit = BallSlideshow.builder()
+                .status(slideshow.getStatus())
+                .build();
+        edit.setId(slideshow.getId());
+        return updateById(edit);
     }
 }

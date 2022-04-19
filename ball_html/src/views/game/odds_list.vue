@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.orderNo" placeholder="订单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!--<el-input v-model="listQuery.orderNo" placeholder="订单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
       </el-button>
@@ -20,49 +20,44 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="id" prop="id" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="赛事ID" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orderNo }}</span>
+          <span>{{ row.gameId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="赔率ID" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="比分" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gameinfo }}</span>
+          <span>{{ row.score }}</span>
         </template>
       </el-table-column>
       <el-table-column label="比赛类型" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.remark }}</span>
+          <span>{{ row.gameType }}</span>
         </template>
       </el-table-column>
       <el-table-column label="反波赔率" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.betMoney|balance }}</span>
+          <span>{{ row.lossPerCent }}</span>
         </template>
       </el-table-column>
       <el-table-column label="正波赔率" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.handMoney|balance }}</span>
+          <span>{{ row.lossPerCent }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.winningAmount|balance }}</span>
+          <span>{{ row.updatedAt }}</span>
         </template>
       </el-table-column>
       <el-table-column label="同步时间" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span>{{ row.createdAt }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保本状态" align="center">
@@ -178,7 +173,7 @@ export default {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/game',
+        url: 'ball/odds',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {

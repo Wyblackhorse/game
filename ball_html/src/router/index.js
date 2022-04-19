@@ -222,7 +222,7 @@ export const asyncRoutes = [
     component: Layout,
     alwaysShow: true,
     name: 'tactics_main',
-    path: 'tactics_main',
+    path: '/tactics_main',
     meta: { title: '策略配置', icon: 'tactics', roles: ['/ball/tactics/main'] },
     children: [
       {

@@ -3,8 +3,8 @@ package com.oxo.ball.bean.dao;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * <p>
@@ -14,8 +14,10 @@ import lombok.Setter;
  * @author oxo_jy
  * @since 2022-04-13
  */
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @TableName("ball_game")
 public class BallGame extends BaseDAO {
 
@@ -87,4 +89,7 @@ public class BallGame extends BaseDAO {
     private Integer status;
 
 
+    public Long getRemainingTime(){
+        return startTime - System.currentTimeMillis();
+    }
 }

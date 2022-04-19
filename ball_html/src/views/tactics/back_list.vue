@@ -1,11 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
-      </el-button>
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <!--<el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
+      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
+      <!--{{ $t('table.search') }}-->
+      <!--</el-button>-->
+      <el-button
+        v-if="hasAuth('/ball/tactics/back/add')"
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
         {{ $t('table.add') }}
       </el-button>
     </div>
@@ -25,64 +32,93 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号" width="300" min-width="150px" align="center">
+      <el-table-column label="优惠名称" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="200" min-width="150px" align="center">
+      <el-table-column label="优惠类型" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ row.commissionStrategyType }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="200" min-width="150px" align="center">
+      <el-table-column label="返佣层级" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.commissionLevel }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="200" min-width="150px" align="center">
+      <el-table-column label="自动发放" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.automaticDistribution }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
+      <el-table-column label="状态" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.status }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="$t('table.actions')"
+        align="center"
+        min-width="200px"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/tactics/back/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button
+            v-if="hasAuth('/ball/tactics/back/del')"
+            size="mini"
+            type="danger"
+            @click="handleDelete(row,$index)"
+          >
             {{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.pageNo"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="90px"
+        style="padding-left:30px;padding-right: 30px"
+      >
+        <el-form-item label="优惠名称" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+        <el-form-item label="优惠类型" prop="depositPolicyType">
+          <el-select v-model="temp.commissionStrategyType" style="width: 100%" clearable placeholder="优惠类型">
             <el-option
-              v-for="item in roles"
-              :key="item.id"
+              v-for="item in policyTypes"
+              :key="item.value"
               :label="item.name"
-              :value="item.id"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="返佣层级" prop="commissionLevel">
+          <el-input v-model="temp.commissionLevel" />
+        </el-form-item>
+        <el-form-item label="自动发放" prop="automaticDistribution">
+          <el-radio v-model="temp.automaticDistribution" :label=1>自动</el-radio>
+          <el-radio v-model="temp.automaticDistribution" :label=2>手动</el-radio>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button  @click="dialogFormVisible = false">
+        <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
@@ -115,18 +151,15 @@ export default {
         username: ''
       },
       temp: {
-        id: 1,
-        username: '',
-        password: '',
-        nickname: '',
-        roleId: ''
+        depositPolicyType: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '编辑',
+        create: '创建'
       },
+      policyTypes: [{ name: '下注返佣', value: 1 }, { name: '盈利返佣', value: 2 }, { name: '充值返佣', value: 2 }],
       rules: {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
@@ -135,13 +168,12 @@ export default {
     }
   },
   created() {
-    this.getRoles()
     this.getList()
   },
   methods: {
     getRoles() {
       request({
-        url: 'ball/admin',
+        url: 'ball/tactics/back',
         method: 'get'
       }).then((response) => {
         if (response.code === 200) {
@@ -154,7 +186,7 @@ export default {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/admin',
+        url: 'ball/tactics/back',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -209,7 +241,7 @@ export default {
         // console.log(this.temp)
         if (valid) {
           request({
-            url: 'ball/admin/add',
+            url: 'ball/tactics/back/add',
             method: 'post',
             data: this.temp
           }).then((response) => {
@@ -228,9 +260,10 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
+      this.temp.start = this.temp.startStr
+      this.temp.end = this.temp.endStr
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -240,7 +273,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/admin/edit',
+            url: 'ball/tactics/back/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -266,7 +299,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: 'ball/admin/del?id=' + ids,
+          url: 'ball/tactics/back/del?id=' + ids,
           method: 'get'
         }).then((response) => {
           if (response.code === 200) {
@@ -289,3 +322,5 @@ export default {
   }
 }
 </script>
+<style>
+</style>

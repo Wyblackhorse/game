@@ -21,22 +21,22 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="角色名" width="300" min-width="150px" align="center">
+      <el-table-column label="角色名"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column label="昵称" width="200" min-width="150px" align="center">-->
+      <!--<el-table-column label="昵称"  align="center">-->
       <!--<template slot-scope="{row}">-->
       <!--<span>{{ row.nickname }}</span>-->
       <!--</template>-->
       <!--</el-table-column>-->
-      <el-table-column label="创建时间" width="200" min-width="150px" align="center">
+      <el-table-column label="创建时间"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="200" min-width="150px" align="center">
+      <el-table-column label="更新时间"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
         </template>

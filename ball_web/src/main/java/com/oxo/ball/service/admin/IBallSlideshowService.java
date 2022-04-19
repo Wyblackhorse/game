@@ -18,4 +18,6 @@ public interface IBallSlideshowService extends IService<BallSlideshow> {
     BallSlideshow insert(BallSlideshow slideshow);
     Boolean delete(Long id);
     Boolean edit(BallSlideshow slideshow);
+
+    Boolean status(BallSlideshow slideshow);
 }

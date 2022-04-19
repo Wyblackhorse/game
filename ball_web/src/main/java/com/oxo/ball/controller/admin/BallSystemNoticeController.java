@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @since 2022-04-13
  */
 @RestController
-@RequestMapping("/ball/ballSystemNotice")
+@RequestMapping("/ball/operation/notice")
 public class BallSystemNoticeController {
     @Resource
     IBallSystemNoticeService noticeService;
@@ -42,6 +42,11 @@ public class BallSystemNoticeController {
     @PostMapping("edit")
     public Object editSave(@RequestBody BallSystemNotice ballPlayer){
         Boolean aBoolean = noticeService.edit(ballPlayer);
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+    }
+    @PostMapping("status")
+    public Object status(@RequestBody BallSystemNotice ballPlayer){
+        Boolean aBoolean = noticeService.status(ballPlayer);
         return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
     }
     @GetMapping("del")
