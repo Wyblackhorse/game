@@ -89,7 +89,7 @@
 						</view>
 					</view>
 			
-					<view :class="changeBtnColor ?'loginBtn active': 'loginBtn'" @click="loginBigBtn">
+					<view :class="changeBtnColor ?'loginBtn active': 'loginBtn'" @click="loginRegfBigBtn">
 						{{$t('login.btntitle')}}
 					</view>
 					<view class="regBtn" @click="changeLoginRegView">
@@ -141,9 +141,13 @@
 									value="" 
 									:placeholder="$t('reg.account.place')"
 									v-model="regAccount"
-									@input="regChangeInput"
+									maxlength="16"
+									@input="regAccoutChangeInput"
 								/>
 							</view>
+						</view>
+						<view class="alterTip" v-if="accountAlterTipBool">
+							{{accountAlterTip}}
 						</view>
 						<view class="item">
 							<view class="loginImage">
@@ -156,15 +160,18 @@
 										value="" 
 										:placeholder="$t('reg.pass.place')" 
 										:password="passwordRegBool" 
-										maxlength="20"
+										maxlength="16"
 										v-model="regPassword"
-										@input="regChangeInput"
+										@input="regPassChangeInput"
 									/>
 								</view>
 								<view class="hidePassImg" @click="loginSeePassClick('reg')">
 									<image :src="srcRegImg" mode=""></image>
 								</view>
 							</view>
+						</view>
+						<view class="alterTip" v-if="passAlterTipBool">
+							{{passAlterTip}}
 						</view>
 						<view class="item">
 							<view class="loginImage">
@@ -177,15 +184,18 @@
 										value="" 
 										:placeholder="$t('reg.passconfirm.place')" 
 										:password="passwordConfirmBool" 
-										maxlength="20"
+										maxlength="16"
 										v-model="regConfirmPassword"
-										@input="regChangeInput"
+										@input="regPassTChangeInput"
 									/>
 								</view>
 								<view class="hidePassImg" @click="loginSeePassClick('regConf')">
 									<image :src="srcConfImg" mode=""></image>
 								</view>
 							</view>
+						</view>
+						<view class="alterTip" v-if="passTAlterTipBool">
+							{{passTAlterTip}}
 						</view>
 						<view class="item">
 							<view class="loginImage">
@@ -197,7 +207,7 @@
 									value="" 
 									:placeholder="$t('reg.invitecode.place')"
 									v-model="regInviteCode"
-									@input="regChangeInput"
+									@input="regInvChangeInput"
 								/>
 							</view>
 						</view>
@@ -211,9 +221,9 @@
 										type="text" 
 										value="" 
 										:placeholder="$t('login.vercode.place')" 
-										maxlength="6"
+										maxlength="4"
 										v-model="regImgCode"
-										@input="regChangeInput"
+										@input="regVerChangeInput"
 									/>
 								</view>
 								<view class="inviteImg" @click="getCodeData">
@@ -221,6 +231,9 @@
 								</view>
 							</view>
 						</view>
+					</view>
+					<view class="alterTip" v-if="verAlterTipBool">
+						{{verAlterTip}}
 					</view>
 					<view class="loginSmallBtn" @click="changeLoginRegView">
 						{{$t('login.btntitle')}}
@@ -232,6 +245,13 @@
 			</view>
 		</view>
 		
+		
+		
+		<u-top-tips 
+			ref="uTips" 
+			:navbar-height="statusBarHeight + navbarHeight"
+		></u-top-tips>
+		
 	</view>
 </template>
 <script>
@@ -239,6 +259,7 @@
 		loginReq,
 		verifyCodeReq,
 		registerReq,
+		verifyCodeCheckReq,
 	} from '../../api/index.js'
 	import wybLoading from '@/components/wyb-loading/wyb-loading.vue'
 	// import { setClipboardData, getClipboardData } from '@/uni_modules/u-clipboard/js_sdk'
@@ -254,7 +275,7 @@
 				loginAccount:'',
 				loginPassword:'',
 				loginVercode:'',
-				vercodeImg:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAAAoCAIAAACTo5SwAAAFE0lEQVR42u2b/UtWVxzA+wP6pRU0pjUFSQtZsbQMJbMXtJbVopiNprPs7Sld9OI0UzOReAqLsSjTknS5Sodkbw4tM7axubIWUVBgEPHUYkGsF5F+6jvOOpzOvffc83bvfa48Xz7I5d5zz3Pv8+F7zv2e5zoi5LfoTTxr2yYq7jImNNxjBGe7dY9zSMLk6ltmzsSwdUYUhm+cLnyB8MsFz1nRDkQUWrrU0lX/5n+8uosbe9YYGVYKG/9chVDpJKfoJBC2Fo3xqiVhGGahosi8niWfBergb96lWcCD/gzprt5srInMhb6M7RU3SYTODazJJYko1BzJL1td/kRFkSYKqxPGqVzQj6l9JHh/+pZ7Rjj7TK+uBdB252AHydjG1SQb1i4sL8wh4el/+cEyHqxOD1aO50Hu+xwfVwC4l4WUP6NIdiRevwKY+sMKqUAi0TYlj9+i+wp3L0uhYPhzTyHp7EjSryRC/ZAWsT8rhTis/PFYlPP38Ma3iGD5GCdSEPtzSSGW1zC911SqRJ+kvxnlVSeaCihM/Vl55VEod+//SQKL5WO0fJO3oluA6FG5qgpLFj3HCCks7NptlZoqChlZyPbEqzC4ERgoSusPTJ59KZ/CXqHCbGebgo5n4eZn6xvSLiNMPckppPyRCpvnnkJwSsINtrYGAEeyUKtCyp8bAymWBDoBdYVGfzxZyNngbk83wkrh4TufIDxRaPRnqjC46hlCs0KJoxCVNZUklDaGwqOTXwLFK79EiDrGIq2ykFOkRoWUNg+y0HhofygbEErE5B3VAHbG80SK9CCjQjOl7ROpafuHHZ0AT1FhvjoYnUaC959PvPrRB/kI2A4XhaJjqVEYZ1EhPcwaFS6uKuYUyVkX2qz3vhNpFOY/haYzn4pC0aJC1CJ/aS9XBfpG4fYF8YDVkwu/wqdJ5xBC/qxiQkIFZdf2lPqjF0gouxJVvM+yMGlbmakqiSxEIrUoVCk5kEhK4d/na0jYqvykkOFJbiBV9McuHOcGgggtVQfDk4MKn/z+tUaF7OJPQqHELxVCCnFM3HcRRNpOdQyF7OJPSeHH0VEYcn9c7ixRhcY1tsySRZgppZUIK0miCrmqiNcNCM5xktGGZ6qzamO7/qItC40iNZb2pgsxbNj+Auu+QMQcvw2IDpLSCmfsnEoiqpATnXPh1SlDCNg+Pq3vf9pCABVNiX0IdxRS+WcrUl3h3tIPAWo/KdJW4cjYZYDbCkmXP0y6xkg1fOjs/AHAOYVyjzBhMpAikd4oZI+Wij8Z8s+FKo+gbIu2pSHbosoPvwxzHSmPEaoKl/60AFE3rQswqjL1VxrbSKKuULGEYEgSffHC8tCmqEdRvwC6FOrPQmSLFKmYf/UdOYiUil0A5/hp5JsNWUDR+sys08nAkq500ZVunrqef4FNSKTbCkPKrz/JZSFboZY3aITqd9EF0u7b2RjvFYasX0JUt+i0QlOR1NFJtW0YHpHq9z563FeAgwrrn9dThLyL9qr491YhDtwH+E8vqJ1DYtueIVJ7bD12xL0slItT3Z+TvJdk+89gRLsdulk1ofYv+CtxSZwie+5aWjyxqRfj3FfnmcLs4ukIhlGNHzf4RxlwvbEVo6tnhsLvs09inBPpfRYaRX46r5nE28sbO9CJCYVlRP4txvehTeHPq38b9l9WfEMM4HuFdYfuARoVHs7MINFyVwdTrzkqkt2g6btUCtNm/+ZlICIDqdsKwy3eApP6D7Gv4nlBAAAAAElFTkSuQmCC',
+				vercodeImg:'null',
 				changeBtnColor:false,
 				LangsBool:false,
 				currSelectLangImg:"../../static/images/lang_en.svg",
@@ -362,25 +383,32 @@
 					  url:"../../static/images/lang_it.svg"
 					},
 				],
-				loginStatus:false,
+				loginStatus:true,
 				regAccount:'',
 				regPassword:'',
 				regConfirmPassword:'',
 				regInviteCode:'',
 				regImgCode:'',
 				changeRegBtnColor:false,
-				
-				
+				loginVercodehash:'',
 				// 状态栏高度，H5中，此值为0，因为H5不可操作状态栏
 				statusBarHeight: uni.getSystemInfoSync().statusBarHeight,
 				// 导航栏内容区域高度，不包括状态栏高度在内
 				navbarHeight: 0,
+				accountAlterTip:'123',
+				passAlterTip:'4234',
+				passTAlterTip:'32423',
+				verAlterTip:'324234',
+				accountAlterTipBool:false,
+				passAlterTipBool:false,
+				passTAlterTipBool:false,
+				verAlterTipBool:false,
+				
 				loginText:'登录',
 				loginDesc:'请填写账号密码进行登录',
-
 				tabLoginText:'切换注册',
 			
-				loginVercodehash:'',
+				
 				verifyCodeImg:'',
 				
 				regNickName:'',
@@ -391,12 +419,14 @@
 				currHideStatus:1,//1不显示,2显示
 				
 				
+				
 			}
 		},
 		onLoad() {
 			// this.getCodeData();
 		},
 		mounted(){
+			
 			// changeBtnColor:{
 			// 	console.log("this.loginAccount",this.loginAccount);
 			// 	console.log("this.loginPassword",this.loginPassword);
@@ -422,6 +452,7 @@
 				this.currSelectLangImg = '../../static/images/lang_zh.svg'
 			}
 			
+			this.getCodeData();
 			
 			// console.log("uni.getStorageSync('isLoginKey')",uni.getStorageSync('isLoginKey'));
 			
@@ -429,7 +460,7 @@
 			// this.loginAccount = uni.getStorageSync('login_account')
 			// this.loginPassword = uni.getStorageSync('login_password');
 				
-			// this.getCodeData();
+			
 			
 			
 	// 		if(uni.getStorageSync('isLoginKey')){
@@ -482,12 +513,88 @@
 					this.changeBtnColor =  false
 				}
 			},
-			regChangeInput(){
+		    regAccoutChangeInput(){
+				this.commonRuls()
+				
+				if(!this.regAccount){
+					this.accountAlterTip = this.$t('reg.ruls.accout.empty')
+					this.accountAlterTipBool = true
+				}else if(this.regAccount.length < 5 ){
+					this.accountAlterTip = this.$t('reg.ruls.accout.length')
+					this.accountAlterTipBool = true
+				}else{
+					this.accountAlterTip = ""
+					this.accountAlterTipBool = false
+				}
+				
+			},
+		    regPassChangeInput(){
+				this.commonRuls()	
+				if(!this.regPassword){
+					this.passAlterTip = this.$t('reg.ruls.pass.empty')
+					this.passAlterTipBool = true
+				}else if(this.regPassword.length < 6 ){
+					this.passAlterTip = this.$t('reg.ruls.pass.length')
+					this.passAlterTipBool = true
+				}else{
+					this.passAlterTip = ""
+					this.passAlterTipBool = false
+				}
+				
+			},
+			regPassTChangeInput(){
+				this.commonRuls()	
+				if(!this.regConfirmPassword){
+					this.passTAlterTip = this.$t('reg.ruls.passtwo.empty')
+					this.passTAlterTipBool = true
+				}else if(this.regConfirmPassword.length < 6 ){
+					this.passTAlterTip = this.$t('reg.ruls.passtwo.length')
+					this.passTAlterTipBool = true
+				}else if(this.regConfirmPassword !== this.regPassword ){
+					this.passTAlterTip = this.$t('reg.ruls.passtwo.unequal')
+					this.passTAlterTipBool = true
+				}else{
+					this.passTAlterTip = ""
+					this.passTAlterTipBool = false
+				}
+			},
+			regInvChangeInput(){
+				this.commonRuls()
+				
+			},
+			async regVerChangeInput(){
+				
+				this.commonRuls()
+				
+				if(!this.regImgCode){
+					this.verAlterTip = this.$t('reg.ruls.vercode.empty')
+					this.verAlterTipBool = true
+				}else if( this.regImgCode && this.regImgCode.length === 4){ // 检验验证码
+					let resR = await verifyCodeCheckReq(this.loginVercodehash,this.regImgCode)
+					// console.log("resR",resR);
+					if(resR.code !== 200){
+						this.verAlterTipBool = true
+						this.verAlterTip = resR.msg
+					}else{
+						this.verAlterTipBool = false
+						this.verAlterTip = ""
+					}
+					
+				}else{
+					this.verAlterTipBool = false
+					this.verAlterTip = ""
+				}
+				
+			},
+			
+			commonRuls(){
+				
 				if(this.regAccount && this.regPassword && this.regConfirmPassword && this.regInviteCode && this.regImgCode){
 					this.changeRegBtnColor =  true
 				}else{
 					this.changeRegBtnColor =  false
 				}
+				
 			},
 			showLangsClick(){  //显示或者隐藏语言列表点击事件
 				this.LangsBool = !this.LangsBool
@@ -539,29 +646,197 @@
 				this.LangsBool = false
 				
 			},
-			loginRegfBigBtn(){ //注册点击事件
+			async loginRegfBigBtn(){ //注册点击事件
 				if(this.loginStatus){ //点击登录页面中登录按钮
+					
+					if(this.loginAccount == ""){
+						
+						uni.showToast({
+							title: this.$t('login.ruls.accout.empty'),
+							icon:"none",
+							duration: 2000
+						});
+					
+						
+						return false
+					}
+					
+					if(this.loginPassword == ""){
+						
+						uni.showToast({
+							title: this.$t('login.ruls.pass.empty'),
+							icon:"none",
+							duration: 2000
+						});
+						
+						return false
+					}
+													
+					if(this.loginVercode == ""){
+						
+						uni.showToast({
+							title: this.$t('login.ruls.vercode.empty'),
+							icon:"none",
+							duration: 2000
+						});
+						
+						return false
+					}
+					// this.$refs.loading.showLoading() // 显示
+					uni.showLoading({
+					    title: '登录中...',
+					})
+					let reqParam = {}
+					reqParam.username = this.loginAccount
+					reqParam.password = this.loginPassword
+					reqParam.code = this.loginVercode,
+					reqParam.verifyKey= this.loginVercodehash
+					let loginRes = await loginReq(reqParam)
+					this.currAlterMsg = loginRes.msg
+					// this.$refs.loading.hideLoading() // 隐藏
+					// console.log("loginRes",loginRes);
+					this.loginVercode = ""
+					this.loginVercodehash = ""
+					if(loginRes.code === 200){
+						
+					
+					// 	this.currHideStatus = 1
+					
+					// 	uni.setStorageSync('login_account', this.loginAccount);
+					// 	uni.setStorageSync('login_password', this.loginPassword);
+					
+					// 	uni.setStorageSync('tokenClientH5', loginRes.result.token);
+					// 	uni.setStorageSync('isLoginKey', 777);		
+						uni.setStorageSync('footballUser', loginRes.data.user);	
+						uni.setStorageSync('footballToken', loginRes.data.token);	
+					// 	uni.setStorageSync('nickname', loginRes.result.nickname);				
+					// 	uni.setStorageSync('lv', loginRes.result.consumption_level_id);			
+					// 	uni.setStorageSync('head_image', loginRes.result.head_image);			
+					// 	// uni.setStorageSync('money', loginRes.result.money);				
+					// 	uni.setStorageSync('UID', loginRes.result.id);			
+					// 	uni.setStorageSync('created_at', loginRes.result.created_at);
+					// 	uni.setStorageSync('loginip', loginRes.result.this_ip);
+						
+					// 	if(loginRes.result.pay_password === null){
+					// 		uni.setStorageSync('isSetPay', 0);
+					// 	}else{
+					// 		uni.setStorageSync('isSetPay', 1);
+					// 	}
+					
+						// this.$refs.loading.hideLoading() // 隐藏
+						setTimeout(()=>{
+							uni.hideLoading();
+							
+							this.$refs.uTips.show({
+								title: loginRes.msg,
+								type: 'success',
+								duration: '2000'
+							})
+							
+							// uni.reLaunch({
+							// 	   url: '/pages/index/index',
+							// 	   animationType: 'slide-in-top',
+							// 	   animationDuration: 200
+							// })
+							
+							// window.location.reload();
+							
+						}, 2000);
+						
+					}else{
+					    uni.hideLoading();
+						this.$refs.uTips.show({
+							title: loginRes.msg,
+							type: 'error',
+							duration: '2000'
+						})
+						this.loginVercode = ""
+						this.getCodeData()
+					
+					
+					}
+									
+					
+					
 					
 				}else{//注册
 					
+					
+					// if(this.regAccount == ""){
+						
+					// 	uni.showToast({
+					// 		title: this.$t('reg.ruls.accout.empty'),
+					// 		icon:"none",
+					// 		duration: 2000
+					// 	});
+						
+					// 	return false
+					// }
+					
+					if(this.regAccount && this.regPassword && this.regConfirmPassword && this.regImgCode && this.loginVercodehash){
+						let currRegData = {
+							username: this.regAccount,
+							password:this.regPassword,
+							twoPassword :this.regConfirmPassword,
+							code :this.regImgCode,
+							verifyKey :this.loginVercodehash,
+						}
+						let registerRes = await registerReq(currRegData)
+						
+						if(registerRes.code === 200){
+							
+							this.$refs.uTips.show({
+								title: registerRes.msg,
+								type: 'success',
+								duration: '1000'
+							})
+							
+							//延迟跳转
+							setTimeout(()=>{
+								
+								this.getCodeData()
+								this.regImgCode = ""
+								this.loginStatus = true
+								
+							}, 1300);
+							
+							
+						}else{
+							this.$refs.uTips.show({
+								title: registerRes.msg,
+								type: 'error',
+								duration: '1000'
+							})
+							
+							this.getCodeData()
+							
+						}
+										
+					}
+					
+					
+				
+				
+				
 				}
 			},
 			changeLoginRegView(){ //切换登录和注册视图点击事件
 				this.loginStatus = !this.loginStatus
+				this.getCodeData()
 			},
 			
 			async getCodeData(){ //获取验证码方法
 				this.loginVercodehash = ""
 				this.loginVercode = ""
-				this.regCode = ""
-				let verifyRes = await verifyCodeReq()
+				this.regImgCode = ""
+				let verifyRes = await verifyCodeReq(new Date().getTime())
 				// console.log("verifyRes",verifyRes);
 				if(verifyRes.code === 200){
-					this.vercodeImg = verifyRes.result.verifyCode
-					this.loginVercodehash = verifyRes.result.verifyCodeTime
+					this.vercodeImg = verifyRes.data.img
+					this.loginVercodehash = verifyRes.data.verifyKey
 				}else{
 					this.$refs.uTips.show({
-						title: "获取验证码失败!",
+						title: verifyRes.msg,
 						type: 'error',
 						duration: '2000'
 					})
@@ -739,6 +1014,7 @@
 						// this.$refs.loading.hideLoading() // 隐藏
 					
 					}
+				
 				}else{
 					// console.log("注册");
 
@@ -981,6 +1257,15 @@
 		background: rgba(51,71,86,.6);
 		height: 47px;
 		position: relative;
+	}
+	
+	.alterTip{
+		text-align: left;
+		margin-top: 10px;
+		margin-left: 35px;
+		font-size: 12px;
+		/* font-weight: bold; */
+		color: red;
 	}
 	
 	.loginImage{

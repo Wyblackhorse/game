@@ -6,11 +6,48 @@
 	"reg.invitecode.place":"请输入邀请码",
 	"reg.vercode.place":"请输入验证码",
 	
+	"reg.ruls.accout.empty":"账号不允许为空",
+	"reg.ruls.accout.length":"账号长度必须5-16位",
+	"reg.ruls.pass.empty":"密码不允许为空",
+	"reg.ruls.pass.length":"密码长度必须6-16位",
+	"reg.ruls.passtwo.empty":"确认密码不允许为空",
+	"reg.ruls.passtwo.length":"确认密码长度必须6-16位",
+	"reg.ruls.passtwo.unequal":"密码和确认密码不一致",
+	"reg.ruls.vercode.empty":"验证码不允许空",
+	
+
 	"login.account.place":"请输入账号",
 	"login.pass.place":"请输入密码",
 	"login.vercode.place":"请输入验证码",
 	"login.btntitle":"登录",
 	"login.downtitle":"客服App下载",
 	"login.chattitle":"24H客服",
-	"login.apptitle":"App下载"
+	"login.apptitle":"App下载",
+	
+	"login.ruls.accout.empty":"账号不允许为空",
+	"login.ruls.pass.empty":"密码不允许为空",
+	"login.ruls.vercode.empty":"验证码不允许空",
+	
+	"tabar.home":"首页",
+	"tabar.competition":"赛事",
+	"tabar.sportsresults":"赛事结果",
+	"tabar.mine":"我的",
+	
+	"home.welcome_morning":"上午好",
+	"home.welcome_afternoon":"下午好",
+	"home.welcome_night":"晚上好",
+	"home.balance":"账户余额",
+	"home.recharge":"充值",
+	"home.withdraw":"提现",
+	"home.hot":"热门赛事",
+	"home.close":"关闭前",
+	
+	"home.munu.game":"赛事管理",
+	"home.munu.notice":"平台公告",
+	"home.munu.server":"在线服务",
+	"home.munu.center":"个人中心",
+	"home.munu.logout":"退出登录",
+	
+	"match.search.text":"球队名称"
+	
 }

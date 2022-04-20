@@ -16,7 +16,7 @@ var localhostPaht = curWwwPath.substring(0, pos);
 var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
 
 
-curWwwPath  = 'http://8.136.97.179/bgh5/index.html#/pages/login/login'
+curWwwPath  = 'http://47.241.62.70:10100'
 
 
 
@@ -38,23 +38,55 @@ export const websiteUrlStr = websiteUrl
 
 // 登录的请求接口
 export const loginReq = (queryParam) => {
-    return ajax(requestCurr+'/client/login',queryParam,'POST')
+    return ajax(requestCurr+'/player/auth/login',queryParam,'POST')
 }
 
 // 注册的请求接口
 export const registerReq = (queryParam) => {
-    return ajax(requestCurr+'/client/register',queryParam,'POST')
+    return ajax(requestCurr+'/player/auth/regist',queryParam,'POST')
 }
 
 // 获取验证码请求接口
-export const verifyCodeReq = () => {
-    return ajax(requestCurr+'/tools/verifyCode','GET')
+export const verifyCodeReq = (verifyKey) => {
+    return ajax(requestCurr+'/player/auth/verify_code?verifyKey='+verifyKey,'GET')
 }
+
+// 校验验证码
+export const verifyCodeCheckReq = (verifyKey,code) => {
+    return ajax(requestCurr+'/player/auth/verify_code_check?verifyKey='+verifyKey+"&code="+code,'GET')
+}
+
+//获取轮播图
+export const sliderReq = (token) => {
+    return ajax(requestCurr+'/player/home/slider','','GET',token)
+}
+
+// 获取滚动广告
+export const swiperReq = (token) => {
+    return ajax(requestCurr+'/player/home/swiper','','GET',token)
+}
+
+// 获取公告通知接口
+export const noticeReq = (token) => {
+    return ajax(requestCurr+'/player/home/notice','','GET',token)
+}
+
+// 获取热门赛事
+export const hotReq = (token) => {
+    return ajax(requestCurr+'/player/home/hot','','GET',token)
+}
+
+// 获取个人信息
+export const playerInfoReq = (token) => {
+    return ajax(requestCurr+'/player/player_info','','GET',token)
+}
+
 
 // 查询余额请求接口
 export const getBalanceReq = (queryParam) => {
     return ajax(requestCurr+'/client/get_balance',queryParam,'POST')
 }
+
 
 // 获取公告通知接口
 export const getNotifyReq = (queryParam) => {

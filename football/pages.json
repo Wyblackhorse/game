@@ -5,6 +5,23 @@
 	},
 
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		
+		
+		{
+			"path" : "pages/home/index",
+		    "style" :                                                                                    
+		    {
+				"navigationBarTitleText": "home",
+			    "navigationBarBackgroundColor":"#082032",
+				"enablePullDownRefresh": false
+				,"app-plus": {
+					//下面这句代码完美解决软键盘把fixed顶起问题
+					"softinputMode": "adjustResize",
+					"titleNView": false
+				}
+		    }
+			
+		},
 		{
 			"path" : "pages/login/login",
 			"style" :
@@ -21,9 +38,39 @@
 			    }
 			}
 		}
-	    
+		,{
+		    "path" : "pages/match/match_list",
+		    "style" :                                                                                    
+		    {
+				"navigationBarTitleText": "home",
+				   "navigationBarBackgroundColor":"#082032",
+				"enablePullDownRefresh": false
+				,"app-plus": {
+					//下面这句代码完美解决软键盘把fixed顶起问题
+					"softinputMode": "adjustResize",
+					"titleNView": false
+				}
+		    }
 		    
-		
+		}
+        ,{
+            "path" : "pages/match/match_history",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/user",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -31,5 +78,39 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 		// ,"maxWidth":"750"
+	},
+	"tabBar": {
+		// "custom": true, 
+		"color": "#FFFFFF",
+		"selectedColor": "#FFF32B",
+		"borderStyle": "#00000054",
+	
+		// "opacity":"0.1",
+		// "backgroundColor": "#F8F8F8",
+		
+		"backgroundColor": "#082032",
+		"list": [{
+				"pagePath": "pages/home/index",
+				"iconPath": "static/images/ball0.svg",
+				"selectedIconPath":"static/images/ball1.svg",
+				"text": "%tabar.home%"
+			},
+			{
+				"pagePath": "pages/match/match_list",
+				"iconPath": "static/images/tab-cate.svg",
+				"selectedIconPath":"static/images/tab-cate-current.svg",
+				"text": "%tabar.competition%"
+			}, {
+				"pagePath": "pages/match/match_history",
+				"iconPath": "static/images/tab-cart.svg",
+				"selectedIconPath":"static/images/tab-cart-current.svg",
+				"text": "%tabar.sportsresults%"
+			}, {
+				"pagePath": "pages/user/user",
+				"iconPath": "static/images/tab-my.svg",
+				"selectedIconPath":"static/images/tab-my-current.svg",
+				"text": "%tabar.mine%"
+			}
+		]
 	}
 }

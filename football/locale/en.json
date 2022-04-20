@@ -6,11 +6,49 @@
 	"reg.invitecode.place":"Please enter the invitation code",
 	"reg.vercode.place":"Verification code",
 	
+	"reg.ruls.accout.empty":"The username cannot be empty",
+	"reg.ruls.accout.length":"The username must be 5 to 16 digits!",
+	"reg.ruls.pass.empty":"The password cannot be empty",
+	"reg.ruls.pass.length":"The password must be 5 to 16 digits!",
+	"reg.ruls.passtwo.empty":"The confirm password cannot be empty",
+	"reg.ruls.passtwo.length":"The confirm password contains 5 to 16 digits",
+	"reg.ruls.passtwo.unequal":"The two passwords are inconsistent!",
+	"reg.ruls.vercode.empty":"The verification code cannot be empty",
+	
 	"login.account.place":"Please enter the username",
 	"login.pass.place":"Please enter the password",
 	"login.vercode.place":"Verification code",
 	"login.btntitle":"Log in",
 	"login.downtitle":"Customer Service App Download",
 	"login.chattitle":"24HCustomer Service",
-	"login.apptitle":"App Download"
+	"login.apptitle":"App Download",
+	
+	"login.ruls.accout.empty":"The username cannot be empty",
+	"login.ruls.pass.empty":"The password cannot be empty",
+	"login.ruls.vercode.empty":"The verification code cannot be empty",
+	
+	"tabar.home":"Home",
+	"tabar.competition":"Match",
+	"tabar.sportsresults":"Results",
+	"tabar.mine":"Me",
+		
+	"home.welcome_morning":"Good morning",
+	"home.welcome_afternoon":"Good afternoon",
+	"home.welcome_night":"Good evening",
+	"home.balance":"Account Balance",
+	"home.recharge":"Recharge",
+	"home.withdraw":"Withdraw",
+	"home.hot":"Hot Events",
+	"home.close":"Closing in",
+	
+	"home.munu.game":"Tournament",
+	"home.munu.notice":"Platform Announcement",
+	"home.munu.server":"Online Service",
+	"home.munu.center":"Personal Center",
+	"home.munu.logout":"Sign Out",
+	
+	
+	"match.search.text":"Game Name"
+	
+	
 }

@@ -44,10 +44,10 @@ export function getMaxTime10(i){ //获取前i天23点59分59秒时间戳
 	}
 }
 
-//时间戳的处理   
+//13位时间戳的处理   
 export function formatDateToStr(value) {
 	var date = new Date();
-	//date.setTime(value);
+	date.setTime(value);
 	var month = date.getMonth() + 1;
 	var hours = date.getHours();
 	if (hours < 10)
@@ -81,6 +81,29 @@ export function formatDateTime(inputTime) {
 	return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
 }
 
+
+export const getTimeState = () => {
+    // 获取当前时间
+    let timeNow = new Date();
+    // 获取当前小时
+    let hours = timeNow.getHours();
+    // 设置默认文字
+    let text = ``;
+    // 判断当前时间段
+    if (hours >= 0 && hours <= 10) {
+        text = `早上好`;
+    } else if (hours > 10 && hours <= 14) {
+        text = `中午好`;
+    } else if (hours > 14 && hours <= 18) {
+        text = `下午好`;
+    } else if (hours > 18 && hours <= 24) {
+        text = `晚上好`;
+    }
+    // console.log(`hours >>>>>`, hours);
+    // console.log(`text >>>>`, text);
+    // 返回当前时间段对应的状态
+    return text;
+};
 
 
 // //输出网址地址

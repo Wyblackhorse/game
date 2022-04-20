@@ -4,7 +4,7 @@
 // import axios from 'axios'
 
 // ,timeout=10000
-export default function ajax(url,data={},method='GET') {
+export default function ajax(url,data={},method='GET',token='') {
 
     return new Promise((resolve, reject)=>{
         let promise;
@@ -15,10 +15,9 @@ export default function ajax(url,data={},method='GET') {
 				method,
 			    header: {
 					// // #ifdef APP-PLUS
-					
 					// 	"user-agent":getApp().globalData.G_UA,
-								
 					// // #endif
+					'token':token,
 			       'Content-Type': 'application/x-www-form-urlencoded'
 			    },
 			});
@@ -31,6 +30,7 @@ export default function ajax(url,data={},method='GET') {
 			    data: data,
 				method,
 			    header: {
+					token,
 			       'Content-Type': 'application/x-www-form-urlencoded'
 			    },
 			});
