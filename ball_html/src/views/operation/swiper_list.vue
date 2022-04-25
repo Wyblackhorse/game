@@ -25,35 +25,28 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标题"  align="center">
+      <el-table-column label="内容" align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="策略类型"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ policyTypes[row.policyType].name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="语言编码"  align="center">
+      <el-table-column label="语言编码" align="center">
         <template slot-scope="{row}">
           <span>{{ row.language }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="图片地址"  align="center" show-overflow-tooltip>
+      <el-table-column label="状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.imageUrl }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.status==1?'显示':'不显示' }}</span>
+          <span>{{ row.status }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="hasAuth('/ball/operation/swiper/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
+          </el-button>
+          <el-button v-if="hasAuth('/ball/operation/swiper/status')" :type="row.status == 1?'danger':'success'" size="mini" @click="changeStatus(row)">
+            {{ row.status==1?'禁用':'启用' }}
           </el-button>
           <el-button v-if="hasAuth('/ball/operation/swiper/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
@@ -66,34 +59,15 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="标题" prop="name">
-          <el-input v-model="temp.name" />
+        <el-form-item label="内容" prop="content">
+          <el-input v-model="temp.content" type="textarea" />
         </el-form-item>
-        <el-form-item label="策略类型" prop="password">
-          <el-select style="width: 320px;"  v-model="temp.policyType" clearable placeholder="角色">
-            <el-option
-              v-for="item in policyTypes"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="temp.policyType==1" label="存款策略ID">
-          <el-input v-model="temp.depositPolicyId" />
-        </el-form-item>
-        <el-form-item v-if="temp.policyType==2" label="返佣策略ID">
-          <el-input v-model="temp.commissionStrategyId" />
-        </el-form-item>
-        <el-form-item label="语言编码">
+        <el-form-item label="语言编码" prop="language">
           <el-input v-model="temp.language" />
-        </el-form-item>
-        <el-form-item label="图片地址">
-          <el-input v-model="temp.imageUrl" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button  @click="dialogFormVisible = false">
+        <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
@@ -138,7 +112,6 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      policyTypes: [{ name: '存款策略', value: 1 }, { name: '返佣策略', value: 2 }],
       rules: {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
@@ -150,15 +123,29 @@ export default {
     this.getList()
   },
   methods: {
-    getRoles() {
-      request({
-        url: '/ball/operation/swiper',
-        method: 'get'
-      }).then((response) => {
-        if (response.code === 200) {
-          this.roles = response.data
-        }
-      }).catch(() => {
+    changeStatus(row) {
+      MessageBox.confirm('你确定要' + (row.status == 1 ? '禁用' : '启用') + '吗？', '提醒', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: '/ball/operation/swiper/status',
+          method: 'post',
+          data: {
+            id: row.id,
+            status: (row.status == 2 ? 1 : 2)
+          }
+        }).then((response) => {
+          if (response.code === 200) {
+            this.$notify({
+              message: '修改成功',
+              type: 'success',
+              duration: 2 * 1000
+            })
+            row.status = (row.status == 2 ? 1 : 2)
+          }
+        })
       })
     },
     getList() {
@@ -198,10 +185,6 @@ export default {
     },
     resetTemp() { // 添加属性
       this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
       }
     },
     handleCreate() {
@@ -214,10 +197,7 @@ export default {
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
-        // console.log(this.temp)
-        this.temp.rate = parseInt(this.temp.rate)
-        this.temp.type = parseInt(this.temp.type)
-        // console.log(this.temp)
+        this.temp.status = 1
         if (valid) {
           request({
             url: '/ball/operation/swiper/add',

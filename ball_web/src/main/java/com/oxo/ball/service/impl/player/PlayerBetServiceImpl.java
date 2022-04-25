@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oxo.ball.bean.dao.*;
+import com.oxo.ball.bean.dto.queue.MessageQueueBet;
+import com.oxo.ball.bean.dto.queue.MessageQueueDTO;
 import com.oxo.ball.bean.dto.req.player.BetRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallBetMapper;
+import com.oxo.ball.service.IMessageQueueService;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallGameLossPerCentService;
 import com.oxo.ball.service.impl.BasePlayerService;
@@ -18,6 +21,7 @@ import com.oxo.ball.service.player.IPlayerBetService;
 import com.oxo.ball.service.player.IPlayerGameService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.BigDecimalUtil;
+import com.oxo.ball.utils.IpUtil;
 import com.oxo.ball.utils.RedisUtil;
 import com.oxo.ball.utils.TimeUtil;
 import org.springframework.stereotype.Service;
@@ -42,6 +46,8 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
     IBallBalanceChangeService ballBalanceChangeService;
     @Resource
     RedisUtil redisUtil;
+    @Resource
+    IMessageQueueService messageQueueService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -108,18 +114,29 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
         save.setCreatedAt(System.currentTimeMillis());
         boolean isSucc = save(save);
         //TODO 下注后账变日志
-        ballBalanceChangeService.insert(BallBalanceChange.builder()
+        BallBalanceChange balanceChange = BallBalanceChange.builder()
                 .playerId(player.getId())
                 .createdAt(System.currentTimeMillis())
                 .changeMoney(betRequest.getMoney())
                 .initMoney(player.getBalance())
                 .dnedMoney(edit.getBalance())
                 .balanceChangeType(3)
-                .remark(game.getAllianceName()+":"
-                        +game.getMainName()
-                        +":"+game.getGuestName()
-                        +":"+odds.getScore()
-                        +":投注["+betRequest.getMoney()/BigDecimalUtil.PLAYER_MONEY_UNIT+"]")
+                .remark(game.getAllianceName() + ":"
+                        + game.getMainName()
+                        + ":" + game.getGuestName()
+                        + ":" + odds.getScore()
+                        + ":投注[" + betRequest.getMoney() / BigDecimalUtil.PLAYER_MONEY_UNIT + "]")
+                .build();
+        ballBalanceChangeService.insert(balanceChange);
+        //下注日志
+        messageQueueService.putMessage(MessageQueueDTO.builder()
+                .type(MessageQueueDTO.TYPE_LOG_BET)
+                .data(MessageQueueBet.builder()
+                        .ballPlayer(player)
+                        .betContent(balanceChange.getRemark())
+                        .ip(player.getIp())
+                        .orderId(save.getOrderNo())
+                        .build())
                 .build());
         if(!isSucc){
             throw new SQLException();

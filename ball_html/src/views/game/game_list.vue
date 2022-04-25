@@ -61,6 +61,11 @@
           <span>{{ row.guestLogo }}</span>
         </template>
       </el-table-column>
+      <!--<el-table-column label="距离开赛" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.remainingTime|countDown }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column label="开赛时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.startTime|formatDate('y-M-d h:m:s') }}</span>
@@ -100,22 +105,6 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model="temp.username" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select v-model="temp.roleId" style="width: 320px;" clearable placeholder="角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -151,11 +140,6 @@ export default {
         username: ''
       },
       temp: {
-        id: 1,
-        username: '',
-        password: '',
-        nickname: '',
-        roleId: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -167,7 +151,7 @@ export default {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
       },
-      roles: []
+      closeingTask: null
     }
   },
   created() {
@@ -185,11 +169,20 @@ export default {
         if (response.code === 200) {
           this.list = response.data.results
           this.total = response.data.totalCount
+          // this.closing()
         }
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
+    },
+    closing() {
+      const that = this
+      this.closeingTask = setInterval(function() {
+        that.list.forEach(function(item) {
+          item.remainingTime -= 1000
+        })
+      }, 1000)
     },
     handleFilter() {
       this.listQuery.pageNo = 1

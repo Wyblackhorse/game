@@ -7,10 +7,7 @@ import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.service.IBasePlayerService;
-import com.oxo.ball.service.admin.IBallBalanceChangeService;
-import com.oxo.ball.service.admin.IBallGameService;
-import com.oxo.ball.service.admin.IBallSlideshowService;
-import com.oxo.ball.service.admin.IBallSystemNoticeService;
+import com.oxo.ball.service.admin.*;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerBetService;
 import com.oxo.ball.service.player.IPlayerService;
@@ -52,6 +49,8 @@ public class PlayerHomeController {
     IBallSystemNoticeService noticeService;
     @Resource
     IBallGameService gameService;
+    @Resource
+    IBallAnnouncementService announcementService;
 
 
     @ApiOperation(
@@ -70,6 +69,19 @@ public class PlayerHomeController {
     @ApiOperation(
             value = "滚动广告",
             notes = "滚动广告" ,
+            httpMethod = "GET")
+    @ApiImplicitParams({
+    })
+    @GetMapping("swiper")
+    public Object swiper(HttpServletRequest request) throws TokenInvalidedException {
+        SearchResponse<BallAnnouncement> search = announcementService.search(BallAnnouncement.builder()
+                .status(1)
+                .build(),1, 20);
+        return BaseResponse.successWithData(search.getResults());
+    }
+    @ApiOperation(
+            value = "系统公告",
+            notes = "系统公告" ,
             httpMethod = "GET")
     @ApiImplicitParams({
     })

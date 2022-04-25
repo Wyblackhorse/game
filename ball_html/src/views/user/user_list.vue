@@ -50,6 +50,9 @@
           <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
+          <el-button style="width: 85px;" v-if="user.name=='admin' && hasAuth('/ball/admin/edit')" type="warning" size="mini" @click="resetGoogle(row)">
+            {{ $t('table.resetGoogle') }}
+          </el-button>
           <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
@@ -71,7 +74,7 @@
           <el-input v-model="temp.nickname" />
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+          <el-select style="width: 100%"  v-model="temp.roleId" clearable placeholder="角色">
             <el-option
               v-for="item in roles"
               :key="item.id"
@@ -139,6 +142,28 @@ export default {
     this.getList()
   },
   methods: {
+    resetGoogle(row) {
+      MessageBox.confirm('你确定要重置google验证码吗？', '重置提醒', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: 'ball/admin/edit?id=' + row.id,
+          method: 'get'
+        }).then((response) => {
+          if (response.code === 200) {
+            this.$notify({
+              title: '成功',
+              message: '重置成功',
+              type: 'success',
+              duration: 2000
+            })
+          }
+        })
+      }).catch(() => {
+      })
+    },
     getRoles() {
       request({
         url: 'ball/admin',

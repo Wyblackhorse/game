@@ -123,4 +123,23 @@ public class PlayerController {
         BaseResponse response = playerService.withdrawal(currentUser, money);
         return BaseResponse.successWithData(response);
     }
+
+//    @ApiOperation(
+//            value = "银行卡",
+//            notes = "余额变动记录" ,
+//            httpMethod = "POST")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "type",value = "1充值 2提现 3投注 4赢 5佣金 6人工"),
+//            @ApiImplicitParam(name = "pageNo",value = "页码"),
+//            @ApiImplicitParam(name = "pageSize",value = "数量")
+//    })
+//    @PostMapping("balance_change")
+//    public Object index(BalanceChangeRequest balanceChangeRequest,
+//                        @RequestParam(defaultValue = "1")Integer pageNo,
+//                        @RequestParam(defaultValue = "20") Integer pageSize,
+//                        HttpServletRequest request) throws TokenInvalidedException {
+//        BallPlayer currentUser = playerService.getCurrentUser(request);
+//        SearchResponse<BallBalanceChange> search = ballBalanceChangeService.search(currentUser,balanceChangeRequest, pageNo, pageSize);
+//        return BaseResponse.successWithData(search);
+//    }
 }

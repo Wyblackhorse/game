@@ -5,7 +5,7 @@
       <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
         <!--{{ $t('table.search') }}-->
       <!--</el-button>-->
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-if="hasAuth('/ball/operation/banner/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
     </div>
@@ -25,32 +25,37 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号"  align="center">
+      <el-table-column label="标题"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称"  align="center">
+      <el-table-column label="策略类型"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ policyTypes[row.policyType-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间"  align="center">
+      <el-table-column label="语言编码"  align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.language }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间"  align="center">
+      <el-table-column label="图片地址"  align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.imageUrl }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态"  align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.status==1?'显示':'不显示' }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/operation/banner/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="hasAuth('/ball/operation/banner/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
         </template>
@@ -60,25 +65,45 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="标题" prop="name">
+          <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+        <el-form-item label="策略类型" prop="password">
+          <el-select style="width: 100%"  v-model="temp.policyType" clearable placeholder="请选择">
             <el-option
-              v-for="item in roles"
-              :key="item.id"
+              v-for="item in policyTypes"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="temp.policyType==1" label="存款策略">
+          <el-select style="width: 100%;"  v-model="temp.depositPolicyId" clearable placeholder="请选择">
+            <el-option
+              v-for="item in deposits"
+              :key="'depositPolicy'+item.id"
               :label="item.name"
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="temp.policyType==2" label="返佣策略">
+          <el-select style="width: 100%"  v-model="temp.commissionStrategyId" clearable placeholder="请选择">
+            <el-option
+              v-for="item in commissions"
+              :key="'commission'+item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="语言编码">
+          <el-input v-model="temp.language" />
+        </el-form-item>
+        <el-form-item label="图片地址">
+          <el-input v-model="temp.imageUrl" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -127,25 +152,39 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
+      policyTypes: [{ name: '存款策略', value: 1 }, { name: '返佣策略', value: 2 }],
       rules: {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
       },
-      roles: []
+      deposits: [],
+      commissions: []
     }
   },
   created() {
-    this.getRoles()
     this.getList()
+    this.getDepositPolicy()
+    this.getCommissionStrategy()
   },
   methods: {
-    getRoles() {
+    getDepositPolicy() {
       request({
-        url: 'ball/admin',
+        url: '/ball/operation/banner',
         method: 'get'
       }).then((response) => {
         if (response.code === 200) {
-          this.roles = response.data
+          this.deposits = response.data
+        }
+      }).catch(() => {
+      })
+    },
+    getCommissionStrategy() {
+      request({
+        url: '/ball/operation/banner',
+        method: 'put'
+      }).then((response) => {
+        if (response.code === 200) {
+          this.commissions = response.data
         }
       }).catch(() => {
       })
@@ -154,7 +193,7 @@ export default {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/admin',
+        url: '/ball/operation/banner',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -209,7 +248,7 @@ export default {
         // console.log(this.temp)
         if (valid) {
           request({
-            url: 'ball/admin/add',
+            url: '/ball/operation/banner/add',
             method: 'post',
             data: this.temp
           }).then((response) => {
@@ -228,7 +267,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -240,7 +278,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/admin/edit',
+            url: '/ball/operation/banner/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -266,7 +304,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: 'ball/admin/del?id=' + ids,
+          url: '/ball/operation/banner/del?id=' + ids,
           method: 'get'
         }).then((response) => {
           if (response.code === 200) {

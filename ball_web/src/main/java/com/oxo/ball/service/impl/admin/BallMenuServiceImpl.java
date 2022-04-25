@@ -20,37 +20,19 @@ public class BallMenuServiceImpl implements BallMenuService {
     BallMenuMapper ballMenuMapper;
 
     @Override
-    @Cacheable(value = "sys_auth", key = "'_ID_' + #id", unless = "#result == null")
+    @Cacheable(value = "ball_menu", key = "'_ID_' + #id", unless = "#result == null")
     public BallMenu findById(Long id) {
         return ballMenuMapper.selectById(id);
     }
 
     @Override
-    @Cacheable(value = "sys_auth_by_role",key="'_'+#roleId",unless ="#result==null")
+    @Cacheable(value = "ball_menu_by_role",key="'_'+#roleId",unless ="#result==null")
     public List<BallMenu> findByRole(Long roleId) {
+        //通过角色ID查找权限
+        //修改角色后清除本缓存
         List<BallMenu> sysUserDAO = ballMenuMapper.findByRole(roleId);
         return sysUserDAO;
     }
-
-//    @Override
-//    public List<String> findPathsByRole(Long roleId) {
-//        List<BallMenu> byRole = findByRole(roleId);
-//        List<String> auths = new ArrayList<>();
-//        for(BallMenu auth:byRole){
-//            auths.add(auth.getPath());
-//        }
-//        return auths;
-//    }
-
-//    @Override
-//    public List<Long> findAuthIdByRole(Long roleId) {
-//        List<BallMenu> byRole = findByRole(roleId);
-//        List<Long> auths = new ArrayList<>();
-//        for(BallMenu auth:byRole){
-//            auths.add(auth.getId());
-//        }
-//        return auths;
-//    }
 
     @Override
     public List<BallMenu> findAll() {

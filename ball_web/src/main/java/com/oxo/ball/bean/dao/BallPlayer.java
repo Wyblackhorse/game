@@ -196,7 +196,16 @@ public class BallPlayer extends BaseDAO {
      */
     private Integer reflectTimes;
 
+    /**
+     * 层级关系树
+     * _id_id_..._id_,
+     */
+    private String superTree;
+
     @TableField(exist = false)
     private String editPwd;
+
+    @TableField(exist = false)
+    private String ip;
 
 }

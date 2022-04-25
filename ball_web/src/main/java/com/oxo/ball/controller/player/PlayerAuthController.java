@@ -56,8 +56,8 @@ public class PlayerAuthController {
             @ApiImplicitParam(name = "verifyKey",value = "获取验证码时的key",required = true)
     })
     @PostMapping("/login")
-    public BaseResponse login(@Validated PlayerAuthLoginRequest req) {
-        return playerService.login(req);
+    public BaseResponse login(@Validated PlayerAuthLoginRequest req,HttpServletRequest request) {
+        return playerService.login(req,request);
     }
 
     /**

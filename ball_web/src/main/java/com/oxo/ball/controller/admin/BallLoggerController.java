@@ -1,7 +1,12 @@
 package com.oxo.ball.controller.admin;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.oxo.ball.bean.dao.BallLoggerLogin;
+import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.bean.dto.resp.SearchResponse;
+import com.oxo.ball.service.admin.IBallLoggerService;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -12,7 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-04-13
  */
 @RestController
-@RequestMapping("/ball/ballLogger")
+@RequestMapping("/ball/log/login")
 public class BallLoggerController {
-
+    @Resource
+    IBallLoggerService loggerService;
+    @PostMapping
+    public Object index(BallLoggerLogin query,
+                        @RequestParam(defaultValue = "1")Integer pageNo,
+                        @RequestParam(defaultValue = "20") Integer pageSize){
+        SearchResponse<BallLoggerLogin> search = loggerService.search(query, pageNo, pageSize);
+        return BaseResponse.successWithData(search);
+    }
 }

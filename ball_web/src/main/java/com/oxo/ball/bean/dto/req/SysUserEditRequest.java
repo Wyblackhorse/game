@@ -15,5 +15,5 @@ public class SysUserEditRequest implements Serializable {
     private Long roleId;
     private String password;
     private String nickname;
-
+    private String googleCode;
 }

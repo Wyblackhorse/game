@@ -138,7 +138,7 @@ export default {
     }
   }
   .image-app-preview {
-    width: 320px;
+    width: 100%
     height: 180px;
     position: relative;
     border: 1px dashed #d9d9d9;

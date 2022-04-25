@@ -35,17 +35,31 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { user, pwd } = userInfo
+    const { user, pwd, googleCode } = userInfo
     return new Promise((resolve, reject) => {
-      login({ user: user.trim(), pwd: pwd }).then(response => {
+      login({ user: user.trim(), pwd: pwd, googleCode: googleCode }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        setUser(JSON.stringify(data))
-        resolve()
-      }).catch(error => {
+        if (data.gtokenKey != 'ok') {
+          data.gtoken = 1
+        } else {
+          commit('SET_TOKEN', data.token)
+          commit('SET_NAME', data.user)
+          setToken(data.token)
+          setUser(JSON.stringify(data))
+        }
+        resolve(data)
+      }).catch((error) => {
         reject(error)
       })
+    })
+  },
+  loging({ commit }, data) {
+    return new Promise((resolve, reject) => {
+      commit('SET_TOKEN', data.token)
+      commit('SET_NAME', data.user)
+      setToken(data.token)
+      setUser(JSON.stringify(data))
+      resolve()
     })
   },
 
@@ -60,27 +74,16 @@ const actions = {
         }
 
         // roles must be a non-empty array
-        if (!data || data.length <= 0) {
+        if (!data || data.auths.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
 
-        commit('SET_ROLES', data)
-        // commit('SET_NAME', name)
-        // commit('SET_AVATAR', avatar)
-        // commit('SET_INTRODUCTION', introduction)
-        resolve({ roles: data })
+        commit('SET_ROLES', data.auths)
+        commit('SET_NAME', data.name)
+        resolve({ roles: data.auths })
       }).catch(error => {
         reject(error)
       })
-      // const data = JSON.parse(getUser())
-      // if (!data) {
-      //   reject('你还没有登陆，请先登陆')
-      // }
-      // commit('SET_NAME', data.user)
-      // commit('SET_AVATAR', getters.baseUrl())
-      // commit('SET_INTRODUCTION', data.id)
-      // commit('SET_ROLES', data.roles)
-      // resolve(data)
     })
   },
 

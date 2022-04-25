@@ -29,7 +29,7 @@ public class BallSystemConfig implements Serializable{
     private Long id;
 
     /**
-     * 注册是否需要邀请码 1需要 2不需要
+     * 注册是否需要邀请码 1需要 0不需要
      */
     private Integer registerIfNeedVerificationCode;
 
@@ -107,11 +107,16 @@ public class BallSystemConfig implements Serializable{
      * 提现密码是否可以修改 1 可以 2不可以
      */
     private Integer withdrawPasswordCanUpdate;
+    /**
+     * 是否可以连续发起提现
+     */
+    private Integer canWithdrawContinuity;
 
     /**
      * 控制首页提现密码是否可以关闭
      */
     private Integer withdrawPasswordShowNeed;
+
 
     /**
      * 每日的提现上线次数

@@ -8,6 +8,8 @@ import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallBalanceChange;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
+import com.oxo.ball.bean.dto.queue.MessageQueueDTO;
+import com.oxo.ball.bean.dto.queue.MessageQueueLogin;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerRegistRequest;
 import com.oxo.ball.bean.dto.resp.AuthLoginResponse;
@@ -15,7 +17,9 @@ import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.contant.RedisKeyContant;
 import com.oxo.ball.mapper.BallPlayerMapper;
 import com.oxo.ball.service.IBasePlayerService;
+import com.oxo.ball.service.IMessageQueueService;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
+import com.oxo.ball.service.admin.IBallLoggerService;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.player.AuthPlayerService;
 import com.oxo.ball.service.player.IPlayerService;
@@ -54,7 +58,10 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
     IBasePlayerService basePlayerService;
     @Resource
     IBallBalanceChangeService ballBalanceChangeService;
-
+    @Resource
+    IBallLoggerService loggerService;
+    @Resource
+    IMessageQueueService messageQueueService;
 
 
     @Override
@@ -64,6 +71,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
             List<String> audience = JWT.decode(request.getHeader("token")).getAudience();
             userId = Long.parseLong(audience.get(0));
             BallPlayer byId = basePlayerService.findById(userId);
+            byId.setIp(IpUtil.getIpAddress(request));
             return byId;
         } catch (JWTDecodeException j) {
             throw new TokenInvalidedException();
@@ -84,6 +92,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
     @Override
     public BaseResponse registPlayer(PlayerRegistRequest registRequest, String ipAddress) {
         Long parentPlayerId = 0L;
+        String superTree = "";
         //先判断验证码是否正确
         BaseResponse baseResponse = checkVerifyCode(registRequest.getVerifyKey(), registRequest.getCode());
         if (baseResponse.getCode() != StatusCodes.OK) {
@@ -123,6 +132,8 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 } else {
                     //邀请码正确,注册账号上级为邀请码关联账号
                     parentPlayerId = parentPlayer.getId();
+                    //tree
+                    superTree = parentPlayer.getSuperTree()+"_"+parentPlayer.getId();
                 }
             }
         } else {
@@ -137,6 +148,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
             }
         }
         BallPlayer save = BallPlayer.builder()
+                .version(1L)
                 .username(registRequest.getUsername())
                 .password(PasswordUtil.genPasswordMd5(registRequest.getPassword()))
                 .invitationCode(invitationCode)
@@ -144,6 +156,9 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 .theNewIp(ipAddress)
                 .theLastIp(ipAddress)
                 .superiorId(parentPlayerId)
+                .superTree(superTree)
+                .accountType(2)
+                .status(1)
                 //TODO 玩家注册送888888
                 .balance(888888*BigDecimalUtil.PLAYER_MONEY_UNIT)
                 .build();
@@ -158,9 +173,10 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
 
 
     @Override
-    public BaseResponse login(PlayerAuthLoginRequest req) {
+    public BaseResponse login(PlayerAuthLoginRequest req, HttpServletRequest request) {
         //判定账号密码输入错误次数
         String redisKey = RedisKeyContant.PLAYER_LOGIN_FAIL_COUNT + req.getUsername();
+        String ip = IpUtil.getIpAddress(request);
         Object failCountRedis = redisUtil.get(redisKey);
         int failCount = 0;
         if(failCountRedis!=null){
@@ -212,6 +228,15 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
         } else {
             userBean.setToken(hget.toString());
         }
+        messageQueueService.putMessage(MessageQueueDTO.builder()
+                .type(MessageQueueDTO.TYPE_LOG_LOGIN)
+                .data(MessageQueueLogin.builder()
+                        .ballPlayer(ballPlayer)
+                        .ip(ip)
+                        .device("web browser")
+                        .build())
+                .build());
+        //登录日志和修改账号登录IP
         return new BaseResponse<>(userBean);
     }
 

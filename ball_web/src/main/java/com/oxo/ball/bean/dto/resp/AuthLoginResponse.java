@@ -26,4 +26,7 @@ public class AuthLoginResponse implements Serializable {
 
     @JsonProperty("token")
     private String token;
+
+    private String gtokenKey;
+    private String gtokenQr;
 }

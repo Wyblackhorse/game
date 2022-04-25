@@ -5,6 +5,7 @@ import com.oxo.ball.bean.dao.BallSystemConfig;
 import com.oxo.ball.mapper.BallSystemConfigMapper;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +39,11 @@ public class BallSystemConfigServiceImpl extends ServiceImpl<BallSystemConfigMap
                     .build();
             save(save);
         }
+    }
+
+    @Override
+    @CacheEvict(value = "ball_sys_config", key = "'one'")
+    public Boolean edit(BallSystemConfig systemConfig) {
+        return updateById(systemConfig);
     }
 }

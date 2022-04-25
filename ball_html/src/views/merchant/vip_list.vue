@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!--<el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         {{ $t('table.search') }}
       </el-button>
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button v-if="hasAuth('/ball/merchant/vip/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         {{ $t('table.add') }}
       </el-button>
     </div>
@@ -25,32 +25,55 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号"  align="center">
+      <el-table-column label="VIP等级" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.level }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称"  align="center">
+      <el-table-column label="VIP名称" align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
+          <span>{{ row.levelName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间"  align="center">
+      <el-table-column label="最小提现金额" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.minPull }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间"  align="center">
+      <el-table-column label="最大提现金额" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
+          <span>{{ row.maxPull }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="会员返水(%)" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.backWater }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="会员礼金" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.cashGift }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="发放周期" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.cashGiftInterval }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.status }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="hasAuth('/ball/merchant/vip/edit')" type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="hasAuth('/ball/merchant/vip/status')" :type="row.status == 1?'danger':'success'" size="mini" @click="changeStatus(row)">
+            {{ row.status==1?'禁用':'启用' }}
+          </el-button>
+          <el-button v-if="hasAuth('/ball/merchant/vip/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
             {{ $t('table.delete') }}
           </el-button>
         </template>
@@ -60,29 +83,32 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="会员等级" prop="level">
+          <el-input v-model="temp.level" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
+        <el-form-item label="等级名称" prop="levelName">
+          <el-input v-model="temp.levelName" />
         </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
+        <el-form-item label="最小提现金额" prop="minPull">
+          <el-input v-model="temp.minPull" />
         </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+        <el-form-item label="最大提现金额" prop="maxPull">
+          <el-input v-model="temp.maxPull" />
+        </el-form-item>
+        <el-form-item label="会员返水(%)" prop="backWater">
+          <el-input v-model="temp.backWater" />
+        </el-form-item>
+        <el-form-item label="会员礼金" prop="cashGift">
+          <el-input v-model="temp.cashGift" />
+        </el-form-item>
+        <el-form-item label="发放周期" prop="cashGiftInterval">
+          <el-input v-model="temp.cashGiftInterval" />
+          <span></span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button  @click="dialogFormVisible = false">
+        <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
@@ -135,26 +161,39 @@ export default {
     }
   },
   created() {
-    this.getRoles()
     this.getList()
   },
   methods: {
-    getRoles() {
-      request({
-        url: 'ball/admin',
-        method: 'get'
-      }).then((response) => {
-        if (response.code === 200) {
-          this.roles = response.data
-        }
-      }).catch(() => {
+    changeStatus(row) {
+      MessageBox.confirm('你确定要' + (row.status == 1 ? '禁用' : '启用') + '吗？', '提醒', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: '/ball/merchant/vip/status',
+          method: 'post',
+          data: {
+            id: row.id,
+            status: (row.status == 2 ? 1 : 2)
+          }
+        }).then((response) => {
+          if (response.code === 200) {
+            this.$notify({
+              message: '修改成功',
+              type: 'success',
+              duration: 2 * 1000
+            })
+            row.status = (row.status == 2 ? 1 : 2)
+          }
+        })
       })
     },
     getList() {
       this.listLoading = true
       const _this = this
       request({
-        url: 'ball/admin',
+        url: '/ball/merchant/vip',
         method: 'post',
         params: _this.listQuery
       }).then((response) => {
@@ -187,10 +226,6 @@ export default {
     },
     resetTemp() { // 添加属性
       this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
       }
     },
     handleCreate() {
@@ -209,7 +244,7 @@ export default {
         // console.log(this.temp)
         if (valid) {
           request({
-            url: 'ball/admin/add',
+            url: '/ball/merchant/vip/add',
             method: 'post',
             data: this.temp
           }).then((response) => {
@@ -240,7 +275,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/admin/edit',
+            url: '/ball/merchant/vip/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -266,7 +301,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: 'ball/admin/del?id=' + ids,
+          url: '/ball/merchant/vip/del?id=' + ids,
           method: 'get'
         }).then((response) => {
           if (response.code === 200) {

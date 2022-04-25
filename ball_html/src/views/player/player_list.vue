@@ -35,6 +35,11 @@
           <span>{{ row.balance|balance }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="最后登录IP" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.theLastIp }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="邀请码" align="center">
         <template slot-scope="{row}">
           <span>{{ row.invitationCode }}</span>
@@ -42,7 +47,7 @@
       </el-table-column>
       <el-table-column label="账号类型" align="center">
         <template slot-scope="{row}">
-          <span>{{ accountTypes[row.accountType-1] }}</span>
+          <span>{{ accountTypes[row.accountType-1].name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="会员级别" align="center">
@@ -110,7 +115,7 @@
         </el-form-item>
         <el-input v-model="temp.superiorId" type="hidden" />
         <el-form-item v-if="showEdit" label="账号类型" prop="superName">
-          <el-select v-model="temp.accountType" style="width: 320px;" placeholder="账号类型">
+          <el-select v-model="temp.accountType" style="width: 100%" placeholder="账号类型">
             <el-option
               v-for="item in accountTypes"
               :key="item.value"

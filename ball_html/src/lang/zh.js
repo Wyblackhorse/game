@@ -1,68 +1,7 @@
 export default {
   route: {
     dashboard: '首页',
-    documentation: '文档',
-    guide: '引导页',
-    permission: '权限测试页',
-    rolePermission: '角色权限',
-    pagePermission: '页面权限',
-    directivePermission: '指令权限',
-    icons: '图标',
-    components: '组件',
-    tinymce: '富文本编辑器',
-    markdown: 'Markdown',
-    jsonEditor: 'JSON 编辑器',
-    dndList: '列表拖拽',
-    splitPane: 'Splitpane',
-    avatarUpload: '头像上传',
-    dropzone: 'Dropzone',
-    sticky: 'Sticky',
-    countTo: 'Count To',
-    componentMixin: '小组件',
-    backToTop: '返回顶部',
-    dragDialog: '拖拽 Dialog',
-    dragSelect: '拖拽 Select',
-    dragKanban: '可拖拽看板',
-    charts: '图表',
-    keyboardChart: '键盘图表',
-    lineChart: '折线图',
-    mixChart: '混合图表',
-    example: '综合实例',
-    nested: '路由嵌套',
-    menu1: '菜单1',
-    'menu1-1': '菜单 1-1',
-    'menu1-2': '菜单 1-2',
-    'menu1-2-1': '菜单 1-2-1',
-    'menu1-2-2': '菜单 1-2-2',
-    'menu1-3': '菜单 1-3',
-    menu2: '菜单 2',
-    Table: 'Table',
-    dynamicTable: '动态 Table',
-    dragTable: '拖拽 Table',
-    inlineEditTable: 'Table 内编辑',
-    complexTable: '综合 Table',
-    tab: 'Tab',
-    form: '表单',
-    createArticle: '创建文章',
-    editArticle: '编辑文章',
-    articleList: '文章列表',
-    errorPages: '错误页面',
-    page401: '401',
-    page404: '404',
-    errorLog: '错误日志',
-    excel: 'Excel',
-    exportExcel: '导出 Excel',
-    selectExcel: '导出 已选择项',
-    mergeHeader: '导出 多级表头',
-    uploadExcel: '上传 Excel',
-    zip: 'Zip',
-    pdf: 'PDF',
-    exportZip: 'Export Zip',
-    theme: '换肤',
-    clipboardDemo: 'Clipboard',
-    i18n: '国际化',
-    externalLink: '外链',
-    profile: '个人中心'
+    player_main: '会员管理'
   },
   navbar: {
     dashboard: '首页',
@@ -78,9 +17,12 @@ export default {
     logIn: '登录',
     username: '账号',
     password: '密码',
+    gpwd: 'google验证码',
     any: '随便填',
     thirdparty: '第三方登录',
-    thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！'
+    thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！',
+    googleValid: '绑定GOOGLE验证码',
+    googleValidButton: '验证'
   },
   documentation: {
     documentation: '文档',
@@ -133,7 +75,8 @@ export default {
     draft: '草稿',
     delete: '删除',
     cancel: '取 消',
-    confirm: '确 定'
+    confirm: '确 定',
+    resetGoogle: '重置google'
   },
   example: {
     warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'
@@ -172,5 +115,8 @@ export default {
     tagsView: '开启 Tags-View',
     fixedHeader: '固定 Header',
     sidebarLogo: '侧边栏 Logo'
+  },
+  messages: {
+    changeLangSuccess: '已切换至中文'
   }
 }

@@ -14,6 +14,6 @@ import org.springframework.cache.annotation.Cacheable;
  */
 public interface IBallSystemConfigService extends IService<BallSystemConfig> {
     BallSystemConfig getSystemConfig();
-
     void init();
+    Boolean edit(BallSystemConfig systemConfig);
 }

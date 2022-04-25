@@ -71,7 +71,7 @@
           <el-input v-model="temp.nickname" />
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+          <el-select style="width: 100%"  v-model="temp.roleId" clearable placeholder="角色">
             <el-option
               v-for="item in roles"
               :key="item.id"

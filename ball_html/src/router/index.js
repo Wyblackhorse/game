@@ -103,7 +103,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     name: 'player_main',
     path: '/player_main',
-    meta: { title: '会员管理', icon: 'player', roles: ['/ball/player/main'] },
+    meta: { title: 'player_main', icon: 'player', roles: ['/ball/player/main'] },
     children: [
       {
         path: 'player',
@@ -307,7 +307,7 @@ export const asyncRoutes = [
         path: 'operation_swiper',
         name: 'operation_swiper',
         component: () => import('@/views/operation/swiper_list'),
-        meta: { title: '轮播公告', icon: 'operation_swiper', roles: ['/ball/operation/swiper'] }
+        meta: { title: '轮播广告', icon: 'operation_swiper', roles: ['/ball/operation/swiper'] }
       },
       {
         path: 'operation_notice',
@@ -321,7 +321,7 @@ export const asyncRoutes = [
     component: Layout,
     alwaysShow: true,
     name: 'merchant_main',
-    path: 'merchant_main',
+    path: '/merchant_main',
     meta: { title: '商户配置', icon: 'merchant', roles: ['/ball/merchant/main'] },
     children: [
       {
@@ -354,7 +354,7 @@ export const asyncRoutes = [
     component: Layout,
     alwaysShow: true,
     name: 'log_main',
-    path: 'log_main',
+    path: '/log_main',
     meta: { title: '日志管理', icon: 'logs', roles: ['/ball/log/main'] },
     children: [
       {

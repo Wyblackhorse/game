@@ -77,6 +77,28 @@ function formatTime(number, format) {
 Vue.filter('formatDate', function(value) {
   return formatTime(value, 'Y-M-D h:m:s')
 })
+Vue.filter('countDown', function(value) {
+  var secondTime = parseInt(value) / 1000// 秒
+  var minuteTime = 0// 分
+  var hourTime = 0// 小时
+  if (secondTime >= 60) {
+    minuteTime = parseInt(secondTime / 60)
+    secondTime = parseInt(secondTime % 60)
+    if (minuteTime >= 60) {
+      hourTime = parseInt(minuteTime / 60)
+      minuteTime = parseInt(minuteTime % 60)
+    }
+  }
+  var result = '' + (parseInt(secondTime) < 10 ? '0' + parseInt(secondTime) : parseInt(secondTime))
+
+  // if (minuteTime > 0) {
+  result = '' + (parseInt(minuteTime) < 10 ? '0' + parseInt(minuteTime) : parseInt(minuteTime)) + ':' + result
+  // }
+  // if (hourTime > 0) {
+  result = '' + (parseInt(hourTime) < 10 ? '0' + parseInt(hourTime) : parseInt(hourTime)) + ':' + result
+  // }
+  return result
+})
 Vue.filter('balance', function(value) {
   if (value == null || value === undefined) {
     return 0

@@ -1,253 +1,269 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
+    <!--<div class="filter-container">-->
+      <!--<el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
+      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
+        <!--{{ $t('table.search') }}-->
+      <!--</el-button>-->
+      <!--<el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
+        <!--{{ $t('table.add') }}-->
+      <!--</el-button>-->
+    <!--</div>-->
+    <el-form ref="dataForm" :model="sysConfig" label-position="left" label-width="180px" style="margin-left:50px;">
+      <el-tabs :value="activeName" @tab-click="handlerTabClick">
+        <el-tab-pane  v-if="hasAuth('/ball/merchant/param/loreg')" label="注册与登录配置" name="loreg">
+          <el-row>
+            <el-col :span="12">
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="注册是否需要邀请码" prop="registerIfNeedVerificationCode">
+                <el-radio v-model="sysConfig.registerIfNeedVerificationCode" :label="0">不需要</el-radio>
+                <el-radio v-model="sysConfig.registerIfNeedVerificationCode" :label="1">需要</el-radio>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="密码连续错误的次数" prop="passwordMaxErrorTimes">
+                <el-input v-model="sysConfig.passwordMaxErrorTimes"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="密码连续错误锁屏时间(秒)" prop="passwordErrorLockTime">
+                <el-input v-model="sysConfig.passwordErrorLockTime"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane v-if="hasAuth('/ball/merchant/param/servicer')" label="客服配置" name="servicer">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="客服连接" prop="serverUrl">
+                <el-input v-model="sysConfig.serverUrl"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane v-if="hasAuth('/ball/merchant/param/finance')" label="财务配置" name="finance">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="会员最多绑卡数量" prop="cardCanNeedNums">
+                <el-input v-model="sysConfig.cardCanNeedNums"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="会员最多绑卡数量" prop="cardCanNeedNums">
+                <el-input v-model="sysConfig.cardCanNeedNums"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="充值打码量转换比例" prop="rechargeCodeConversionRate">
+                <el-input v-model="sysConfig.rechargeCodeConversionRate"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="用户打码设量设置阀值" prop="captchaThreshold">
+                <el-input v-model="sysConfig.captchaThreshold"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="会员最多绑卡数量" prop="cardCanNeedNums">
+                <el-input v-model="sysConfig.cardCanNeedNums"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="投注手续费率" prop="betHandMoneyRate">
+                <el-input v-model="sysConfig.betHandMoneyRate"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="快捷金额" prop="fastMoney">
+                <el-input v-model="sysConfig.fastMoney"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="usdt提现汇率" prop="usdtWithdrawPer">
+                <el-input v-model="sysConfig.usdtWithdrawPer"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="提现usdt自动汇率" prop="withdrawUsdtAutomaticPer">
+                <el-input v-model="sysConfig.withdrawUsdtAutomaticPer"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="保本扣除手续费" prop="evenNeedHandMoney">
+                <el-input v-model="sysConfig.evenNeedHandMoney"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="最多可绑定usdt账号数量" prop="maxUsdtAccountNums">
+                <el-input v-model="sysConfig.maxUsdtAccountNums"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="最多可绑定pix账号数量" prop="maxPixAccountNums">
+                <el-input v-model="sysConfig.maxPixAccountNums"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="提现密码是否可以修改" prop="withdrawPasswordCanUpdate">
+                <el-input v-model="sysConfig.withdrawPasswordCanUpdate"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="是否可以连续发起提现" prop="canWithdrawContinuity">
+                <el-input v-model="sysConfig.canWithdrawContinuity"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="控制首页提现密码是否可以关闭" prop="withdrawPasswordShowNeed">
+                <el-input v-model="sysConfig.withdrawPasswordShowNeed"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane v-if="hasAuth('/ball/merchant/param/risk')" label="风控配置" name="risk">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="每日的提现上限次数" prop="everydayWithdrawTimes">
+                <el-input v-model="sysConfig.everydayWithdrawTimes"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane v-if="hasAuth('/ball/merchant/param/operate')" label="运营配置" name="operate">
+
+        </el-tab-pane>
+        <el-tab-pane v-if="hasAuth('/ball/merchant/param/share')" label="推广配置" name="share">
+
+        </el-tab-pane>
+      </el-tabs>
+      <el-button type="primary" @click="updateData()">
+        {{ $t('table.confirm') }}
       </el-button>
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        {{ $t('table.add') }}
-      </el-button>
-    </div>
-
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <el-table-column label="id" prop="id" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="账号"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="昵称"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="更新时间"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('table.edit') }}
-          </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
-            {{ $t('table.delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
-        </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button  @click="dialogFormVisible = false">
-          {{ $t('table.cancel') }}
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          {{ $t('table.confirm') }}
-        </el-button>
-      </div>
-    </el-dialog>
+    </el-form>
   </div>
 </template>
 
 <script>
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination基于el分页的二次包
 import request from '@/utils/request'
 import { MessageBox } from 'element-ui'
 import store from '@/store'
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
   data() {
     return {
       user: store.getters.user,
-      tableKey: 0,
-      list: null,
-      total: 0,
+      activeName: '',
       listLoading: true,
-      listQuery: {
-        pageNo: 1,
-        pageSize: 20,
-        username: ''
-      },
-      temp: {
-        id: 1,
-        username: '',
-        password: '',
-        nickname: '',
-        roleId: ''
-      },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
-      rules: {
-        username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
-        roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
-      },
-      roles: []
+      sysConfig: {},
+      editSubmitUrl: ''
     }
   },
   created() {
-    this.getRoles()
-    this.getList()
+    this.getSysconfig()
   },
   methods: {
-    getRoles() {
+    getSysconfig() {
       request({
-        url: 'ball/admin',
+        url: '/ball/merchant/param',
         method: 'get'
       }).then((response) => {
         if (response.code === 200) {
-          this.roles = response.data
+          this.sysConfig = response.data
         }
       }).catch(() => {
       })
     },
-    getList() {
-      this.listLoading = true
-      const _this = this
-      request({
-        url: 'ball/admin',
-        method: 'post',
-        params: _this.listQuery
-      }).then((response) => {
-        if (response.code === 200) {
-          this.list = response.data.results
-          this.total = response.data.totalCount
-        }
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
-    },
-    handleFilter() {
-      this.listQuery.pageNo = 1
-      this.getList()
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    resetTemp() { // 添加属性
-      this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
-      }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        // console.log(this.temp)
-        this.temp.rate = parseInt(this.temp.rate)
-        this.temp.type = parseInt(this.temp.type)
-        // console.log(this.temp)
-        if (valid) {
-          request({
-            url: 'ball/admin/add',
-            method: 'post',
-            data: this.temp
-          }).then((response) => {
-            if (response.code === 200) {
-              this.dialogFormVisible = false
-              this.list.unshift(response.data)
-              this.$message({
-                message: '添加成功',
-                type: 'success',
-                duration: 3 * 1000
-              })
-            }
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+    handlerTabClick(tab) {
+      this.editSubmitUrl = tab.name
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
+          const tempData = Object.assign({}, this.sysConfig)
           request({
-            url: 'ball/admin/edit',
+            url: '/ball/merchant/param/' + this.editSubmitUrl,
             method: 'post',
             data: tempData
           }).then((response) => {
             if (response.code === 200) {
-              const index = this.list.findIndex(v => v.id === this.temp.id)
-              this.dialogFormVisible = false
-              this.list.splice(index, 1, this.temp)
               this.$notify({
                 message: '修改成功',
                 type: 'success',
@@ -257,34 +273,6 @@ export default {
           })
         }
       })
-    },
-    handleDelete(row, index) {
-      var ids = row.id
-      MessageBox.confirm('你确定要删除吗？', '删除提醒', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        request({
-          url: 'ball/admin/del?id=' + ids,
-          method: 'get'
-        }).then((response) => {
-          if (response.code === 200) {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
-            this.list.splice(index, 1)
-          }
-        })
-      }).catch(() => {
-      })
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

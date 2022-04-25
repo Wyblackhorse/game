@@ -15,7 +15,7 @@ public interface IPlayerService extends IService<BallPlayer> {
     BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException;
     boolean editPwd(Long id, String password);
     BaseResponse registPlayer(PlayerRegistRequest ballPlayer, String ipAddress);
-    BaseResponse login(PlayerAuthLoginRequest req);
+    BaseResponse login(PlayerAuthLoginRequest req, HttpServletRequest request);
     BaseResponse getVerifyCode() throws IOException;
     BaseResponse checkVerifyCode(String verifyKey,String code);
 

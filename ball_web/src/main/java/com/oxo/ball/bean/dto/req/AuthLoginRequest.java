@@ -20,7 +20,8 @@ public class AuthLoginRequest implements Serializable {
     @JsonProperty("pwd")
     private String password;
     @NotEmpty
-    private String code;
+    private String googleCode;
     @NotEmpty
-    private String verifyKey;
+    private String googleKey;
+
 }

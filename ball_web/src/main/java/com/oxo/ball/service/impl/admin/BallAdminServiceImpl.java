@@ -128,8 +128,15 @@ public class BallAdminServiceImpl implements BallAdminService {
         if(!StringUtils.isEmpty(sysUserEditRequest.getPassword())){
             dao.setPassword(PasswordUtil.genPasswordMd5(sysUserEditRequest.getPassword()));
         }
-        dao.setRoleId(sysUserEditRequest.getRoleId());
-        dao.setNickname(sysUserEditRequest.getNickname());
+        if(sysUserEditRequest.getRoleId()!=null){
+            dao.setRoleId(sysUserEditRequest.getRoleId());
+        }
+        if(!StringUtils.isEmpty(sysUserEditRequest.getNickname())){
+            dao.setNickname(sysUserEditRequest.getNickname());
+        }
+        if(sysUserEditRequest.getGoogleCode()!=null){
+            dao.setGoogleCode(sysUserEditRequest.getGoogleCode());
+        }
 
         if(ballAdminMapper.update(dao, wrapper) == 0) {
             return false;

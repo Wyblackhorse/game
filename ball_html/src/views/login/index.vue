@@ -47,25 +47,55 @@
             </span>
           </el-form-item>
         </el-tooltip>
+        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+          <el-form-item prop="googleCode">
+            <span class="svg-container">
+              <svg-icon icon-class="google" />
+            </span>
+            <el-input
+              :key="passwordType"
+              ref="password"
+              v-model="loginForm.googleCode"
+              :placeholder="$t('login.gpwd')"
+              name="gpwd"
+              tabindex="3"
+              autocomplete="on"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="handleLogin"
+            />
+          </el-form-item>
+        </el-tooltip>
 
         <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
           {{ $t('login.logIn') }}
         </el-button>
       </div>
     </el-form>
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
-      {{ $t('login.thirdpartyTips') }}
+    <el-dialog :title="$t('login.googleValid')" :visible="googleValidVisible">
+      <el-image :src="otherQuery.qrcode" style="width: 180px;height: 180px;" />
+      <h3>扫码绑定后输入验证码提交验证~</h3>
       <br>
-      <br>
-      <br>
-      <social-sign />
+      <el-form ref="gvalidform" :model="otherQuery" label-position="left" label-width="120px">
+        <el-form-item label="GOOGLE验证码">
+          <el-input v-model="otherQuery.googleCode" class="googleValidInput" style="color: black !important;background: white !important;" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="googleValidVisible = false">
+          {{ $t('table.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="googleValidSubmit">
+          {{ $t('login.googleValidButton') }}
+        </el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import SocialSign from './components/SocialSignin'
-
+import request from '@/utils/request'
 
 export default {
   name: 'Login',
@@ -86,6 +116,7 @@ export default {
       }
     }
     return {
+      googleValidVisible: false,
       loginForm: {
         user: '',
         pwd: ''
@@ -147,10 +178,16 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-
+            .then((data) => {
+              if (data.gtoken === 1) {
+                this.googleValidVisible = true
+                this.otherQuery.user = data.user
+                this.otherQuery.googleKey = data.gtokenKey
+                this.otherQuery.qrcode = data.gtokenQr
+              } else {
+                this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+                this.loading = false
+              }
             })
             .catch(() => {
               this.loading = false
@@ -168,6 +205,36 @@ export default {
         }
         return acc
       }, {})
+    },
+    googleValidSubmit(query) {
+      request({
+        url: '/auth/userinfo',
+        method: 'post',
+        data: this.otherQuery
+      }).then((response) => {
+        if (response.code === 200) {
+          // 登录成功
+          this.$store.dispatch('user/loging', response.data).then(() => {
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            this.loading = false
+          })
+        }
+      }).catch(() => {
+      })
+    },
+    crateQrcode: function(qrimg) {
+      this.qrcode = qrimg
+      if (this.$refs['qrcode'] != undefined) {
+        this.$refs['qrcode'].innerHTML = ''
+      }
+      this.$nextTick(() => {
+        this.qr = new QRCode('qrcode', {
+          width: 150,
+          height: 150,
+          text: this.qrcode,
+          render: 'table'
+        })
+      })
     }
   }
 }
@@ -186,7 +253,14 @@ $cursor: #fff;
     color: $cursor;
   }
 }
-
+.googleValidInput{
+  background: white !important;
+  color: black !important;
+  input{
+    color: black !important;
+    caret-color: black !important;
+  }
+}
 /* reset element-ui css */
 .login-container {
   .el-input {

@@ -1,5 +1,7 @@
 package com.oxo.ball.bean.dto.resp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.undertow.util.StatusCodes;
 import lombok.Data;
 
@@ -34,6 +36,11 @@ public class BaseResponse<T> implements Serializable {
 
     private Integer code;
     private String msg;
+    /**
+     * 操作日志备注,
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String remark;
     private T data;
 
     public BaseResponse(T data) {

@@ -1,6 +1,8 @@
 package com.oxo.ball.config;
 
+import com.oxo.ball.service.IMessageQueueService;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
+import com.oxo.ball.utils.ThreadPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,10 +22,15 @@ public class OnServerStarted  implements ApplicationListener<ContextRefreshedEve
 
     @Resource
     IBallSystemConfigService systemConfigService;
+    @Resource
+    IMessageQueueService messageQueueService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.info("on server start~version:{}",1);
         systemConfigService.init();
+        ThreadPoolUtil.exec(() -> {
+            messageQueueService.startQueue();
+        });
     }
 }

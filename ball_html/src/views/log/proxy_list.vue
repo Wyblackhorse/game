@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
-      </el-button>
-      <el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        {{ $t('table.add') }}
-      </el-button>
+      <!--<el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
+      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">-->
+        <!--{{ $t('table.search') }}-->
+      <!--</el-button>-->
+      <!--<el-button v-if="hasAuth('/ball/admin/add')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">-->
+        <!--{{ $t('table.add') }}-->
+      <!--</el-button>-->
     </div>
 
     <el-table
@@ -20,41 +20,41 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="id" prop="id" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="账号"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="昵称"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.nickname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="更新时间"  align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('table.edit') }}
-          </el-button>
-          <el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">
-            {{ $t('table.delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
+      <!--<el-table-column label="id" prop="id" align="center" width="80">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.id }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="账号"  align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.username }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="昵称"  align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.nickname }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="创建时间"  align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.createdAt|formatDate('y-M-d h:m:s') }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="更新时间"  align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.updatedAt|formatDate('y-M-d h:m:s') }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">-->
+        <!--<template slot-scope="{row,$index}">-->
+          <!--<el-button v-if="row.id!=1 && hasAuth('/ball/admin/edit')" type="primary" size="mini" @click="handleUpdate(row)">-->
+            <!--{{ $t('table.edit') }}-->
+          <!--</el-button>-->
+          <!--<el-button v-if="row.id!=1 && hasAuth('/ball/admin/del')" size="mini" type="danger" @click="handleDelete(row,$index)">-->
+            <!--{{ $t('table.delete') }}-->
+          <!--</el-button>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
@@ -71,7 +71,7 @@
           <el-input v-model="temp.nickname" />
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
-          <el-select style="width: 320px;"  v-model="temp.roleId" clearable placeholder="角色">
+          <el-select style="width: 100%"  v-model="temp.roleId" clearable placeholder="角色">
             <el-option
               v-for="item in roles"
               :key="item.id"
@@ -135,8 +135,6 @@ export default {
     }
   },
   created() {
-    this.getRoles()
-    this.getList()
   },
   methods: {
     getRoles() {
