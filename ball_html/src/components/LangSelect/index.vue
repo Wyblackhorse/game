@@ -35,6 +35,7 @@ export default {
         message: this.$t('messages.changeLangSuccess'),
         type: 'success'
       })
+      this.$router.go(0)
     }
   }
 }

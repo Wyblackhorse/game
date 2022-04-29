@@ -1,7 +1,50 @@
 export default {
   route: {
     dashboard: '首页',
-    player_main: '会员管理'
+    player_main: '会员管理',
+    player_finance: '会员账务汇总',
+    game_main: '赛事管理',
+    game_odds: '赔率管理',
+    game_finish: '赛事结算管理',
+    report_main: '报表管理',
+    report_data: '数据总览',
+    report_proxy: '代理报表',
+    report_balance_change: '账变报表',
+    report_player_day: '会员日报表',
+    report_bet: '下注报表',
+    report_recharge: '充提报表',
+    report_recharge_way: '充值渠道',
+    report_game: '赛事报表',
+    bets_main: '订单管理',
+    bets: '足球订单',
+    tactics_main: '策略配置',
+    tactics_inout: '存款优惠',
+    tactics_back: '返佣策略',
+    finance_main: '账务管理',
+    finance_pay: '支付管理',
+    finance_withdraw: '提现方式管理',
+    finance_bind: '绑卡审核',
+    finance_offline: '线下充值',
+    finance_online: '线上充值',
+    finance_out: '提现管理',
+    finance_inlog: '上分记录',
+    operation_main: '运营管理',
+    operation_banner: 'Banner管理',
+    operation_swiper: '轮播广告',
+    operation_notice: '系统公告',
+    merchant_main: '商户配置',
+    merchant_param: '参数配置',
+    merchant_vip: 'VIP配置',
+    merchant_white: '后台白名单',
+    merchant_black: '前端黑名单',
+    log_main: '日志管理',
+    log_bet: '下注日志',
+    log_login: '登录日志',
+    log_operate: '操作日志',
+    log_proxy: '代理迁移',
+    sys_config_main: '系统管理',
+    sys_users: '用户管理',
+    sys_roles: '角色管理'
   },
   navbar: {
     dashboard: '首页',
@@ -18,38 +61,11 @@ export default {
     username: '账号',
     password: '密码',
     gpwd: 'google验证码',
-    any: '随便填',
-    thirdparty: '第三方登录',
-    thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！',
     googleValid: '绑定GOOGLE验证码',
-    googleValidButton: '验证'
-  },
-  documentation: {
-    documentation: '文档',
-    github: 'Github 地址'
-  },
-  permission: {
-    addRole: '新增角色',
-    editPermission: '编辑权限',
-    roles: '你的权限',
-    switchRoles: '切换权限',
-    tips: '在某些情况下，不适合使用 v-permission。例如：Element-UI 的 el-tab 或 el-table-column 以及其它动态渲染 dom 的场景。你只能通过手动设置 v-if 来实现。',
-    delete: '删除',
-    confirm: '确定',
-    cancel: '取消'
-  },
-  guide: {
-    description: '引导页对于一些第一次进入项目的人很有用，你可以简单介绍下项目的功能。本 Demo 是基于',
-    button: '打开引导'
-  },
-  components: {
-    documentation: '文档',
-    tinymceTips: '富文本是管理后台一个核心的功能，但同时又是一个有很多坑的地方。在选择富文本的过程中我也走了不少的弯路，市面上常见的富文本都基本用过了，最终权衡了一下选择了Tinymce。更详细的富文本比较和介绍见',
-    dropzoneTips: '由于我司业务有特殊需求，而且要传七牛 所以没用第三方，选择了自己封装。代码非常的简单，具体代码你可以在这里看到 @/components/Dropzone',
-    stickyTips: '当页面滚动到预设的位置会吸附在顶部',
-    backToTopTips1: '页面滚动到指定位置会在右下角出现返回顶部按钮',
-    backToTopTips2: '可自定义按钮的样式、show/hide、出现的高度、返回的位置 如需文字提示，可在外部使用Element的el-tooltip元素',
-    imageUploadTips: '由于我在使用时它只有vue@1版本，而且和mockjs不兼容，所以自己改造了一下，如果大家要使用的话，优先还是使用官方版本。'
+    googleValidButton: '验证',
+    unlogin: '登陆失效，可以取消继续留在该页面，或者重新登录',
+    logout: '确定登出',
+    relogin: '重新登录'
   },
   table: {
     dynamicTips1: '固定表头, 按照表头顺序排序',
@@ -60,7 +76,7 @@ export default {
     importance: '重要性',
     type: '类型',
     remark: '点评',
-    search: '搜索',
+    search: '查询',
     add: '添加',
     export: '导出',
     reviewer: '审核人',
@@ -76,32 +92,13 @@ export default {
     delete: '删除',
     cancel: '取 消',
     confirm: '确 定',
-    resetGoogle: '重置google'
-  },
-  example: {
-    warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'
-  },
-  errorLog: {
-    tips: '请点击右上角bug小图标',
-    description: '现在的管理后台基本都是spa的形式了，它增强了用户体验，但同时也会增加页面出问题的可能性，可能一个小小的疏忽就导致整个页面的死锁。好在 Vue 官网提供了一个方法来捕获处理异常，你可以在其中进行错误处理或者异常上报。',
-    documentation: '文档介绍'
+    resetGoogle: '重置google',
+    info: '查看'
   },
   excel: {
     export: '导出',
     selectedExport: '导出已选择项',
     placeholder: '请输入文件名(默认excel-list)'
-  },
-  zip: {
-    export: '导出',
-    placeholder: '请输入文件名(默认file)'
-  },
-  pdf: {
-    tips: '这里使用   window.print() 来实现下载pdf的功能'
-  },
-  theme: {
-    change: '换肤',
-    documentation: '换肤文档',
-    tips: 'Tips: 它区别于 navbar 上的 theme-pick, 是两种不同的换肤方法，各自有不同的应用场景，具体请参考文档。'
   },
   tagsView: {
     refresh: '刷新',
@@ -117,6 +114,106 @@ export default {
     sidebarLogo: '侧边栏 Logo'
   },
   messages: {
-    changeLangSuccess: '已切换至中文'
-  }
+    success: '成功',
+    changeLangSuccess: '已切换至中文',
+    successEdit: '修改成功',
+    successDel: '删除成功',
+    successAdd: '添加成功'
+  },
+  tips: {
+    delTitle: '删除提醒',
+    importentTitle: '重要提醒',
+    delContent: '你确定要删除吗?'
+  },
+  button: {
+    ok: '确定',
+    cancel: '取消',
+    choose: '选择'
+  },
+  form: {
+    info: '查看详细',
+    textMap: ['修改', '添加'],
+    statusOper: [
+      { name: '启用', value: 1 },
+      { name: '禁用', value: 2 }
+    ],
+    player: {
+      name_exsit: '用户名已存在',
+      superiorName: '上级用户名不正确',
+      cannotSelf: '不能设置自己为上级',
+      requireUserName: '用户名必填',
+      requirePwd: '密码必填',
+      statusConfirm0: '你确定要启用该账号吗?',
+      statusConfirm1: '你确定要禁用该账号吗?',
+      accountTypes: [
+        { name: '测试号', value: 1 },
+        { name: '正式号', value: 2 },
+        { name: '代理号', value: 3 }
+      ]
+    }
+  },
+  page: {
+    player: {
+      username: '账号',
+      pwd: '密码',
+      phone: '手机号',
+      balance: '余额',
+      theLastIp: '最后登录IP',
+      superiorName: '所属上级',
+      sub: '直属下级',
+      group: '团队人数',
+      invitationCode: '邀请码',
+      directlySubordinateNum: '直属下级',
+      groupSize: '团队人数',
+      accountType: '账号类型',
+      vipLevel: '会员级别',
+      status: '状态',
+      createdAt: '创建时间',
+      remark: '备注',
+      version: '版本号',
+      cumulativeReflect: '累计提现',
+      reflectTimes: '提现次数',
+      maxReflect: '最大提款金额',
+      firstReflect: '首次提现金额',
+      cumulativeTopUp: '累计充值',
+      topUpTimes: '充值次数',
+      maxTopUp: '最大充值金额',
+      firstTopUp: '首次充值金额',
+      firstTopUpTime: '首次充值时间',
+      onLineTopUp: '线上充值',
+      offlineTopUp: '线下充值',
+      artificialAdd: '人工加款',
+      artificialSubtract: '人工减款',
+      cumulativeWinning: '累计中奖',
+      accumulativeBet: '累计投注',
+      cumulativeBackWater: '累计返水',
+      promoteIncome: '推广收入',
+      cumulativeQr: '累计打码量',
+      needQr: '所需总打码量',
+      edit: '修改',
+      editPwd: '修改密码',
+      editPayPwd: '改支付密码',
+      editBalance: '上分',
+      editBalanceOut: '改出款打码量',
+      balanceLog: '账变记录',
+      setParent: '设置上级'
+    }
+  },
+  balanceChange: {
+    changeTypes: [
+      { name: '充值', value: 1 },
+      { name: '提现', value: 2 },
+      { name: '下注', value: 3 },
+      { name: '赢', value: 4 },
+      { name: '佣金', value: 5 },
+      { name: '人工', value: 6 }
+    ]
+  },
+  initMoney: '变动前余额',
+  changeMoney: '变动金额',
+  dnedMoney: '变动后金额',
+  balanceChangeType: '变动类型',
+  createdAt: '创建时间',
+  remark: '备注',
+  role: [{ 'id': 10, 'label': '会员管理', 'children': [{ 'id': 11, 'label': '会员管理', 'children': [{ 'id': 13, 'label': '增加' }, { 'id': 14, 'label': '修改' }, { 'id': 15, 'label': '查看' }, { 'id': 16, 'label': '账变记录' }, { 'id': 17, 'label': '更改密码' }, { 'id': 18, 'label': '更改支付密码' }, { 'id': 19, 'label': '禁/启用' }, { 'id': 20, 'label': '上分' }, { 'id': 21, 'label': '修改出款打码量' }] }, { 'id': 12, 'label': '会员账务汇总' }] }, { 'id': 22, 'label': '赛事管理', 'children': [{ 'id': 23, 'label': '赛事管理', 'children': [{ 'id': 24, 'label': '修改' }, { 'id': 25, 'label': '禁/启用' }, { 'id': 26, 'label': '置顶' }, { 'id': 27, 'label': '热门' }, { 'id': 28, 'label': '保本' }, { 'id': 29, 'label': '查看' }] }, { 'id': 30, 'label': '赔率管理', 'children': [{ 'id': 31, 'label': '查看' }, { 'id': 32, 'label': '修改' }, { 'id': 33, 'label': '禁/启用' }, { 'id': 34, 'label': '弃保' }] }, { 'id': 35, 'label': '赛事结算管理', 'children': [{ 'id': 36, 'label': '重算' }, { 'id': 37, 'label': '回滚' }, { 'id': 38, 'label': '查看' }] }] }, { 'id': 39, 'label': '报表管理', 'children': [{ 'id': 40, 'label': '数据总览' }, { 'id': 41, 'label': '运营总报表' }, { 'id': 42, 'label': '代理报表', 'children': [{ 'id': 43, 'label': '查首充' }, { 'id': 44, 'label': '查取款用户' }, { 'id': 45, 'label': '查注册用户' }, { 'id': 46, 'label': '查投注报表' }] }, { 'id': 47, 'label': '账变报表' }, { 'id': 48, 'label': '会员日报表' }, { 'id': 49, 'label': '下注报表' }, { 'id': 50, 'label': '充提报表' }, { 'id': 51, 'label': '充值渠道' }, { 'id': 52, 'label': '赛事报表' }] }, { 'id': 53, 'label': '订单管理', 'children': [{ 'id': 54, 'label': '足球订单', 'children': [{ 'id': 55, 'label': '查看' }, { 'id': 56, 'label': '撤单' }, { 'id': 57, 'label': '导出' }] }] }, { 'id': 58, 'label': '策略配置', 'children': [{ 'id': 59, 'label': '存款优惠', 'children': [{ 'id': 60, 'label': '增加' }, { 'id': 61, 'label': '修改' }, { 'id': 62, 'label': '删除' }] }, { 'id': 63, 'label': '返佣策略', 'children': [{ 'id': 64, 'label': '增加' }, { 'id': 65, 'label': '修改' }, { 'id': 66, 'label': '删除' }] }] }, { 'id': 67, 'label': '账务管理', 'children': [{ 'id': 68, 'label': '支付管理', 'children': [{ 'id': 69, 'label': '增加' }, { 'id': 70, 'label': '修改' }, { 'id': 71, 'label': '禁/启用' }, { 'id': 72, 'label': '查看' }, { 'id': 73, 'label': '删除' }] }, { 'id': 74, 'label': '提现方式管理', 'children': [{ 'id': 75, 'label': '增加' }, { 'id': 76, 'label': '修改' }, { 'id': 77, 'label': '禁/启用' }, { 'id': 78, 'label': '查看' }, { 'id': 79, 'label': '删除' }] }, { 'id': 80, 'label': '绑卡审核', 'children': [{ 'id': 81, 'label': '查看' }, { 'id': 82, 'label': '修改' }, { 'id': 83, 'label': '禁/启用' }, { 'id': 84, 'label': '导出' }] }, { 'id': 85, 'label': '线下充值', 'children': [{ 'id': 86, 'label': '查看' }, { 'id': 87, 'label': '导出' }] }, { 'id': 88, 'label': '线上充值', 'children': [{ 'id': 89, 'label': '查看' }, { 'id': 90, 'label': '上分' }, { 'id': 91, 'label': '导出' }] }, { 'id': 92, 'label': '提现管理', 'children': [{ 'id': 93, 'label': '查看' }, { 'id': 94, 'label': '审核' }, { 'id': 95, 'label': '导出' }] }, { 'id': 96, 'label': '上分记录', 'children': [{ 'id': 97, 'label': '导出' }] }] }, { 'id': 98, 'label': '运营管理', 'children': [{ 'id': 99, 'label': 'Banner管理', 'children': [{ 'id': 100, 'label': '增加' }, { 'id': 101, 'label': '修改' }, { 'id': 102, 'label': '禁/启用' }, { 'id': 103, 'label': '查看' }, { 'id': 104, 'label': '删除' }] }, { 'id': 105, 'label': '轮播公告', 'children': [{ 'id': 106, 'label': '增加' }, { 'id': 107, 'label': '修改' }, { 'id': 108, 'label': '禁/启用' }, { 'id': 109, 'label': '查看' }, { 'id': 110, 'label': '删除' }] }, { 'id': 111, 'label': '系统公告', 'children': [{ 'id': 112, 'label': '增加' }, { 'id': 113, 'label': '修改' }, { 'id': 114, 'label': '禁/启用' }, { 'id': 115, 'label': '查看' }, { 'id': 116, 'label': '删除' }] }] }, { 'id': 117, 'label': '商户配置', 'children': [{ 'id': 118, 'label': '参数配置', 'children': [{ 'id': 119, 'label': '系统配置' }, { 'id': 120, 'label': '注册/登录' }, { 'id': 121, 'label': '客服配置' }, { 'id': 122, 'label': '财务配置' }, { 'id': 123, 'label': '风控配置' }, { 'id': 124, 'label': '运营配置' }, { 'id': 125, 'label': '推广配置' }] }, { 'id': 126, 'label': 'VIP配置', 'children': [{ 'id': 127, 'label': '增加' }, { 'id': 128, 'label': '修改' }, { 'id': 129, 'label': '查看' }, { 'id': 130, 'label': '删除' }] }, { 'id': 131, 'label': '后台白名单', 'children': [{ 'id': 132, 'label': '增加' }, { 'id': 133, 'label': '修改' }, { 'id': 134, 'label': '禁/启用' }, { 'id': 135, 'label': '查看' }, { 'id': 136, 'label': '删除' }] }, { 'id': 137, 'label': '前端黑名单', 'children': [{ 'id': 138, 'label': '增加' }, { 'id': 139, 'label': '修改' }, { 'id': 140, 'label': '禁/启用' }, { 'id': 141, 'label': '查看' }, { 'id': 142, 'label': '删除' }] }] }, { 'id': 143, 'label': '日志管理', 'children': [{ 'id': 144, 'label': '下注日志' }, { 'id': 145, 'label': '登录日志' }, { 'id': 146, 'label': '操作日志' }, { 'id': 147, 'label': '代理迁移' }] }, { 'id': 9, 'label': '系统管理', 'children': [{ 'id': 1, 'label': '用户管理', 'children': [{ 'id': 2, 'label': '增加' }, { 'id': 3, 'label': '修改' }, { 'id': 4, 'label': '删除' }] }, { 'id': 5, 'label': '角色管理', 'children': [{ 'id': 6, 'label': '增加' }, { 'id': 7, 'label': '修改' }, { 'id': 8, 'label': '删除' }] }] }]
 }

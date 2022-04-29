@@ -1,10 +1,12 @@
 package com.oxo.ball.config;
 
 import com.oxo.ball.auth.AuthException;
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.PlayerEnabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.service.player.AuthPlayerService;
+import com.oxo.ball.service.player.IPlayerService;
 import io.undertow.util.StatusCodes;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -49,6 +51,11 @@ public class ExceptionAdvice {
     @ResponseBody
     public BaseResponse exceptionHandler(TokenInvalidedException e) {
         return new BaseResponse(TOKEN_INVALID, "登录失效或已过期");
+    }
+    @ExceptionHandler(PlayerDisabledException.class)
+    @ResponseBody
+    public BaseResponse exceptionHandler(PlayerDisabledException e) {
+        return new BaseResponse(IPlayerService.STATUS_DISABLED, "");
     }
     @ExceptionHandler(BindException.class)
     @ResponseBody

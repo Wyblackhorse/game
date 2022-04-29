@@ -2,10 +2,12 @@ package com.oxo.ball.scheduled;
 
 import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.contant.LogsContant;
+import com.oxo.ball.service.admin.IBallGameService;
 import com.oxo.ball.service.player.IPlayerBetService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,6 +30,8 @@ public class JobScheduled {
 
     @Resource
     IPlayerBetService playerBetService;
+    @Autowired
+    IBallGameService gameService;
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
@@ -43,15 +47,13 @@ public class JobScheduled {
         //清楚今日订单号
         playerBetService.clearDayOrderNo();
     }
-//    /**
-//     * 300ms
-//     * 检测是否有消息可以发送
-//     */
-//    @Scheduled(fixedDelay = 5000, initialDelay = 10000)
-//    private void wsSenddingPing() {
-//        clientSocketManager.sendPing();
-//        clientSocketManager.checkClientStatus();
-//    }
+    /**
+     * 每分钟修改开赛的比赛
+     */
+    @Scheduled(cron = "0 0/1 * * * ?")
+    private void wsSenddingPing() {
+        gameService.whenGameStart();
+    }
 
 
 

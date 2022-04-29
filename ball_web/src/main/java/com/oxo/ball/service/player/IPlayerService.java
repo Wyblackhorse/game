@@ -1,6 +1,7 @@
 package com.oxo.ball.service.player;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
@@ -12,7 +13,9 @@ import java.io.IOException;
 
 public interface IPlayerService extends IService<BallPlayer> {
 
-    BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException;
+    int  STATUS_DISABLED = 403;
+
+    BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException;
     boolean editPwd(Long id, String password);
     BaseResponse registPlayer(PlayerRegistRequest ballPlayer, String ipAddress);
     BaseResponse login(PlayerAuthLoginRequest req, HttpServletRequest request);

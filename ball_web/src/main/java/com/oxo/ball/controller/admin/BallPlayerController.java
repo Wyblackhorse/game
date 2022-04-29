@@ -6,9 +6,13 @@ import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dto.req.player.BalanceChangeRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
+import com.oxo.ball.interceptor.MainOper;
+import com.oxo.ball.interceptor.SubOper;
 import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallPlayerService;
+import com.oxo.ball.service.player.IPlayerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,7 +27,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/ball/player")
-
+@MainOper("会员管理")
 public class BallPlayerController {
 
     @Resource
@@ -32,6 +36,8 @@ public class BallPlayerController {
     IBasePlayerService iBasePlayerService;
     @Resource
     IBallBalanceChangeService ballBalanceChangeService;
+    @Autowired
+    IPlayerService playerService;
 
     @PostMapping
     public Object index(BallPlayer query, @RequestParam(defaultValue = "1")Integer pageNo, @RequestParam(defaultValue = "20") Integer pageSize){
@@ -41,14 +47,8 @@ public class BallPlayerController {
 
     @PostMapping("add")
     public Object add(@RequestBody BallPlayer sysUserRequest){
-        BallPlayer insert = new BallPlayer();
-        try {
-            insert = ballPlayerService.insert(sysUserRequest);
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("增加失败~");
+        Object insert = ballPlayerService.insert(sysUserRequest);
+        return insert;
     }
     @PostMapping("edit")
     public Object editSave(@RequestBody BallPlayer ballPlayer){
@@ -71,9 +71,13 @@ public class BallPlayerController {
         return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
     }
     @PostMapping("add_balance")
-    public Object addBalance(@RequestBody BallPlayer ballPlayer){
-        Boolean aBoolean = ballPlayerService.editAddBalance(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+    @SubOper("上分")
+    public BaseResponse<BallPlayer> addBalance(@RequestBody BallPlayer ballPlayer){
+        BaseResponse<BallPlayer> response = ballPlayerService.editAddBalance(ballPlayer);
+        if(response.getCode().equals(BaseResponse.SUCCESS.getCode())){
+            response.setRemark("会员["+response.getData().getUsername()+"]上分["+ballPlayer.getBalance()+"]");
+        }
+        return response;
     }
     @PostMapping("captcha_pass")
     public Object captchaPass(@RequestBody BallPlayer ballPlayer){
@@ -86,5 +90,11 @@ public class BallPlayerController {
         ballPlayer.setId(playerId);
         SearchResponse<BallBalanceChange> response = ballBalanceChangeService.search(ballPlayer, new BalanceChangeRequest(), pageNo, pageSize);
         return BaseResponse.successWithData(response);
+    }
+    @PostMapping("info")
+    public Object balanceChange(@RequestParam("playerId") Long playerId){
+        BallPlayer ballPlayer = BallPlayer.builder().build();
+        ballPlayer.setId(playerId);
+        return ballPlayerService.info(ballPlayer);
     }
 }

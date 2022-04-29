@@ -11,6 +11,7 @@ import com.oxo.ball.bean.dao.BallAdmin;
 import com.oxo.ball.bean.dao.BallGame;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
+import com.oxo.ball.bean.dto.req.player.GameFinishRequest;
 import com.oxo.ball.bean.dto.req.player.GameRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerRegistRequest;
@@ -94,6 +95,43 @@ public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame>
         //先ID降序再top升序
         query.orderByDesc("id");
         query.orderByAsc("top");
+        IPage<BallGame> pages = page(page, query);
+        response.setPageNo(pages.getCurrent());
+        response.setPageSize(pages.getSize());
+        response.setTotalCount(pages.getTotal());
+        response.setTotalPage(pages.getPages());
+        response.setResults(pages.getRecords());
+        return response;
+    }
+
+    @Override
+    public SearchResponse<BallGame> searchFinish(GameFinishRequest queryParam, Integer pageNo, Integer pageSize) {
+        SearchResponse<BallGame> response = new SearchResponse<>();
+        Page<BallGame> page = new Page<>(pageNo, pageSize);
+        QueryWrapper<BallGame> query = new QueryWrapper<>();
+        /**
+         * 过滤条件
+         * 一.已结束赛事
+         * 0今天1昨天7最近7天
+         * 排序条件
+         * start_time 降序
+         */
+        if(queryParam.getStartTime()==0){
+            //today
+            query.ge("start_time",TimeUtil.getDayBegin().getTime());
+            query.le("start_time",TimeUtil.getDayEnd().getTime());
+        }else if(queryParam.getStartTime()==1){
+            //yestoday
+            query.ge("start_time",TimeUtil.getBeginDayOfYesterday().getTime());
+            query.le("start_time",TimeUtil.getEndDayOfYesterday().getTime());
+        }else{
+            //7days ago
+            query.ge("start_time",TimeUtil.getDayBegin().getTime()-7*TimeUtil.TIME_ONE_DAY);
+            query.le("start_time",TimeUtil.getDayEnd().getTime());
+        }
+        query.eq("status",3);
+        //ID降序
+        query.orderByDesc("start_time");
         IPage<BallGame> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());

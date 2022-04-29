@@ -76,7 +76,7 @@
             修改
           </el-button>
           <el-button v-if="hasAuth('/ball/odds/info')" type="primary" size="mini" @click="betInfo(row)">
-            查看
+            {{$t('table.info')}}
           </el-button>
           <el-button v-if="hasAuth('/ball/odds/status')" type="primary" size="mini" @click="handleUpdate(row)">
             {{row.even==1?'关闭':'开启'}}

@@ -3,6 +3,7 @@ package com.oxo.ball.service.player;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.oxo.ball.bean.dao.BallBet;
 import com.oxo.ball.bean.dao.BallPlayer;
+import com.oxo.ball.bean.dto.req.player.BetPreRequest;
 import com.oxo.ball.bean.dto.req.player.BetRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
@@ -15,4 +16,6 @@ public interface IPlayerBetService extends IService<BallBet> {
     SearchResponse<BallBet> search(PlayerBetRequest queryParam, BallPlayer ballPlayer, Integer pageNo, Integer pageSize) ;
     Long getDayOrderNo();
     void clearDayOrderNo();
+
+    BaseResponse gameBetPrepare(BetPreRequest betRequest, BallPlayer currentPlayer);
 }

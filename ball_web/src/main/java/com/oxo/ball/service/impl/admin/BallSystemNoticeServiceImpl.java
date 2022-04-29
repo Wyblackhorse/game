@@ -40,6 +40,7 @@ public class BallSystemNoticeServiceImpl extends ServiceImpl<BallSystemNoticeMap
     @Override
     public BallSystemNotice insert(BallSystemNotice slideshow) {
         slideshow.setStatus(1);
+        slideshow.setCreatedAt(System.currentTimeMillis());
         boolean save = save(slideshow);
         return slideshow;
     }

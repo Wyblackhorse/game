@@ -1,5 +1,6 @@
 package com.oxo.ball.controller.player;
 
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallBalanceChange;
 import com.oxo.ball.bean.dao.BallBet;
@@ -54,7 +55,7 @@ public class PlayerController {
             notes = "个人资料" ,
             httpMethod = "GET")
     @GetMapping("player_info")
-    public Object getPlayerInfo(HttpServletRequest request) throws TokenInvalidedException {
+    public Object getPlayerInfo(HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer player = playerService.getCurrentUser(request);
         return BaseResponse.successWithData(basePlayerService.findById(player.getId()));
     }
@@ -72,7 +73,7 @@ public class PlayerController {
     public Object index(BalanceChangeRequest balanceChangeRequest,
                         @RequestParam(defaultValue = "1")Integer pageNo,
                         @RequestParam(defaultValue = "20") Integer pageSize,
-                        HttpServletRequest request) throws TokenInvalidedException {
+                        HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer currentUser = playerService.getCurrentUser(request);
         SearchResponse<BallBalanceChange> search = ballBalanceChangeService.search(currentUser,balanceChangeRequest, pageNo, pageSize);
         return BaseResponse.successWithData(search);
@@ -90,7 +91,7 @@ public class PlayerController {
     public Object bets(PlayerBetRequest query,
                         @RequestParam(defaultValue = "1")Integer pageNo,
                         @RequestParam(defaultValue = "20") Integer pageSize,
-                        HttpServletRequest request) throws TokenInvalidedException {
+                        HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer currentUser = playerService.getCurrentUser(request);
         SearchResponse<BallBet> search = betService.search(query,currentUser, pageNo, pageSize);
         return BaseResponse.successWithData(search);
@@ -104,7 +105,7 @@ public class PlayerController {
     })
     @PostMapping("recharge")
     public Object recharge(Long money,
-                        HttpServletRequest request) throws TokenInvalidedException {
+                        HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer currentUser = playerService.getCurrentUser(request);
         BaseResponse response = playerService.recharge(currentUser, money);
         return BaseResponse.successWithData(response);
@@ -118,7 +119,7 @@ public class PlayerController {
     })
     @PostMapping("withdrawal")
     public Object withdrawal(Long money,
-                        HttpServletRequest request) throws TokenInvalidedException {
+                        HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer currentUser = playerService.getCurrentUser(request);
         BaseResponse response = playerService.withdrawal(currentUser, money);
         return BaseResponse.successWithData(response);

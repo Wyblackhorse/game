@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallBalanceChange;
 import com.oxo.ball.bean.dao.BallPlayer;
@@ -27,6 +28,7 @@ import com.oxo.ball.utils.*;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -65,18 +67,21 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
 
 
     @Override
-    public BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException {
+    public BallPlayer getCurrentUser(HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         Long userId;
         try {
             List<String> audience = JWT.decode(request.getHeader("token")).getAudience();
             userId = Long.parseLong(audience.get(0));
             BallPlayer byId = basePlayerService.findById(userId);
             byId.setIp(IpUtil.getIpAddress(request));
+            if(byId.getStatus()==2){
+                throw new PlayerDisabledException();
+            }
             return byId;
         } catch (JWTDecodeException j) {
             throw new TokenInvalidedException();
-        } catch (Exception ex) {
-            throw new RuntimeException("内部错误");
+        } catch (PlayerDisabledException e) {
+            throw new PlayerDisabledException();
         }
     }
 
@@ -90,9 +95,12 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BaseResponse registPlayer(PlayerRegistRequest registRequest, String ipAddress) {
         Long parentPlayerId = 0L;
         String superTree = "";
+        String parentPlayerName = "";
+        BallPlayer parentPlayer=null;
         //先判断验证码是否正确
         BaseResponse baseResponse = checkVerifyCode(registRequest.getVerifyKey(), registRequest.getCode());
         if (baseResponse.getCode() != StatusCodes.OK) {
@@ -121,7 +129,7 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,errorList);
             } else {
                 //邀请码是否正确
-                BallPlayer parentPlayer = basePlayerService.findByInvitationCode(registRequest.getInvitationCode());
+                parentPlayer = basePlayerService.findByInvitationCode(registRequest.getInvitationCode());
                 if (parentPlayer == null) {
                     List<Map<String, Object>> errorList = new ArrayList<>();
                     Map<String, Object> data = new HashMap<>();
@@ -130,14 +138,17 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                     errorList.add(data);
                     return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,errorList);
                 } else {
+                    parentPlayerName = parentPlayer.getUsername();
                     //邀请码正确,注册账号上级为邀请码关联账号
                     parentPlayerId = parentPlayer.getId();
                     //tree
-                    superTree = parentPlayer.getSuperTree()+"_"+parentPlayer.getId();
+                    superTree = (StringUtils.isEmpty(parentPlayer.getSuperTree())?"":parentPlayer.getSuperTree())+parentPlayer.getId()+"_";
                 }
             }
         } else {
             //TODO 当前没有指定默认邀请码
+            //没有指定邀请码就是顶端tree path
+            superTree = "_";
         }
         String invitationCode = "";
         while (true){
@@ -161,11 +172,37 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
                 .status(1)
                 //TODO 玩家注册送888888
                 .balance(888888*BigDecimalUtil.PLAYER_MONEY_UNIT)
+                .superiorName(parentPlayerName)
                 .build();
         MapUtil.setCreateTime(save);
 
         boolean res = save(save);
         if (res) {
+            //如果保存成功，并且有上级，重新计算上级的团队和下属计数
+            if(save.getSuperiorId()!=0){
+                //上级直属下级+1,团队人数+1
+                while (true){
+                    BallPlayer parentPlayerEdit = BallPlayer.builder()
+                            .version(parentPlayer.getVersion())
+                            .directlySubordinateNum(parentPlayer.getDirectlySubordinateNum()+1)
+                            .groupSize(parentPlayer.getGroupSize()+1)
+                            .build();
+                    parentPlayerEdit.setId(parentPlayerId);
+                    boolean isSucc = basePlayerService.editAndClearCache(parentPlayerEdit, parentPlayer);
+                    if(isSucc){
+                        break;
+                    }else{
+                        parentPlayer = basePlayerService.findById(parentPlayerId);
+                    }
+                }
+                //上级的上上上。。级团队人数+1
+                String treePath = parentPlayer.getSuperTree();
+                if(!StringUtils.isEmpty(treePath)&&!treePath.equals("_")){
+                    String ids = StringUtils.join(treePath.split("_"), ",").substring(1);
+                    basePlayerService.editMultGroupNum(ids,1);
+                }
+
+            }
             redisUtil.del(RedisKeyContant.VERIFY_KEY+registRequest.getVerifyKey());
         }
         return res ? BaseResponse.successWithMsg("注册成功~") : BaseResponse.failedWithMsg("注册失败~");
@@ -196,6 +233,9 @@ public class PlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPlayer>
         BallPlayer ballPlayer = null;
         try {
             ballPlayer = basePlayerService.findByUsername(req.getUsername());
+            if(ballPlayer.getStatus()==2){
+                return BaseResponse.failedWithMsg(IPlayerService.STATUS_DISABLED,"");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

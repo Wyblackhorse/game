@@ -15,4 +15,6 @@ import com.oxo.ball.bean.dto.resp.SearchResponse;
 public interface IBallGameService extends IService<BallGame> {
 
     SearchResponse<BallGame> search(BallGame query, Integer pageNo, Integer pageSize);
+
+    void whenGameStart();
 }

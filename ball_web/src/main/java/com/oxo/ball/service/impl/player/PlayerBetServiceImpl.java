@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oxo.ball.bean.dao.*;
 import com.oxo.ball.bean.dto.queue.MessageQueueBet;
 import com.oxo.ball.bean.dto.queue.MessageQueueDTO;
+import com.oxo.ball.bean.dto.req.player.BetPreRequest;
 import com.oxo.ball.bean.dto.req.player.BetRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
@@ -16,20 +17,23 @@ import com.oxo.ball.mapper.BallBetMapper;
 import com.oxo.ball.service.IMessageQueueService;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallGameLossPerCentService;
+import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.impl.BasePlayerService;
 import com.oxo.ball.service.player.IPlayerBetService;
 import com.oxo.ball.service.player.IPlayerGameService;
 import com.oxo.ball.service.player.IPlayerService;
 import com.oxo.ball.utils.BigDecimalUtil;
-import com.oxo.ball.utils.IpUtil;
 import com.oxo.ball.utils.RedisUtil;
 import com.oxo.ball.utils.TimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> implements IPlayerBetService {
@@ -48,6 +52,8 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
     RedisUtil redisUtil;
     @Resource
     IMessageQueueService messageQueueService;
+    @Autowired
+    IBallSystemConfigService systemConfigService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -178,5 +184,27 @@ public class PlayerBetServiceImpl extends ServiceImpl<BallBetMapper, BallBet> im
     @Override
     public void clearDayOrderNo() {
         redisUtil.del(RedisKeyContant.BET_ORDER_NO);
+    }
+
+    @Override
+    public BaseResponse gameBetPrepare(BetPreRequest betRequest, BallPlayer currentPlayer) {
+        //账户余额
+        Map<String,Object> data = new HashMap<>();
+        data.put("balance",currentPlayer.getBalance());
+        //手续费
+        BallSystemConfig systemConfig = systemConfigService.getSystemConfig();
+        data.put("betHandMoneyRate",systemConfig.getBetHandMoneyRate());
+        data.put("fastMoney",systemConfig.getFastMoney());
+        //报酬率
+        //TODO 报酬率先返回赔率了
+        BallGameLossPerCent gameLossPerCent = gameLossPerCentService.findById(betRequest.getOddsId());
+        data.put("rateOfReturn",gameLossPerCent.getLossPerCent());
+        //赛事
+        data.put("game",gameService.findById(betRequest.getGameId()));
+        //赔率
+        data.put("lossPerCent",gameLossPerCent);
+        //TODO 预备下注说明,生产时删除
+        data.put("explain","字段说明:[betHandMoneyRate:手续费,需要除100?1000?],[rateOfReturn:报酬率,不懂先返回赔率了],[game:游戏],[lossPerCent]赔率");
+        return BaseResponse.successWithData(data);
     }
 }

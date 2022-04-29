@@ -7,4 +7,6 @@ public interface IBasePlayerService {
     BallPlayer findByUsername(String username);
     BallPlayer findByInvitationCode(String invitationCode);
     boolean editAndClearCache(BallPlayer edit,BallPlayer db);
+
+    void editMultGroupNum(String treeIds,int quantity);
 }

@@ -89,7 +89,7 @@
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="hasAuth('/ball/game/info')" type="primary" size="mini" @click="betInfo(row)">
-            查看
+            {{$t('table.info')}}
           </el-button>
           <el-button v-if="row.status ===1 && hasAuth('/ball/game/undo')" type="primary" size="mini" @click="handleUpdate(row)">
             撤单

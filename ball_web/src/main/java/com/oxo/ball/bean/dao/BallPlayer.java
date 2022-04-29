@@ -9,6 +9,7 @@ import java.sql.Blob;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -50,6 +51,10 @@ public class BallPlayer extends BaseDAO {
      * 直属上级(添加索引)
      */
     private Long superiorId;
+    /**
+     * 直属上级username
+     */
+    private String superiorName;
 
     /**
      * 状态1正常 2封禁
@@ -77,11 +82,6 @@ public class BallPlayer extends BaseDAO {
     private String theNewIp;
 
     /**
-     * 累计提现
-     */
-    private Long cumulativeReflect;
-
-    /**
      * 上一次登录的ip
      */
     private String theLastIp;
@@ -90,11 +90,6 @@ public class BallPlayer extends BaseDAO {
      * 会员的级别  比如他的上一级是 3  他就是4
      */
     private Integer vipLevel;
-
-    /**
-     * 累计充值
-     */
-    private Long cumulativeTopUp;
 
     /**
      * 累计中奖
@@ -122,19 +117,34 @@ public class BallPlayer extends BaseDAO {
     private Integer groupSize;
 
     /**
+     * 累计提现
+     */
+    private Long cumulativeReflect;
+    /**
+     * 提现次数
+     */
+    private Integer reflectTimes;
+    /**
      * 最大提现金额
      */
     private Long maxReflect;
-
-    /**
-     * 最大的充值金额
-     */
-    private Long maxTopUp;
-
     /**
      * 首次提现金额
      */
     private Long firstReflect;
+
+    /**
+     * 累计充值
+     */
+    private Long cumulativeTopUp;
+    /**
+     * 充值次数
+     */
+    private Integer topUpTimes;
+    /**
+     * 最大的充值金额
+     */
+    private Long maxTopUp;
 
     /**
      * 首次充值金额
@@ -145,21 +155,6 @@ public class BallPlayer extends BaseDAO {
      * 首次充值金额时间
      */
     private Long firstTopUpTime;
-
-    /**
-     * 累计打码量
-     */
-    private Long cumulativeQr;
-
-    /**
-     * 离下次提现所需要的打码量
-     */
-    private Long needQr;
-
-    /**
-     * 累计投注金额
-     */
-    private Long accumulativeBet;
 
     /**
      * 线上充值金额
@@ -182,6 +177,21 @@ public class BallPlayer extends BaseDAO {
     private Long artificialSubtract;
 
     /**
+     * 累计打码量
+     */
+    private Long cumulativeQr;
+
+    /**
+     * 离下次提现所需要的打码量
+     */
+    private Long needQr;
+
+    /**
+     * 累计投注金额
+     */
+    private Long accumulativeBet;
+
+    /**
      * 累计反水
      */
     private Long cumulativeBackWater;
@@ -192,9 +202,9 @@ public class BallPlayer extends BaseDAO {
     private Integer directlySubordinateNum;
 
     /**
-     * 提现次数
+     * 备注
      */
-    private Integer reflectTimes;
+    private String remark;
 
     /**
      * 层级关系树
@@ -202,10 +212,21 @@ public class BallPlayer extends BaseDAO {
      */
     private String superTree;
 
+
     @TableField(exist = false)
     private String editPwd;
 
     @TableField(exist = false)
     private String ip;
 
+
+    public Integer getLevelStr(){
+        if(StringUtils.isEmpty(superTree)){
+            return 0;
+        }
+        if("_".equals(superTree)){
+            return 1;
+        }
+        return superTree.split("_").length;
+    }
 }

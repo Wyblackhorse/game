@@ -45,6 +45,11 @@
           <span>{{ row.status }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.createdAt|formatDate }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" min-width="200px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="hasAuth('/ball/operation/notice/edit')" type="primary" size="mini" @click="handleUpdate(row)">

@@ -1,5 +1,6 @@
 package com.oxo.ball.bean.dao;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.oxo.ball.bean.dao.BaseDAO;
 import java.io.Serializable;
@@ -51,5 +52,20 @@ public class BallGameLossPerCent extends BaseDAO {
      */
     private Integer status;
 
+    /**
+     *  *-4说明，客赢4球(含)以上
+     *  4-*     主赢4球(含)以上
+     */
+    @TableField(exist = false)
+    private String help;
 
+    public String getHelp(){
+        if(score.startsWith("*")){
+            return "客赢"+score.split("-")[1]+"球(含)以上";
+        }
+        if(score.endsWith("*")){
+            return "主赢"+score.split("-")[0]+"球(含)以上";
+        }
+        return "";
+    }
 }

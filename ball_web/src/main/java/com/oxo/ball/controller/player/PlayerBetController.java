@@ -1,9 +1,11 @@
 package com.oxo.ball.controller.player;
 
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallGame;
 import com.oxo.ball.bean.dao.BallGameLossPerCent;
 import com.oxo.ball.bean.dao.BallPlayer;
+import com.oxo.ball.bean.dto.req.player.BetPreRequest;
 import com.oxo.ball.bean.dto.req.player.BetRequest;
 import com.oxo.ball.bean.dto.req.player.GameRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
@@ -54,7 +56,7 @@ public class PlayerBetController {
             @ApiImplicitParam(name = "money",value = "下注金额",required = true)
     })
     @PostMapping
-    public Object bets(@Validated BetRequest betRequest, HttpServletRequest request) throws TokenInvalidedException {
+    public Object bets(@Validated BetRequest betRequest, HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         try {
             BallPlayer currentPlayer = playerService.getCurrentUser(request);
             BaseResponse baseResponse = betService.gameBet(betRequest,currentPlayer);
@@ -62,6 +64,21 @@ public class PlayerBetController {
         } catch (SQLException e) {
         }
         return BaseResponse.failedWithMsg("下注失败~");
+    }
+
+    @ApiOperation(
+            value = "下注准备",
+            notes = "下注准备" ,
+            httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "gameId",value = "游戏ID",required = true),
+            @ApiImplicitParam(name = "oddsId",value = "赔率ID",required = true)
+    })
+    @PostMapping("pre")
+    public Object betsPrepare(@Validated BetPreRequest betRequest, HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
+        BallPlayer currentPlayer = playerService.getCurrentUser(request);
+        BaseResponse baseResponse = betService.gameBetPrepare(betRequest,currentPlayer);
+        return baseResponse;
     }
 
 

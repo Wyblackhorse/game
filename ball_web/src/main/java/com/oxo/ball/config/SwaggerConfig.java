@@ -34,6 +34,7 @@ public class SwaggerConfig {
                                         "<br>200-正确的响应" +
                                         "<br>401-无权访问" +
                                         "<br>402-未登录或者登录失效" +
+                                        "<br>403-账号已被禁用" +
                                         "<br>500-出错的响应" +
                                         "<br>103-表单提交项验证未通过"+
                                         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiMSIsIjE2NTAwMzIyNDc5NjYiXX0.rwa_X-9w1yQGJv7FMZQkaHwSgWJYZW7W52Xmfxf5B5g"

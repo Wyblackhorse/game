@@ -50,17 +50,21 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
-      Message({
-        message: res.msg || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
+      if (res.code === 103) {
+        // 表单提交错误
+      } else {
+        Message({
+          message: res.msg || 'Error',
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
 
       if (res.code === 402) {
         // to re-login
-        MessageBox.confirm('登陆失效，可以取消继续留在该页面，或者重新登录', '确定登出', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
+        MessageBox.confirm(this.$t('login.unlogin'), this.$t('login.logout'), {
+          confirmButtonText: this.$t('login.relogin'),
+          cancelButtonText: this.$t('table.cancel'),
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
@@ -68,19 +72,19 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(res)
     } else {
       return res
     }
   },
-  error => {
+  (error, res) => {
     // console.log('err' + error) // for debug
     Message({
       message: error.message,
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+    return Promise.reject(error, res)
   }
 )
 

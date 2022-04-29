@@ -76,7 +76,7 @@ public class BallSystemConfig implements Serializable{
     /**
      * 快捷金额
      */
-    private Long fastMoney;
+    private String fastMoney;
 
     /**
      * usdt 提现汇率

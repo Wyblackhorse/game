@@ -3,7 +3,6 @@ package com.oxo.ball.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oxo.ball.bean.dao.BallPlayer;
-import com.oxo.ball.controller.admin.BallAdminController;
 import com.oxo.ball.mapper.BallPlayerMapper;
 import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.utils.RedisUtil;
@@ -53,5 +52,10 @@ public class BasePlayerService extends ServiceImpl<BallPlayerMapper, BallPlayer>
         }catch (Exception ex){
             return false;
         }
+    }
+
+    @Override
+    public void editMultGroupNum(String treeIds,int quantity) {
+        baseMapper.updateTreeGroupNum(treeIds,quantity);
     }
 }

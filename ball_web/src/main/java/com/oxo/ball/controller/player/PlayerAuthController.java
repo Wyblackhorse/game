@@ -1,5 +1,6 @@
 package com.oxo.ball.controller.player;
 
+import com.oxo.ball.auth.PlayerDisabledException;
 import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
@@ -131,7 +132,7 @@ public class PlayerAuthController {
     @ApiImplicitParams({
     })
     @GetMapping("/logout")
-    public BaseResponse logout(HttpServletRequest request) throws TokenInvalidedException {
+    public BaseResponse logout(HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer systemUser = playerService.getCurrentUser(request);
         if(systemUser == null) {
             return new BaseResponse("未登录");
@@ -149,7 +150,7 @@ public class PlayerAuthController {
             @ApiImplicitParam(name = "confirmed",value = "再次密码",required = true),
     })
     @PostMapping("/editPwd")
-    public BaseResponse editPwd(AuthEditPwdRequest req, HttpServletRequest request) throws TokenInvalidedException {
+    public BaseResponse editPwd(AuthEditPwdRequest req, HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer player = playerService.getCurrentUser(request);
         if(player == null) {
             throw new RuntimeException("系统错误");
