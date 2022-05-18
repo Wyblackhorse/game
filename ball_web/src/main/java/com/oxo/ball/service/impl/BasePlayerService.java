@@ -21,6 +21,10 @@ public class BasePlayerService extends ServiceImpl<BallPlayerMapper, BallPlayer>
     public BallPlayer findById(Long id) {
         return getById(id);
     }
+    @Override
+    public BallPlayer findByIdNoCache(Long id) {
+        return getById(id);
+    }
 
     @Cacheable(value = "ball_player_by_username", key = "#username", unless = "#result == null")
     @Override
@@ -43,14 +47,14 @@ public class BasePlayerService extends ServiceImpl<BallPlayerMapper, BallPlayer>
     @Override
     public boolean editAndClearCache(BallPlayer edit,BallPlayer db) {
         try {
-            updateById(edit);
+            return updateById(edit);
+        }catch (Exception ex){
+            return false;
+        }finally {
             //清除账号缓存
             redisUtil.del("ball_player_by_id::"+db.getId());
             redisUtil.del("ball_player_by_username::"+db.getUsername());
             redisUtil.del("ball_player_by_invitation_code::"+db.getInvitationCode());
-            return true;
-        }catch (Exception ex){
-            return false;
         }
     }
 

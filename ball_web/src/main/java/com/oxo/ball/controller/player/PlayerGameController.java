@@ -51,7 +51,7 @@ public class PlayerGameController {
             httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "startTime",value = "日期选项0全部,1今天,2明日/昨日",required = true),
-            @ApiImplicitParam(name = "status",value = "状态选项0未结束1已结束",required = true),
+            @ApiImplicitParam(name = "status",value = "状态选项0未结束1已开始2已结束",required = true),
             @ApiImplicitParam(name = "pageNo",value = "页码"),
             @ApiImplicitParam(name = "pageSize",value = "数量")
     })

@@ -29,6 +29,9 @@ public class BallSlideshowServiceImpl extends ServiceImpl<BallSlideshowMapper, B
         if(queryParam.getStatus()!=null){
             query.eq("status",queryParam.getStatus());
         }
+        if(queryParam.getLanguage()!=null){
+            query.eq("language",queryParam.getLanguage());
+        }
         IPage<BallSlideshow> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());

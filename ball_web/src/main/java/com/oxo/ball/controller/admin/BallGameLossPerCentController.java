@@ -4,10 +4,7 @@ import com.oxo.ball.bean.dao.BallGameLossPerCent;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.service.admin.IBallGameLossPerCentService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -30,5 +27,26 @@ public class BallGameLossPerCentController {
                         @RequestParam(defaultValue = "20") Integer pageSize){
         SearchResponse<BallGameLossPerCent> search = gameLossPerCentService.search(query, pageNo, pageSize);
         return BaseResponse.successWithData(search);
+    }
+
+    @PostMapping("info")
+    public Object info(@RequestBody BallGameLossPerCent gameLossPerCent){
+        BallGameLossPerCent res = gameLossPerCentService.findById(gameLossPerCent.getId());
+        return BaseResponse.successWithData(res);
+    }
+    @PostMapping("edit")
+    public Object editSave(@RequestBody BallGameLossPerCent gameLossPerCent){
+        BaseResponse res = gameLossPerCentService.edit(gameLossPerCent);
+        return res;
+    }
+    @PostMapping("status")
+    public Object status(@RequestBody BallGameLossPerCent gameLossPerCent){
+        Boolean aBoolean = gameLossPerCentService.editStatus(gameLossPerCent);
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
+    }
+    @PostMapping("down")
+    public Object even(@RequestBody BallGameLossPerCent gameLossPerCent){
+        Boolean aBoolean = gameLossPerCentService.editStatusEven(gameLossPerCent);
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
 }

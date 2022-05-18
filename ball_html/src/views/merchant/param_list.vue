@@ -265,7 +265,7 @@ export default {
           }).then((response) => {
             if (response.code === 200) {
               this.$notify({
-                message: '修改成功',
+                message: this.$t('messages.successEdit'),
                 type: 'success',
                 duration: 2 * 1000
               })

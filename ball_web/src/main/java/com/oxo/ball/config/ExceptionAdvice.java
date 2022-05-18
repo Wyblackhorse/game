@@ -40,17 +40,17 @@ public class ExceptionAdvice {
     @ExceptionHandler(AuthException.class)
     @ResponseBody
     public BaseResponse exceptionHandler(AuthException e) {
-        return new BaseResponse(HAVE_NO_AUTH, "没有权限");
+        return new BaseResponse(HAVE_NO_AUTH, "unauthorized ");
     }
     @ExceptionHandler(PlayerEnabledException.class)
     @ResponseBody
     public BaseResponse exceptionHandler(PlayerEnabledException e) {
-        return new BaseResponse(AuthPlayerService.PLAYER_INVALID, "账号已停用");
+        return new BaseResponse(AuthPlayerService.PLAYER_INVALID, "Account disabled");
     }
     @ExceptionHandler(TokenInvalidedException.class)
     @ResponseBody
     public BaseResponse exceptionHandler(TokenInvalidedException e) {
-        return new BaseResponse(TOKEN_INVALID, "登录失效或已过期");
+        return new BaseResponse(TOKEN_INVALID, "Login failed or expired");
     }
     @ExceptionHandler(PlayerDisabledException.class)
     @ResponseBody
@@ -68,7 +68,7 @@ public class ExceptionAdvice {
                 FieldError error = (FieldError)objectError;
                 Map<String,Object> data = new HashMap<>();
                 data.put("name", error.getField());
-                data.put("msg", error.getDefaultMessage());
+                data.put("msgKey", error.getDefaultMessage());
                 errorList.add(data);
             }
         }

@@ -295,9 +295,9 @@ export default {
     },
     handleDelete(row, index) {
       var ids = row.id
-      MessageBox.confirm('你确定要删除吗？', '删除提醒', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      MessageBox.confirm(this.$t('tips.delContent'), this.$t('tips.delTitle'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
         type: 'warning'
       }).then(() => {
         request({
@@ -306,8 +306,8 @@ export default {
         }).then((response) => {
           if (response.code === 200) {
             this.$notify({
-              title: '成功',
-              message: '删除成功',
+              title: this.$t('messages.success'),
+              message: this.$t('messages.successDel'),
               type: 'success',
               duration: 2000
             })

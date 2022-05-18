@@ -41,6 +41,11 @@ public class BallPlayer extends BaseDAO {
      */
     @JsonIgnore
     private String password;
+    /**
+     * 支付提现密码
+     */
+    @JsonIgnore
+    private String payPassword;
 
     /**
      * 邀请码(每个账户生成的时候就会生成唯一性)
@@ -80,6 +85,7 @@ public class BallPlayer extends BaseDAO {
      * 最新的一次登录ip
      */
     private String theNewIp;
+    private Long theNewLoginTime;
 
     /**
      * 上一次登录的ip
@@ -137,6 +143,14 @@ public class BallPlayer extends BaseDAO {
      * 累计充值
      */
     private Long cumulativeTopUp;
+    /**
+     * 累计优惠
+     */
+    private Long cumulativeDiscount;
+    /**
+     * 累计活动金额
+     */
+    private Long cumulativeActivity;
     /**
      * 充值次数
      */

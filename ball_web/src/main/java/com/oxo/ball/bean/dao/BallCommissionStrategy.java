@@ -30,6 +30,9 @@ public class BallCommissionStrategy extends BaseDAO {
 
     /**
      * 1 下注返佣 2盈利返佣 3充值返佣
+     * 个人中心统计
+     * 今日 昨日 上周
+     *  - 列表 日期 返佣类型 返佣金额 操作
      */
     private Integer commissionStrategyType;
 

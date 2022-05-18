@@ -561,12 +561,27 @@ public class RedisUtil {
      * @param time 时间(秒)
      * @return
      */
-    public boolean lSet(String key, List<Object> value, long time) {
+    public boolean listSet(String key, List<?> value, long time) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
             if (time > 0) {
                 expire(key, time);
             }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /**
+     * 将list放入缓存
+     * @param key 键
+     * @param value 值
+     * @return
+     */
+    public boolean listSet(String key, List<?> value) {
+        try {
+            redisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

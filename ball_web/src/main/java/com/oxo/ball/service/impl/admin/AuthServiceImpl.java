@@ -11,6 +11,7 @@ import com.oxo.ball.service.admin.AuthService;
 import com.oxo.ball.service.admin.BallMenuService;
 import com.oxo.ball.service.admin.BallAdminService;
 import com.oxo.ball.utils.RedisUtil;
+import com.oxo.ball.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,15 +33,15 @@ public class AuthServiceImpl implements AuthService {
     @Resource
     BallMenuService ballMenuService;
 
-    public static final String REDIS_AUTH_KEY = "ball_auth_user_rec";
+    public static final String REDIS_AUTH_KEY = "ball_auth_user_rec::";
 
     @Override
     public String buildToken(BallAdmin user) {
         String result = JWT.create().withAudience(user.getId().toString(),
                 String.valueOf(System.currentTimeMillis()))
                 .sign(Algorithm.HMAC256(user.getPassword()));
-
-        redisUtil.hset(REDIS_AUTH_KEY, user.getId().toString(), result);
+        //TODO 账号登录过期为8小时
+        redisUtil.set(REDIS_AUTH_KEY+user.getId().toString(), result,TimeUtil.TIME_EIGHT_HOURS);
 
         return result;
     }
@@ -57,10 +58,10 @@ public class AuthServiceImpl implements AuthService {
             List<String> audience = JWT.decode(token).getAudience();
             userId = Long.parseLong(audience.get(0));
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("内部错误");
+            throw new RuntimeException("internal error");
         }
 
-        String recToken = (String)redisUtil.hget(REDIS_AUTH_KEY, userId.toString());
+        Object recToken = redisUtil.get(REDIS_AUTH_KEY+userId);
         if(!token.equals(recToken)) {
             return TOKEN_INVALID;
         }
@@ -92,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void clearAuth(@NotNull BallAdmin user) {
-        redisUtil.hdel(REDIS_AUTH_KEY, user.getId().toString());
+        redisUtil.del(REDIS_AUTH_KEY+user.getId());
     }
 
     @Override

@@ -40,7 +40,7 @@ public class BallSystemConfigController {
                 .passwordErrorLockTime(systemConfig.getPasswordErrorLockTime())
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("servicer")
     public Object servicer(@RequestBody BallSystemConfig systemConfig){
@@ -49,7 +49,7 @@ public class BallSystemConfigController {
                 .serverUrl(systemConfig.getServerUrl())
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("finance")
     public Object finance(@RequestBody BallSystemConfig systemConfig){
@@ -70,7 +70,7 @@ public class BallSystemConfigController {
                 .withdrawPasswordShowNeed(systemConfig.getWithdrawPasswordShowNeed())
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("risk")
     public Object risk(@RequestBody BallSystemConfig systemConfig){
@@ -80,7 +80,7 @@ public class BallSystemConfigController {
 
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("operate")
     public Object operate(@RequestBody BallSystemConfig systemConfig){
@@ -89,7 +89,7 @@ public class BallSystemConfigController {
                 .serverUrl(systemConfig.getServerUrl())
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("share")
     public Object share(@RequestBody BallSystemConfig systemConfig){
@@ -98,7 +98,7 @@ public class BallSystemConfigController {
                 .serverUrl(systemConfig.getServerUrl())
                 .build();
         Boolean aBoolean = systemConfigService.edit(edit);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
 
 }

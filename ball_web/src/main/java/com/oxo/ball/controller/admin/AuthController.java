@@ -80,11 +80,11 @@ public class AuthController {
             userBean.setGtokenQr(qrCodeImageBase64);
             return BaseResponse.successWithData(userBean);
         }
-        Object hget = redisUtil.hget(AuthServiceImpl.REDIS_AUTH_KEY, ballAdmin.getId().toString());
-        if (hget == null || StringUtils.isEmpty(hget.toString())) {
+        Object get = redisUtil.get(AuthServiceImpl.REDIS_AUTH_KEY+ballAdmin.getId().toString());
+        if (get == null || StringUtils.isEmpty(get.toString())) {
             userBean.setToken(authService.buildToken(ballAdmin));
         } else {
-            userBean.setToken(hget.toString());
+            userBean.setToken(get.toString());
         }
         String rightCode = GoogleAuthenticationTool.getTOTPCode(ballAdmin.getGoogleCode());
         if (!rightCode.equals(req.getGoogleCode())) {
@@ -99,12 +99,12 @@ public class AuthController {
     public BaseResponse bindGoogleValid(@RequestBody AuthLoginRequest loginRequest) {
         BallAdmin ballAdmin = ballAdminService.findByUsername(loginRequest.getUsername());
         if (!StringUtils.isEmpty(ballAdmin.getGoogleCode())) {
-            return BaseResponse.failedWithMsg("已经绑定了google验证码，不需要重复绑定~");
+            return BaseResponse.failedWithMsg("The Google verification code has been bound. There is no need to bind it again");
         }
         String rightCode = GoogleAuthenticationTool.getTOTPCode(loginRequest.getGoogleKey());
         System.out.println(rightCode);
         if (!rightCode.equals(loginRequest.getGoogleCode())) {
-            return BaseResponse.failedWithMsg("google验证码输入错误~");
+            return BaseResponse.failedWithMsg("Google verification code input error");
         }
         //验证码正确
         SysUserEditRequest edit = new SysUserEditRequest();
@@ -114,11 +114,11 @@ public class AuthController {
         AuthLoginResponse userBean = new AuthLoginResponse();
         userBean.setId(ballAdmin.getId());
         userBean.setUserName(ballAdmin.getUsername());
-        Object hget = redisUtil.hget(AuthServiceImpl.REDIS_AUTH_KEY, ballAdmin.getId().toString());
-        if (hget == null || StringUtils.isEmpty(hget.toString())) {
+        Object get = redisUtil.get(AuthServiceImpl.REDIS_AUTH_KEY+ballAdmin.getId().toString());
+        if (get == null || StringUtils.isEmpty(get.toString())) {
             userBean.setToken(authService.buildToken(ballAdmin));
         } else {
-            userBean.setToken(hget.toString());
+            userBean.setToken(get.toString());
         }
         return new BaseResponse<>(userBean);
     }
@@ -154,7 +154,7 @@ public class AuthController {
     public BaseResponse editPwd(@RequestBody AuthEditPwdRequest req, HttpServletRequest request) {
         BallAdmin systemUser = ballAdminService.getCurrentUser(request.getHeader("token"));
         if (systemUser == null) {
-            throw new RuntimeException("系统错误");
+            throw new RuntimeException("system error");
         }
 
         if (!systemUser.getPassword().equals(PasswordUtil.genPasswordMd5(req.getOrigin()))) {
@@ -168,7 +168,7 @@ public class AuthController {
         if (!ballAdminService.editPwd(systemUser.getId(), PasswordUtil.genPasswordMd5(req.getConfirmed()))) {
             throw new RuntimeException("系统错误");
         }
-        redisUtil.hdel(AuthServiceImpl.REDIS_AUTH_KEY, systemUser.getId().toString());
+        redisUtil.del(AuthServiceImpl.REDIS_AUTH_KEY+systemUser.getId().toString());
         return new BaseResponse(StatusCodes.OK, "修改成功");
     }
 }

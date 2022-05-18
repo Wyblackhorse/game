@@ -40,13 +40,13 @@ public class BallAnnouncementController {
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("增加失败~");
+        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("add error");
     }
     @SubOper("修改")
     @PostMapping("edit")
     public Object editSave(@RequestBody BallAnnouncement ballPlayer){
         Boolean aBoolean = announcementService.edit(ballPlayer);
-        BaseResponse res = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("修改失败~"));
+        BaseResponse res = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("edit error"));
         res.setRemark("id"+ballPlayer.getId());
         return res;
     }
@@ -54,14 +54,14 @@ public class BallAnnouncementController {
     @PostMapping("status")
     public Object status(@RequestBody BallAnnouncement ballPlayer){
         Boolean aBoolean = announcementService.status(ballPlayer);
-        BaseResponse res = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("修改失败~"));
-        res.setRemark("id"+ballPlayer.getId()+"状态设置为"+ballPlayer.getStatus());
+        BaseResponse res = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("edit error"));
+        res.setRemark("id"+ballPlayer.getId()+" set status "+ballPlayer.getStatus());
         return  res;
     }
     @SubOper("删除")
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){
         Boolean delete = announcementService.delete(id);
-        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("删除失败~");
+        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("del error");
     }
 }

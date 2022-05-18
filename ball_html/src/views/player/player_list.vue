@@ -89,7 +89,7 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-if="hasAuth('/ball/player/edit')" @click.native="handleCommandData('a1',row)">{{$t('page.player.edit')}}</el-dropdown-item>
+                <el-dropdown-item v-if="hasAuth('/ball/player/edit')" @click.native="handleCommandData('a1',row)">{{$t('page.edit')}}</el-dropdown-item>
                 <el-dropdown-item v-if="hasAuth('/ball/player/edit_pwd')" @click.native="handleCommandData('a2',row)">{{$t('page.player.editPwd')}}</el-dropdown-item>
                 <el-dropdown-item v-if="hasAuth('/ball/player/edit_pay_pwd')" @click.native="handleCommandData('a3',row)">{{$t('page.player.editPayPwd')}}</el-dropdown-item>
                 <el-dropdown-item v-if="hasAuth('/ball/player/status')" @click.native="handleCommandData('a4',row)">{{ $t('form.statusOper')[row.status%2].name }}</el-dropdown-item>
@@ -159,7 +159,7 @@
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="dialogStatus===0?createData():updateData()">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
@@ -194,7 +194,7 @@
             <span>{{ row.dnedMoney|balance }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('balanceChange.balanceChange')" prop="balanceChangeType" align="center">
+        <el-table-column :label="$t('balanceChange.balanceChangeType')" prop="balanceChangeType" align="center">
           <template slot-scope="{row}">
             <span>{{ $t('balanceChange.changeTypes')[row.balanceChangeType-1].name }}</span>
           </template>
@@ -745,6 +745,7 @@ export default {
       this.dialogStatus = 0
       this.dialogFormVisible = true
       this.showAdd = true
+      this.showEdit = false
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })

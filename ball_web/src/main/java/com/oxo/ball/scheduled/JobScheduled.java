@@ -1,7 +1,9 @@
 package com.oxo.ball.scheduled;
 
 import com.oxo.ball.bean.dto.req.player.PlayerBetRequest;
+import com.oxo.ball.config.SomeConfig;
 import com.oxo.ball.contant.LogsContant;
+import com.oxo.ball.service.admin.IApiService;
 import com.oxo.ball.service.admin.IBallGameService;
 import com.oxo.ball.service.player.IPlayerBetService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,10 @@ public class JobScheduled {
     IPlayerBetService playerBetService;
     @Autowired
     IBallGameService gameService;
+    @Autowired
+    IApiService apiService;
+    @Autowired
+    SomeConfig someConfig;
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
@@ -55,6 +61,28 @@ public class JobScheduled {
         gameService.whenGameStart();
     }
 
+    /**
+     * 每分钟查询比赛比分
+     */
+    @Scheduled(fixedDelay = 60000,initialDelay = 8000)
+    private void refreshGame() {
+        if(someConfig.getApiSwitch()==null){
+            apiService.refreshFixturesAll();
+        }
+    }
 
-
+    /**
+     * 每小时更新联赛数据
+     */
+    @Scheduled(fixedDelay = 3600000,initialDelay = 3600000)
+    private void refreshLeagues() {
+//        apiService.refreshLeagues();
+    }
+    /**
+     * 每分钟修改开赛的比赛
+     */
+    @Scheduled(cron = "0 0/1 * * * ?")
+    private void requestOdds() {
+        apiService.refreshOdds();
+    }
 }

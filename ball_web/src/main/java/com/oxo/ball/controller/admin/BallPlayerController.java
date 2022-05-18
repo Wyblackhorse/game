@@ -53,22 +53,22 @@ public class BallPlayerController {
     @PostMapping("edit")
     public Object editSave(@RequestBody BallPlayer ballPlayer){
         Boolean aBoolean = ballPlayerService.edit(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("edit_pwd")
     public Object editPwd(@RequestBody BallPlayer ballPlayer){
         Boolean aBoolean = ballPlayerService.editPwd(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("edit_pay_pwd")
     public Object editPayPwd(@RequestBody BallPlayer ballPlayer){
         Boolean aBoolean = ballPlayerService.editPayPwd(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("status")
     public Object status(@RequestBody BallPlayer ballPlayer){
         Boolean aBoolean = ballPlayerService.editStatus(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("add_balance")
     @SubOper("上分")
@@ -82,7 +82,7 @@ public class BallPlayerController {
     @PostMapping("captcha_pass")
     public Object captchaPass(@RequestBody BallPlayer ballPlayer){
         Boolean aBoolean = ballPlayerService.editCaptchaPass(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改账号信息失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("error");
     }
     @PostMapping("log")
     public Object balanceChange(@RequestParam("playerId") Long playerId,@RequestParam(defaultValue = "1")Integer pageNo, @RequestParam(defaultValue = "20") Integer pageSize){

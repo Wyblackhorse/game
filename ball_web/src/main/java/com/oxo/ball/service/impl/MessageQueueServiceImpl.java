@@ -62,6 +62,8 @@ public class MessageQueueServiceImpl implements IMessageQueueService {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } catch (Exception ex){
+                ex.printStackTrace();
             }
         }
     }
@@ -72,9 +74,7 @@ public class MessageQueueServiceImpl implements IMessageQueueService {
         BallPlayer ballPlayer = data.getBallPlayer();
         if(!StringUtils.isEmpty(ballPlayer.getSuperTree())){
             //有上线
-            String[] superId = ballPlayer.getSuperTree().split("_");
-            BallPlayer superPlayer = basePlayerService.findById(Long.parseLong(superId[0]));
-            superName = superPlayer.getUsername();
+            superName = getSuperPlayerName(superName, ballPlayer);
         }
         loggerBetService.insert(BallLoggerBet.builder()
                 .createdAt(System.currentTimeMillis())
@@ -84,6 +84,20 @@ public class MessageQueueServiceImpl implements IMessageQueueService {
                 .playerName(data.getBallPlayer().getUsername())
                 .superPlayerName(superName)
                 .build());
+    }
+
+    private String getSuperPlayerName(String superName, BallPlayer ballPlayer) {
+        if(!StringUtils.isEmpty(ballPlayer.getSuperTree()) || !("_".equals(ballPlayer.getSuperTree()))){
+            //有上线
+            String superTree =ballPlayer.getSuperTree().startsWith("_")?ballPlayer.getSuperTree().substring(1):ballPlayer.getSuperTree();
+            String[] superId = superTree.split("_");
+            try {
+                BallPlayer superPlayer = basePlayerService.findById(Long.parseLong(superId[0]));
+                superName = superPlayer.getUsername();
+            }catch (Exception ex){
+            }
+        }
+        return superName;
     }
 
     private void logOper(MessageQueueDTO message) {
@@ -102,12 +116,7 @@ public class MessageQueueServiceImpl implements IMessageQueueService {
         MessageQueueLogin data = (MessageQueueLogin) message.getData();
         BallPlayer ballPlayer = data.getBallPlayer();
         String superName = "";
-        if(!StringUtils.isEmpty(ballPlayer.getSuperTree())){
-            //有上线
-            String[] superId = ballPlayer.getSuperTree().split("_");
-            BallPlayer superPlayer = basePlayerService.findById(Long.parseLong(superId[0]));
-            superName = superPlayer.getUsername();
-        }
+        superName = getSuperPlayerName(superName, ballPlayer);
         //登录日志
         try {
             loggerService.insert(BallLoggerLogin.builder()
@@ -122,7 +131,11 @@ public class MessageQueueServiceImpl implements IMessageQueueService {
         }
         //修改最新一次登录IP
         BallPlayer edit = BallPlayer.builder()
-                .theLastIp(data.getIp())
+                //上次登录IP
+                .theLastIp(ballPlayer.getTheLastIp())
+                //最新登录IP
+                .theNewIp(data.getIp())
+                .theNewLoginTime(System.currentTimeMillis())
                 .build();
         edit.setId(ballPlayer.getId());
         basePlayerService.editAndClearCache(edit,ballPlayer);

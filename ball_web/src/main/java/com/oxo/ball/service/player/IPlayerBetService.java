@@ -16,6 +16,10 @@ public interface IPlayerBetService extends IService<BallBet> {
     SearchResponse<BallBet> search(PlayerBetRequest queryParam, BallPlayer ballPlayer, Integer pageNo, Integer pageSize) ;
     Long getDayOrderNo();
     void clearDayOrderNo();
-
     BaseResponse gameBetPrepare(BetPreRequest betRequest, BallPlayer currentPlayer);
+    BaseResponse unbet(Long betId, BallPlayer currentUser);
+
+    BaseResponse betInfo(Long betId, BallPlayer currentUser);
+
+    boolean edit(BallBet edit);
 }

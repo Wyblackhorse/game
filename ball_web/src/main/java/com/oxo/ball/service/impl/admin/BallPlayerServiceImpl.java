@@ -13,14 +13,13 @@ import com.oxo.ball.mapper.BallPlayerMapper;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.oxo.ball.service.admin.IBallPlayerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.impl.BasePlayerService;
-import com.oxo.ball.utils.BigDecimalUtil;
-import com.oxo.ball.utils.MapUtil;
-import com.oxo.ball.utils.PasswordUtil;
-import com.oxo.ball.utils.TimeUtil;
+import com.oxo.ball.utils.*;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +44,8 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
     BasePlayerService playerService;
     @Resource
     IBallBalanceChangeService ballBalanceChangeService;
+    @Autowired
+    IBallSystemConfigService systemConfigService;
 
     @Override
     public SearchResponse<BallPlayer> search(BallPlayer paramQuery, Integer pageNo, Integer pageSize) {
@@ -80,25 +81,18 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
         String parentPlayerName = "";
         BallPlayer parentPlayer=null;
         //检查数据库里面是否有用户名
-        List<Map<String, Object>> errorList = new ArrayList<>();
         BallPlayer ballPlayer = playerService.findByUsername(registRequest.getUsername());
         if (ballPlayer != null) {
-            Map<String, Object> data = new HashMap<>();
-            data.put("name", "username");
-            data.put("msgKey", "name_exsit");
-            errorList.add(data);
-            return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,errorList);
+            return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,
+                    ResponseMessageUtil.responseMessage("username", "name_exsit"));
         }
         //是否有输入上级
         if(!"0".equals(registRequest.getSuperiorName()) && !StringUtils.isEmpty(registRequest.getSuperiorName())) {
             //邀请码是否正确
             parentPlayer = playerService.findByUsername(registRequest.getSuperiorName());
             if (parentPlayer == null) {
-                Map<String, Object> data = new HashMap<>();
-                data.put("name", "superiorName");
-                data.put("msgKey", "superiorName");
-                errorList.add(data);
-                return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,errorList);
+                return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,
+                        ResponseMessageUtil.responseMessage("superiorName", "superiorName"));
             } else {
                 parentPlayerName = parentPlayer.getUsername();
                 //邀请码正确,注册账号上级为邀请码关联账号
@@ -159,7 +153,7 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
                 }
             }
         }
-        return res ? BaseResponse.successWithMsg("注册成功~") : BaseResponse.failedWithMsg("注册失败~");
+        return res ? BaseResponse.successWithMsg("ok") : BaseResponse.failedWithMsg("error");
     }
 
     @Override
@@ -288,10 +282,27 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
     @Transactional(rollbackFor = Exception.class)
     public BaseResponse editAddBalance(BallPlayer ballPlayer) {
         BallPlayer byId = playerService.findById(ballPlayer.getId());
+        BallSystemConfig systemConfig = systemConfigService.getSystemConfig();
+        Long realMoney = ballPlayer.getBalance()*BigDecimalUtil.PLAYER_MONEY_UNIT;
         BallPlayer edit = BallPlayer.builder()
-                .balance(byId.getBalance()+ballPlayer.getBalance()*BigDecimalUtil.PLAYER_MONEY_UNIT)
+                .version(byId.getVersion())
+                .balance(byId.getBalance()+realMoney)
                 .build();
         edit.setId(ballPlayer.getId());
+        if(systemConfig.getRegisterIfNeedVerificationCode()!=null&&systemConfig.getRegisterIfNeedVerificationCode()>0){
+            //累计打码量,查询配置,是否需要*比例
+            edit.setCumulativeQr((byId.getCumulativeQr()==null?0:byId.getCumulativeQr())+realMoney*systemConfig.getRechargeCodeConversionRate());
+        }else{
+            edit.setCumulativeQr((byId.getCumulativeQr()==null?0:byId.getCumulativeQr())+realMoney);
+        }
+        if(systemConfig.getCaptchaThreshold()!=null&&systemConfig.getCaptchaThreshold()>0){
+            //离下次提现所需captchaThreshold要打码量,如果当前打码量>设置的量,则为0,否则为相差数
+            if(edit.getCumulativeQr()>systemConfig.getCaptchaThreshold()){
+                edit.setNeedQr(0L);
+            }else{
+                edit.setNeedQr(systemConfig.getCaptchaThreshold()-edit.getCumulativeQr());
+            }
+        }
         while(true){
             boolean b = playerService.editAndClearCache(edit, byId);
             if(b){
@@ -299,9 +310,11 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
                 ballBalanceChangeService.insert(BallBalanceChange.builder()
                         .playerId(byId.getId())
                         .initMoney(byId.getBalance())
-                        .changeMoney(ballPlayer.getBalance()*BigDecimalUtil.PLAYER_MONEY_UNIT)
+                        .changeMoney(realMoney)
                         .dnedMoney(edit.getBalance())
-                        .remark("管理员上分")
+                        // key:admin_add
+//                        .remark("管理员上分")
+//                        .remark("admin_add")
                         .createdAt(System.currentTimeMillis())
                         .balanceChangeType(6)
                         .build());
@@ -309,7 +322,7 @@ public class BallPlayerServiceImpl extends ServiceImpl<BallPlayerMapper, BallPla
             }else{
                 byId = playerService.findById(ballPlayer.getId());
                 edit.setVersion(byId.getVersion());
-                edit.setBalance(byId.getBalance()+ballPlayer.getBalance()*BigDecimalUtil.PLAYER_MONEY_UNIT);
+                edit.setBalance(byId.getBalance()+realMoney);
             }
         }
     }

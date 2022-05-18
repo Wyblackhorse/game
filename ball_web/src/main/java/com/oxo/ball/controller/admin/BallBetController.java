@@ -4,10 +4,7 @@ import com.oxo.ball.bean.dao.BallBet;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.service.admin.IBallBetService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -33,5 +30,17 @@ public class BallBetController {
         SearchResponse<BallBet> search = betService.search(query, pageNo, pageSize);
         return BaseResponse.successWithData(search);
     }
+
+    @PostMapping("undo")
+    public Object undo(@RequestBody BallBet query){
+        BaseResponse res = betService.undo(query);
+        return res;
+    }
+    @PostMapping("info")
+    public Object info(@RequestBody BallBet query){
+        BaseResponse res = betService.info(query);
+        return res;
+    }
+
 
 }

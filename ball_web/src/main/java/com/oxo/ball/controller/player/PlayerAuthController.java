@@ -5,21 +5,21 @@ import com.oxo.ball.auth.TokenInvalidedException;
 import com.oxo.ball.bean.dao.BallPlayer;
 import com.oxo.ball.bean.dao.BallSystemConfig;
 import com.oxo.ball.bean.dto.req.AuthEditPwdRequest;
+import com.oxo.ball.bean.dto.req.player.AuthSetPayPwdRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerAuthLoginRequest;
 import com.oxo.ball.bean.dto.req.player.PlayerRegistRequest;
 import com.oxo.ball.bean.dto.resp.BaseResponse;
+import com.oxo.ball.service.IBasePlayerService;
 import com.oxo.ball.service.admin.IBallSystemConfigService;
 import com.oxo.ball.service.impl.player.PlayerAuthServiceImpl;
 import com.oxo.ball.service.player.IPlayerService;
-import com.oxo.ball.utils.IpUtil;
-import com.oxo.ball.utils.MapUtil;
-import com.oxo.ball.utils.PasswordUtil;
-import com.oxo.ball.utils.RedisUtil;
+import com.oxo.ball.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,13 +43,20 @@ public class PlayerAuthController {
     RedisUtil redisUtil;
     @Resource
     IBallSystemConfigService systemConfigService;
+    @Autowired
+    IBasePlayerService basePlayerService;
 
     @ApiOperation(
             value = "登录认证",
             notes = "登录认证" +
                     "<br>响应code" +
                     "<br>101-密码输入错误计数"+
-                    "<br>102-密码输入错误上限",
+                    "<br>102-密码输入错误上限"+
+                    "<br>codeTimeOut:验证码已过期"+
+                    "<br>codeError:验证码不正确"+
+                    "<br>pwdErrorMax:密码输入错误次数已达上限"+
+                    "<br>pwdErrorCount:密码错误次数N次"+
+                    "",
             httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username",value = "账号",required = true),
@@ -135,7 +143,7 @@ public class PlayerAuthController {
     public BaseResponse logout(HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer systemUser = playerService.getCurrentUser(request);
         if(systemUser == null) {
-            return new BaseResponse("未登录");
+            return new BaseResponse("not login");
         }
         return new BaseResponse(StatusCodes.OK, "注销成功");
     }
@@ -150,26 +158,28 @@ public class PlayerAuthController {
             @ApiImplicitParam(name = "confirmed",value = "再次密码",required = true),
     })
     @PostMapping("/editPwd")
-    public BaseResponse editPwd(AuthEditPwdRequest req, HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
+    public BaseResponse editPwd(@Validated AuthEditPwdRequest req, HttpServletRequest request) throws TokenInvalidedException, PlayerDisabledException {
         BallPlayer player = playerService.getCurrentUser(request);
-        if(player == null) {
-            throw new RuntimeException("系统错误");
-        }
 
         if(!player.getPassword().equals(PasswordUtil.genPasswordMd5(req.getOrigin()))) {
-            throw new RuntimeException("原始密码不一致");
+            return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,
+                    ResponseMessageUtil.responseMessage("origin","originError"));
         }
 
         if(!req.getConfirmed().equals(req.getNewpwd())) {
-            throw new RuntimeException("确认密码不一致");
+            return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,
+                    ResponseMessageUtil.responseMessage("confirmed","confirmedError"));
         }
 
-        if(!playerService.editPwd(player.getId(), PasswordUtil.genPasswordMd5(req.getConfirmed()))) {
-            throw new RuntimeException("系统错误");
+        BallPlayer edit = BallPlayer.builder()
+                .password(PasswordUtil.genPasswordMd5(req.getConfirmed()))
+                .build();
+        edit.setId(player.getId());
+        if(!basePlayerService.editAndClearCache(edit, player)) {
+            return BaseResponse.failedWithData(BaseResponse.FAIL_FORM_SUBMIT,
+                    ResponseMessageUtil.responseMessage("","updateFailed"));
         }
         redisUtil.hdel(PlayerAuthServiceImpl.REDIS_PLAYER_AUTH_KEY, player.getId().toString());
-        return new BaseResponse(StatusCodes.OK, "修改成功");
+        return new BaseResponse(StatusCodes.OK, "edit success");
     }
-
-
 }

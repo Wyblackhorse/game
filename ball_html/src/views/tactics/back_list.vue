@@ -32,29 +32,29 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="优惠名称" align="center">
+      <el-table-column :label="$t('form.commissionStrategy.name')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="优惠类型" align="center">
+      <el-table-column :label="$t('form.commissionStrategy.commissionStrategyType')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.commissionStrategyType }}</span>
+          <span>{{ $t('form.commissionStrategy.commissionStrategyTypes')[row.commissionStrategyType-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="返佣层级" align="center">
+      <el-table-column :label="$t('form.commissionStrategy.commissionLevel')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.commissionLevel }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="自动发放" align="center">
+      <el-table-column :label="$t('form.commissionStrategy.automaticDistribution')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.automaticDistribution }}</span>
+          <span>{{ $t('form.commissionStrategy.automaticDistributions')[row.automaticDistribution-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center">
+      <el-table-column :label="$t('form.status')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span>{{ $t('form.statusOper')[row.status-1].name }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -87,7 +87,7 @@
       @pagination="getList"
     />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="$t('form.textMap')[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
         :rules="rules"
@@ -96,25 +96,25 @@
         label-width="90px"
         style="padding-left:30px;padding-right: 30px"
       >
-        <el-form-item label="优惠名称" prop="name">
+        <el-form-item :label="$t('form.commissionStrategy.name')" prop="name">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item label="优惠类型" prop="depositPolicyType">
-          <el-select v-model="temp.commissionStrategyType" style="width: 100%" clearable placeholder="优惠类型">
+        <el-form-item :label="$t('form.commissionStrategy.commissionStrategyType')" prop="depositPolicyType">
+          <el-select v-model="temp.commissionStrategyType" style="width: 100%" clearable :placeholder="$t('form.commissionStrategy.commissionStrategyType')">
             <el-option
-              v-for="item in policyTypes"
+              v-for="item in $t('form.commissionStrategy.commissionStrategyTypes')"
               :key="item.value"
               :label="item.name"
               :value="item.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="返佣层级" prop="commissionLevel">
+        <el-form-item :label="$t('form.commissionStrategy.commissionLevel')" prop="commissionLevel">
           <el-input v-model="temp.commissionLevel" />
         </el-form-item>
-        <el-form-item label="自动发放" prop="automaticDistribution">
-          <el-radio v-model="temp.automaticDistribution" :label=1>自动</el-radio>
-          <el-radio v-model="temp.automaticDistribution" :label=2>手动</el-radio>
+        <el-form-item :label="$t('form.commissionStrategy.automaticDistribution')" prop="automaticDistribution">
+          <el-radio v-model="temp.automaticDistribution" :label=1>{{$t('form.commissionStrategy.automaticDistributions')[0].name}}</el-radio>
+          <el-radio v-model="temp.automaticDistribution" :label=2>{{$t('form.commissionStrategy.automaticDistributions')[1].name}}</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -154,17 +154,11 @@ export default {
         depositPolicyType: ''
       },
       dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: '编辑',
-        create: '创建'
-      },
-      policyTypes: [{ name: '下注返佣', value: 1 }, { name: '盈利返佣', value: 2 }, { name: '充值返佣', value: 2 }],
+      dialogStatus: 0,
       rules: {
         username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
-      },
-      roles: []
+      }
     }
   },
   created() {
@@ -227,7 +221,7 @@ export default {
     },
     handleCreate() {
       this.resetTemp()
-      this.dialogStatus = 'create'
+      this.dialogStatus = 1
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -249,7 +243,7 @@ export default {
               this.dialogFormVisible = false
               this.list.unshift(response.data)
               this.$message({
-                message: '添加成功',
+                message: this.$t('messages.successAdd'),
                 type: 'success',
                 duration: 3 * 1000
               })
@@ -260,7 +254,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'update'
+      this.dialogStatus = 0
       this.dialogFormVisible = true
       this.temp.start = this.temp.startStr
       this.temp.end = this.temp.endStr
@@ -282,7 +276,7 @@ export default {
               this.dialogFormVisible = false
               this.list.splice(index, 1, this.temp)
               this.$notify({
-                message: '修改成功',
+                message: this.$t('messages.successEdit'),
                 type: 'success',
                 duration: 2 * 1000
               })
@@ -293,9 +287,9 @@ export default {
     },
     handleDelete(row, index) {
       var ids = row.id
-      MessageBox.confirm('你确定要删除吗？', '删除提醒', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      MessageBox.confirm(this.$t('tips.delContent'), this.$t('tips.delTitle'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
         type: 'warning'
       }).then(() => {
         request({
@@ -304,8 +298,8 @@ export default {
         }).then((response) => {
           if (response.code === 200) {
             this.$notify({
-              title: '成功',
-              message: '删除成功',
+              title: this.$t('messages.success'),
+              message: this.$t('messages.successDel'),
               type: 'success',
               duration: 2000
             })

@@ -1,5 +1,7 @@
 package com.oxo.ball.utils;
 
+import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
@@ -161,5 +163,12 @@ public class BigDecimalUtil {
     public static DecimalFormat decimalFormat = new DecimalFormat("#.###");
     public static String formatNumber(double num){
         return decimalFormat.format(num);
+    }
+
+    public static String antiPerCent(String odd) {
+        //反波 = 1/正波*40
+        Double aDouble = Double.valueOf(odd);
+        double div = mul(div(1, aDouble,2),40);
+        return String.valueOf(div);
     }
 }

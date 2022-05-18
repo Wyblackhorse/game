@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * <p>
@@ -32,6 +33,9 @@ public class BallDepositPolicyServiceImpl extends ServiceImpl<BallDepositPolicyM
         if(queryParam.getStatus()!=null){
             query.eq("status",queryParam.getStatus());
         }
+        if(queryParam.getDepositPolicyType()!=null){
+            query.eq("deposit_policy_type",queryParam.getDepositPolicyType());
+        }
         IPage<BallDepositPolicy> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());
@@ -39,6 +43,23 @@ public class BallDepositPolicyServiceImpl extends ServiceImpl<BallDepositPolicyM
         response.setTotalPage(pages.getPages());
         response.setResults(pages.getRecords());
         return response;
+    }
+
+    @Override
+    public BallDepositPolicy getCurrentDepositPolicy(int type) {
+        QueryWrapper<BallDepositPolicy> query = new QueryWrapper<>();
+        query.eq("status",1);
+        query.eq("deposit_policy_type",type);
+        //当前可用的,小于结束时间
+        query.le("end_time",TimeUtil.getNowTimeMill());
+        //大于开始时间
+        query.gt("start_time",TimeUtil.getNowTimeMill());
+        query.orderByDesc("preferential_per");
+        List<BallDepositPolicy> list = list(query);
+        if(list!=null&&!list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
     }
 
     @Override

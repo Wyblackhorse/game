@@ -53,7 +53,7 @@ public class PlayerAuthServiceImpl implements AuthPlayerService {
             List<String> audience = JWT.decode(token).getAudience();
             userId = Long.parseLong(audience.get(0));
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("内部错误");
+            return TOKEN_INVALID;
         }
 
         String recToken = (String)redisUtil.hget(REDIS_PLAYER_AUTH_KEY, userId.toString());

@@ -20,69 +20,64 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="赛事ID" align="center">
+      <el-table-column :label="$t('page.odds.gameId')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.gameId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="赔率ID" align="center">
+      <el-table-column :label="$t('page.odds.id')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="比分" align="center">
+      <el-table-column :label="$t('page.odds.score')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.score }}</span>
+          <span>{{ row.scoreHome }}-{{ row.scoreAway }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="比赛类型" align="center">
+      <el-table-column :label="$t('page.odds.gameType')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gameType }}</span>
+          <span>{{ $t('form.odds.gameType')[row.gameType-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="反波赔率" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.lossPerCent }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="正波赔率" align="center">
+      <el-table-column :label="$t('page.odds.lossPerCent')" align="center">
         <template slot-scope="{row}">
           <span>{{ row.lossPerCent }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" align="center">
+      <el-table-column :label="$t('page.odds.antiPerCent')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt }}</span>
+          <span>{{ row.antiPerCent }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="同步时间" align="center">
+      <el-table-column :label="$t('page.odds.updatedAt')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt }}</span>
+          <span>{{ row.updatedAt | formatDate}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保本状态" align="center">
+      <el-table-column :label="$t('page.odds.even')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.even }}</span>
+          <span>{{ $t('page.game.evenStatusArr')[row.even-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center">
+      <el-table-column :label="$t('page.odds.status')" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span>{{ $t('page.game.statusArr')[row.status-1].name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" min-width="280px" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')" align="center" min-width="180px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="hasAuth('/ball/odds/edit')" type="primary" size="mini" @click="handleUpdate(row)">
-            修改
+            {{$t('page.edit')}}
           </el-button>
-          <el-button v-if="hasAuth('/ball/odds/info')" type="primary" size="mini" @click="betInfo(row)">
-            {{$t('table.info')}}
+          <!--<el-button v-if="hasAuth('/ball/odds/info')" type="primary" size="mini" @click="oddsinfo(row)">-->
+            <!--{{$t('table.info')}}-->
+          <!--</el-button>-->
+          <el-button v-if="hasAuth('/ball/odds/status')" type="primary" size="mini" @click="changeStatus(row)">
+            {{ $t('form.statusOper')[row.status%2].name }}
           </el-button>
-          <el-button v-if="hasAuth('/ball/odds/status')" type="primary" size="mini" @click="handleUpdate(row)">
-            {{row.even==1?'关闭':'开启'}}
-          </el-button>
-          <el-button v-if="hasAuth('/ball/odds/down')" type="primary" size="mini" @click="handleUpdate(row)">
-            {{row.even==1?'保本':'弃保'}}
+          <el-button v-if="hasAuth('/ball/odds/down')" type="primary" size="mini" @click="changeStatusEven(row)">
+            {{ $t('page.game.evenStatusArr')[row.even%2].name }}
           </el-button>
         </template>
       </el-table-column>
@@ -90,33 +85,26 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNo" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="$t('form.textMap')[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" />
+        <el-form-item :label="$t('page.odds.scoreHome')" prop="scoreHome">
+          <el-input v-model="temp.scoreHome" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
+        <el-form-item :label="$t('page.odds.scoreAway')" prop="scoreAway">
+          <el-input v-model="temp.scoreAway" />
         </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="temp.nickname" />
+        <el-form-item :label="$t('page.odds.lossPerCent')" prop="lossPerCent">
+          <el-input v-model.number="temp.lossPerCent" />
         </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select v-model="temp.roleId" style="width: 100%" clearable placeholder="角色">
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+        <el-form-item :label="$t('page.odds.antiPerCent')" prop="antiPerCent">
+          <el-input v-model.number="temp.antiPerCent" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="updateData()">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
@@ -153,14 +141,12 @@ export default {
         roleId: ''
       },
       dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
+      dialogStatus: 1,
       rules: {
-        username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
-        roleId: [{ required: true, message: '角色必选', trigger: 'blur' }]
+        lossPerCent: [{ required: true, message: this.$t('form.odds.oddRequired'), trigger: 'blur' },
+          { type: 'number', message: this.$t('form.odds.oddMustNumber'), trigger: 'blur' }],
+        antiPerCent: [{ required: true, message: this.$t('form.odds.oddRequired'), trigger: 'blur' },
+          { type: 'number', message: this.$t('form.odds.oddMustNumber'), trigger: 'blur' }],
       },
       roles: []
     }
@@ -169,6 +155,58 @@ export default {
     this.getList()
   },
   methods: {
+    changeStatusEven(row) {
+      MessageBox.confirm(this.$t('form.odds.statusEven' + (row.even % 2)), this.$t('tips.importentTitle'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: 'ball/odds/down',
+          method: 'post',
+          data: {
+            id: row.id,
+            even: row.even
+          }
+        }).then((response) => {
+          if (response.code === 200) {
+            const index = this.list.findIndex(v => v.id === row.id)
+            this.list[index].even = (row.even == 1 ? 2 : 1)
+            this.$notify({
+              message: this.$t('messages.successEdit'),
+              type: 'success',
+              duration: 2 * 1000
+            })
+          }
+        })
+      })
+    },
+    changeStatus(row) {
+      MessageBox.confirm(this.$t('form.odds.statusConfirm' + (row.status % 2)), this.$t('tips.importentTitle'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: 'ball/odds/status',
+          method: 'post',
+          data: {
+            id: row.id,
+            status: row.status
+          }
+        }).then((response) => {
+          if (response.code === 200) {
+            const index = this.list.findIndex(v => v.id === row.id)
+            this.list[index].status = (row.status == 1 ? 2 : 1)
+            this.$notify({
+              message: this.$t('messages.successEdit'),
+              type: 'success',
+              duration: 2 * 1000
+            })
+          }
+        })
+      })
+    },
     getList() {
       this.listLoading = true
       const _this = this
@@ -206,49 +244,11 @@ export default {
     },
     resetTemp() { // 添加属性
       this.temp = {
-        id: undefined,
-        username: '',
-        password: '',
-        nickname: ''
       }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        // console.log(this.temp)
-        this.temp.rate = parseInt(this.temp.rate)
-        this.temp.type = parseInt(this.temp.type)
-        // console.log(this.temp)
-        if (valid) {
-          request({
-            url: 'ball/game/add',
-            method: 'post',
-            data: this.temp
-          }).then((response) => {
-            if (response.code === 200) {
-              this.dialogFormVisible = false
-              this.list.unshift(response.data)
-              this.$message({
-                message: '添加成功',
-                type: 'success',
-                duration: 3 * 1000
-              })
-            }
-          })
-        }
-      })
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
+      this.dialogStatus = 1
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -259,7 +259,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           request({
-            url: 'ball/game/edit',
+            url: 'ball/odds/edit',
             method: 'post',
             data: tempData
           }).then((response) => {
@@ -268,37 +268,13 @@ export default {
               this.dialogFormVisible = false
               this.list.splice(index, 1, this.temp)
               this.$notify({
-                message: '修改成功',
+                message: this.$t('messages.successEdit'),
                 type: 'success',
                 duration: 2 * 1000
               })
             }
           })
         }
-      })
-    },
-    handleDelete(row, index) {
-      var ids = row.id
-      MessageBox.confirm('你确定要删除吗？', '删除提醒', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        request({
-          url: 'ball/game/del?id=' + ids,
-          method: 'get'
-        }).then((response) => {
-          if (response.code === 200) {
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
-            this.list.splice(index, 1)
-          }
-        })
-      }).catch(() => {
       })
     },
     getSortClass: function(key) {

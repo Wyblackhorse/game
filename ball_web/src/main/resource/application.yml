@@ -50,7 +50,12 @@ logging:
   level:
     root: info
     com.oxo.ball.mapper: debug
-#some-comfig:
-#  #客户端通过这个端口连接
-#  tcp-port: 10011
-#  test: 1
+some-comfig:
+  api-key: "b7c0d664a71b77ed3124268f330fece5"
+  api-bookmaker: 1
+  api-switch: 0
+#    - 72
+#    - 269
+#    - 673
+# update ball_game set start_time=start_time+86400000,game_status=1 where game_status=2;
+# wy011620.

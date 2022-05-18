@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oxo.ball.mapper.BallGameLossPerCentMapper">
-
+    <insert id="batchInsert" >
+        insert ignore into ball_game_loss_per_cent (
+        game_id,
+        score_home,
+        score_away,
+        game_type,
+        loss_per_cent,
+        anti_per_cent,
+        even,
+        status
+        )
+        values
+        <foreach collection="lossPerCents" item="item" index="index" separator=",">
+            (#{item.gameId},#{item.scoreHome},#{item.scoreAway},#{item.gameType},#{item.lossPerCent},#{item.antiPerCent},2,1)
+        </foreach>
+    </insert>
 </mapper>

@@ -3,6 +3,7 @@ package com.oxo.ball.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oxo.ball.service.player.IPlayerService;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -17,6 +18,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author flooming
@@ -29,8 +33,17 @@ public class RedisConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(1));
+
+        Set<String> cacheNames = new HashSet<>();
+        cacheNames.add(IPlayerService.REDIS_DATA_CENTER);
+
+        ConcurrentHashMap<String, RedisCacheConfiguration> configMap = new ConcurrentHashMap<>();
+        configMap.put(IPlayerService.REDIS_DATA_CENTER, redisCacheConfiguration.entryTtl(Duration.ofMinutes(1)));
+
         return RedisCacheManager
                 .builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
+                .initialCacheNames(cacheNames)
+                .withInitialCacheConfigurations(configMap)
                 .cacheDefaults(redisCacheConfiguration).build();
     }
 

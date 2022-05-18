@@ -28,6 +28,9 @@ public class BallAnnouncementServiceImpl extends ServiceImpl<BallAnnouncementMap
         if(queryParam.getStatus()!=null){
             query.eq("status",queryParam.getStatus());
         }
+        if(queryParam.getLanguage()!=null){
+            query.eq("language",queryParam.getLanguage());
+        }
         IPage<BallAnnouncement> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());

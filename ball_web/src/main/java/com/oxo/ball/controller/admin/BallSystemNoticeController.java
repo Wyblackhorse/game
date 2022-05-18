@@ -37,21 +37,21 @@ public class BallSystemNoticeController {
             ex.printStackTrace();
         }
 
-        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("增加失败~");
+        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("add error");
     }
     @PostMapping("edit")
     public Object editSave(@RequestBody BallSystemNotice ballPlayer){
         Boolean aBoolean = noticeService.edit(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("edit error");
     }
     @PostMapping("status")
     public Object status(@RequestBody BallSystemNotice ballPlayer){
         Boolean aBoolean = noticeService.status(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("edit error");
     }
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){
         Boolean delete = noticeService.delete(id);
-        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("删除失败~");
+        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("del error");
     }
 }

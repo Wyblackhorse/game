@@ -49,7 +49,7 @@ import java.util.Map;
 @Service
 public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame> implements IPlayerGameService {
     @Override
-    @Cacheable(value = "ball_player_game_by_id", key = "#id", unless = "#result == null")
+//    @Cacheable(value = "ball_player_game_by_id", key = "#id", unless = "#result == null")
     public BallGame findById(Long id) {
         return getById(id);
     }
@@ -77,15 +77,24 @@ public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame>
             query.le("start_time",TimeUtil.getDayEnd().getTime());
         }
         if(queryParam.getStatus()==0){
-            //未开始,未
-            query.ne("status",3);
+            //未开始
+            query.eq("game_status",1);
+            //未开始查明天
+            if(queryParam.getStartTime()==2){
+                query.ge("start_time",TimeUtil.getBeginDayOfTomorrow().getTime());
+                query.le("start_time",TimeUtil.getEndDayOfTomorrow().getTime());
+            }
+        }else if(queryParam.getStatus()==1){
+            //已开始
+            query.eq("game_status",2);
             //未开始查明天
             if(queryParam.getStartTime()==2){
                 query.ge("start_time",TimeUtil.getBeginDayOfTomorrow().getTime());
                 query.le("start_time",TimeUtil.getEndDayOfTomorrow().getTime());
             }
         }else{
-            query.eq("status",3);
+            //已结束
+            query.eq("game_status",3);
             //已结束查昨天
             if(queryParam.getStartTime()==2){
                 query.ge("start_time",TimeUtil.getBeginDayOfYesterday().getTime());
@@ -129,7 +138,7 @@ public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame>
             query.ge("start_time",TimeUtil.getDayBegin().getTime()-7*TimeUtil.TIME_ONE_DAY);
             query.le("start_time",TimeUtil.getDayEnd().getTime());
         }
-        query.eq("status",3);
+        query.eq("game_status",3);
         //ID降序
         query.orderByDesc("start_time");
         IPage<BallGame> pages = page(page, query);
@@ -139,5 +148,12 @@ public class PlayerGameServiceImpl extends ServiceImpl<BallGameMapper, BallGame>
         response.setTotalPage(pages.getPages());
         response.setResults(pages.getRecords());
         return response;
+    }
+
+    @Override
+    public List<BallGame> findUnfinish() {
+        QueryWrapper query = new QueryWrapper();
+        query.eq("game_status",2);
+        return list(query);
     }
 }

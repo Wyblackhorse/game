@@ -48,7 +48,12 @@ public class BallBalanceChange implements Serializable {
     private Long dnedMoney;
 
     /**
-     * 1充值 2提现 3投注 4赢 5佣金 6人工 
+     * 1线上充值 2提现 3投注 4投注盈利 5促销反利
+     * 6人工加款 7投注撤消
+     * 8人工减款 9投注返奖扣除 10 充值撤消 11线下充值
+     * 12提现退回 13投注退回 14投注回滚 15注册赠送
+     * 16分享赠送 17 VIP礼金 18 活动礼金 19充值赠送
+     *
      */
     private Integer balanceChangeType;
 

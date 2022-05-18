@@ -29,6 +29,7 @@ public class BallLoggerBetServiceImpl extends ServiceImpl<BallLoggerBetMapper, B
         SearchResponse<BallLoggerBet> response = new SearchResponse<>();
         Page<BallLoggerBet> page = new Page<>(pageNo, pageSize);
         QueryWrapper<BallLoggerBet> query = new QueryWrapper<>();
+        query.orderByDesc("id");
         IPage<BallLoggerBet> pages = page(page, query);
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());

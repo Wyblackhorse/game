@@ -26,6 +26,9 @@ public class BallDepositPolicy extends BaseDAO {
 
     private static final long serialVersionUID = 1L;
 
+    public static final int DEPOSITPOLICY_TYPE_FIRST = 1;
+    public static final int DEPOSITPOLICY_TYPE_EVERY = 2;
+
     /**
      * 优惠名称
      */
@@ -54,12 +57,12 @@ public class BallDepositPolicy extends BaseDAO {
     /**
      * 优惠百分比
      */
-    private String preferentialPer;
+    private Integer preferentialPer;
 
     /**
      * 优惠上限
      */
-    private String preferentialTop;
+    private Integer preferentialTop;
 
     /**
      * 状态 1开启 2关闭

@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class BetPreRequest {
-    @NotNull
+    @NotNull(message = "gameIdIsNull")
     private Long gameId;
-    @NotNull
+    @NotNull(message = "oddsIdIsNull")
     private Long oddsId;
 }

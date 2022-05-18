@@ -47,7 +47,7 @@ public class BallAdminController {
             ex.printStackTrace();
         }
 
-        BaseResponse res = (insert.getId() != null ? BaseResponse.successWithData(insert) : BaseResponse.failedWithMsg("增加失败~"));
+        BaseResponse res = (insert.getId() != null ? BaseResponse.successWithData(insert) : BaseResponse.failedWithMsg("add error"));
         res.setRemark("添加用户"+insert.getUsername());
         return res;
     }
@@ -61,11 +61,11 @@ public class BallAdminController {
     @SubOper("修改用户")
     public Object editSave(@Validated @RequestBody SysUserEditRequest sysUserEditRequest){
         if(sysUserEditRequest.getId() == 1){
-            return BaseResponse.failedWithMsg("不能编辑超级管理员账号~");
+            return BaseResponse.failedWithMsg("cat not edit superadmin");
         }
         Boolean aBoolean = ballAdminService.edit(sysUserEditRequest);
-        BaseResponse response = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("修改账号信息失败~"));
-        response.setRemark("修改账号"+sysUserEditRequest.getId());
+        BaseResponse response = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("edit error"));
+        response.setRemark("edit"+sysUserEditRequest.getId());
         return response;
     }
     @GetMapping("edit")
@@ -75,19 +75,19 @@ public class BallAdminController {
         edit.setId(id);
         edit.setGoogleCode("");
         Boolean aBoolean = ballAdminService.edit(edit);
-        BaseResponse response = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("重置失败~"));
-        response.setRemark("重置账号"+id+"的google验证码~");
+        BaseResponse response = (aBoolean ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("reset failed"));
+        response.setRemark("reset "+id+"'s google verification code");
         return response;
     }
     @GetMapping("del")
     @SubOper("删除用户")
     public Object del(@RequestParam("id") Long id){
         if(id == 1){
-            return BaseResponse.failedWithMsg("不能删除超级管理员账号~");
+            return BaseResponse.failedWithMsg("cat not del superadmin");
         }
         Boolean delete = ballAdminService.delete(id);
-        BaseResponse res = delete ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("删除失败~");
-        res.setRemark("删除用户"+id);
+        BaseResponse res = delete ? BaseResponse.SUCCESS : BaseResponse.failedWithMsg("del error");
+        res.setRemark("del user "+id);
         return res;
     }
 

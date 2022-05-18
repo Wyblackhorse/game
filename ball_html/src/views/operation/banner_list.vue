@@ -256,7 +256,7 @@ export default {
               this.dialogFormVisible = false
               this.list.unshift(response.data)
               this.$message({
-                message: '添加成功',
+                message: this.$t('messages.successAdd'),
                 type: 'success',
                 duration: 3 * 1000
               })
@@ -287,7 +287,7 @@ export default {
               this.dialogFormVisible = false
               this.list.splice(index, 1, this.temp)
               this.$notify({
-                message: '修改成功',
+                message: this.$t('messages.successEdit'),
                 type: 'success',
                 duration: 2 * 1000
               })
@@ -298,9 +298,9 @@ export default {
     },
     handleDelete(row, index) {
       var ids = row.id
-      MessageBox.confirm('你确定要删除吗？', '删除提醒', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      MessageBox.confirm(this.$t('tips.delContent'), this.$t('tips.delTitle'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
         type: 'warning'
       }).then(() => {
         request({
@@ -309,8 +309,8 @@ export default {
         }).then((response) => {
           if (response.code === 200) {
             this.$notify({
-              title: '成功',
-              message: '删除成功',
+              title: this.$t('messages.success'),
+              message: this.$t('messages.successDel'),
               type: 'success',
               duration: 2000
             })

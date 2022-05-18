@@ -53,7 +53,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        logger.info("静态资源目录配置为:"+staticFile);
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/",staticFile);
         //swagger-config

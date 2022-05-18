@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * <p>
@@ -16,6 +17,7 @@ import java.text.ParseException;
  */
 public interface IBallDepositPolicyService extends IService<BallDepositPolicy> {
     SearchResponse<BallDepositPolicy> search(BallDepositPolicy query, Integer pageNo, Integer pageSize);
+    BallDepositPolicy getCurrentDepositPolicy(int type);
     BallDepositPolicy insert(BallDepositPolicy depositPolicy) throws ParseException;
     Boolean delete(Long id);
     Boolean edit(BallDepositPolicy depositPolicy);

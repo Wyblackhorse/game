@@ -36,7 +36,7 @@ public class BallGroupController {
             ex.printStackTrace();
         }
 
-        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("增加失败~");
+        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("add error");
     }
 
     @GetMapping("edit/{id}")
@@ -47,7 +47,7 @@ public class BallGroupController {
     @PostMapping("edit")
     public Object editSave(@Validated @RequestBody BallGroup editBallGroup){
         Boolean aBoolean = ballGroupService.edit(editBallGroup);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改角色失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("edit error");
     }
 
     /**
@@ -67,7 +67,7 @@ public class BallGroupController {
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){
         Boolean delete = ballGroupService.delete(id);
-        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("删除失败~");
+        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("del error");
     }
 
 

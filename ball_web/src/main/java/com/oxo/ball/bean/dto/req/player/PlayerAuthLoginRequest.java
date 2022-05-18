@@ -13,12 +13,12 @@ import java.io.Serializable;
 public class PlayerAuthLoginRequest implements Serializable {
     private static final long serialVersionUID = -4842392920233760571L;
 
-    @NotEmpty
+    @NotEmpty(message = "usernameIsEmpty")
     private String username;
-    @NotEmpty
+    @NotEmpty(message = "passwordIsEmpty")
     private String password;
-    @NotEmpty
+    @NotEmpty(message = "codeIsEmpty")
     private String code;
-    @NotEmpty
+    @NotEmpty(message = "verifyKeyIsEmpty")
     private String verifyKey;
 }

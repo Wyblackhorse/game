@@ -53,6 +53,7 @@ public class PlayerBetController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "gameId",value = "游戏ID",required = true),
             @ApiImplicitParam(name = "oddsId",value = "赔率ID",required = true),
+            @ApiImplicitParam(name = "type",value = "1正波2反波",required = true),
             @ApiImplicitParam(name = "money",value = "下注金额",required = true)
     })
     @PostMapping
@@ -63,7 +64,7 @@ public class PlayerBetController {
             return baseResponse;
         } catch (SQLException e) {
         }
-        return BaseResponse.failedWithMsg("下注失败~");
+        return BaseResponse.failedWithMsg("failed");
     }
 
     @ApiOperation(

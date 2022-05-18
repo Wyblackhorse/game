@@ -159,7 +159,7 @@ public class BallAdminServiceImpl implements BallAdminService {
             BallAdmin byId = ballAdminService.findById(userId);
             return byId;
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("内部错误");
+            throw new RuntimeException("internal error");
         } catch (Exception ex){
             return null;
         }

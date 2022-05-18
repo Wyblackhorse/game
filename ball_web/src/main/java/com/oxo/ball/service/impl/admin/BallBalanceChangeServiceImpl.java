@@ -10,6 +10,7 @@ import com.oxo.ball.bean.dto.resp.SearchResponse;
 import com.oxo.ball.mapper.BallBalanceChangeMapper;
 import com.oxo.ball.service.admin.IBallBalanceChangeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.oxo.ball.utils.TimeUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class BallBalanceChangeServiceImpl extends ServiceImpl<BallBalanceChangeMapper, BallBalanceChange> implements IBallBalanceChangeService {
 
     @Override
-    public SearchResponse<BallBalanceChange> search(BallPlayer currentUser, BalanceChangeRequest balanceChangeRequest, Integer pageNo, Integer pageSize) {
+    public SearchResponse<BallBalanceChange> search(BallPlayer currentUser, BalanceChangeRequest queryParam, Integer pageNo, Integer pageSize) {
         SearchResponse<BallBalanceChange> response = new SearchResponse<>();
 
         Page<BallBalanceChange> page = new Page<>(pageNo, pageSize);
@@ -32,12 +33,39 @@ public class BallBalanceChangeServiceImpl extends ServiceImpl<BallBalanceChangeM
         if(currentUser!=null){
             query.eq("player_id",currentUser.getId());
         }
-        if(balanceChangeRequest.getType()!=null){
-            query.eq("balanceChange_type",balanceChangeRequest.getType());
+        if(queryParam.getType()!=null){
+            query.eq("balance_change_type",queryParam.getType());
         }
+//        if(queryParam.getTypeb()!=null){
+//            //收入
+//            if(queryParam.getTypeb()==1){
+//                query.ge("change_money",0);
+//            }else{
+//                //支出
+//                query.le("change_money",0);
+//            }
+//        }
+        if (queryParam.getTime() != null) {
+            switch (queryParam.getTime()) {
+                case 1:
+                    query.ge("created_at", TimeUtil.getDayBegin().getTime());
+                    query.le("created_at", TimeUtil.getDayEnd().getTime());
+                    break;
+                case 2:
+                    query.ge("created_at", TimeUtil.getBeginDayOfYesterday().getTime());
+                    query.le("created_at", TimeUtil.getEndDayOfYesterday().getTime());
+                    break;
+                case 3:
+                    query.ge("created_at", TimeUtil.getDayBegin().getTime()-7*TimeUtil.TIME_ONE_DAY);
+                    query.le("created_at", TimeUtil.getDayEnd().getTime());
+                    break;
+                default:
+                    break;
+            }
+        }
+
         query.orderByDesc("id");
         IPage<BallBalanceChange> pages = page(page, query);
-
         response.setPageNo(pages.getCurrent());
         response.setPageSize(pages.getSize());
         response.setTotalCount(pages.getTotal());

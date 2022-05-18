@@ -12,6 +12,7 @@ import com.oxo.ball.bean.dto.resp.BaseResponse;
 import com.oxo.ball.bean.dto.resp.SearchResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IPlayerGameService extends IService<BallGame> {
     BallGame findById(Long id);
@@ -19,4 +20,6 @@ public interface IPlayerGameService extends IService<BallGame> {
     SearchResponse<BallGame> search(GameRequest query, Integer pageNo, Integer pageSize);
 
     SearchResponse<BallGame> searchFinish(GameFinishRequest query, Integer pageNo, Integer pageSize);
+
+    List<BallGame> findUnfinish();
 }

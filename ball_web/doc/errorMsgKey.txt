@@ -1,0 +1,42 @@
+登录:
+codeTimeOut: 验证码已过期
+codeError: 验证码不正确
+pwdErrorMax: 密码输入错误次数已达上限
+pwdErrorCount: 密码错误次数N次
+
+注册:
+usernameIsEmpty: 用户名不能为空
+usernameSizeError: 用户名长度为5-16
+usernameFormatError: 用户名必须是字母数字
+passwordIsEmpty: 密码不能为空
+passwordSizeError: 密码长度为6-16
+towPasswordError: 确定密码不能为空
+codeIsEmpty: 验证码不能为空
+verifyKeyIsEmpty: 验证码key不能为空
+nameExists: 账号已存在
+passwordDiff: 两次密码不对
+invitationCodeIsEmpty: 必须输入邀请码
+invitationCodeError: 邀请码不正确
+
+修改密码
+originIsEmpty: 原密码不能为空
+originError: 原密码不正确
+newpwdIsEmpty: 新密码不能为空
+confirmedIsEmpty: 确认密码不能为空
+confirmedError: 两次密码不一致
+updateFailed: 密码修改失败
+
+下注
+gameIdIsNull: 游戏ID不能为空
+oddsIdIsNull: 赔率ID不能为空
+moneyIsNull: 下注金额不能为空
+moneyError: 下注金额格式不正确
+gameNotFound: 赛事不存在
+oddsNotFound: 赔率不存在
+balanceNotEnough: 账号余额不足
+gameClosed: 赛事已关闭
+gameStarted: 赛事已开始
+gameFinished: 赛事已结束
+
+订单
+orderCatUnbet: 无法撤单

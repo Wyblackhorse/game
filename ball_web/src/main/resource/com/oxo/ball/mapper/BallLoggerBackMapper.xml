@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oxo.ball.mapper.BallLoggerBackMapper">
+    <select id="statis" resultType="map">
+        select
+          sum(money) as money
+        from
+          ball_logger_back
+        where
+          player_id = #{playerId}
+        and
+          created_at between #{begin} and #{end}
+    </select>
+</mapper>

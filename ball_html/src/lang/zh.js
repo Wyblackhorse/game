@@ -131,6 +131,7 @@ export default {
     choose: '选择'
   },
   form: {
+    status: '状态',
     info: '查看详细',
     textMap: ['修改', '添加'],
     statusOper: [
@@ -150,9 +151,81 @@ export default {
         { name: '正式号', value: 2 },
         { name: '代理号', value: 3 }
       ]
+    },
+    game: {
+      statusConfirm0: '你确定要启用该赛事吗?',
+      statusConfirm1: '你确定要禁用该赛事吗?',
+      statusTop0: '你确定要置顶该赛事吗?',
+      statusTop1: '你确定要取消置顶该赛事吗?',
+      statusHot0: '你确定要设置热门赛事吗?',
+      statusHot1: '你确定要取消热门赛事吗?',
+      statusEven0: '你确定要设置保本吗?',
+      recountConfirm: '你确定要重新结算吗?',
+      recountSuccess: '已开始重新结算,请稍等',
+      rollbackConfirm: '你确定要回滚吗?',
+      rollbackSuccess: '已开始回滚,请稍等',
+      homeHalf: '主队半场比分',
+      guestHalf: '客队半场比分',
+      homeFull: '主队全场比分',
+      guestFull: '客队全场比分',
+      homeOvertime: '主队加时比分',
+      guestOvertime: '客队加时比分',
+      homePenalty: '主队点球比分',
+      guestPenalty: '客队点球比分',
+      socreMustNumber: '比分只能是数字',
+      settlementType: '结算类型',
+      settlementTypes: [
+        { name: '自动结算', value: 0 },
+        { name: '手动结算', value: 1 },
+        { name: '回滚', value: 2 },
+        { name: '重算', value: 3 }
+      ]
+    },
+    odds: {
+      gameType: [
+        { name: '全场', value: 1 },
+        { name: '半场', value: 2 }
+      ],
+      oddMustNumber: '赔率必须是数字',
+      oddRequired: '赔率必须填写',
+      statusConfirm0: '你确定要启用该赔率吗?',
+      statusConfirm1: '你确定要禁用该赔率吗?',
+      statusEven0: '你确定要设置保本吗?',
+      statusEven1: '你确定要取消保本吗?'
+    },
+    bets: {
+      status: [
+        { name: '未结算', value: 1 },
+        { name: '已结算', value: 2 },
+        { name: '撤单', value: 3 },
+        { name: '回滚', value: 4 }
+      ],
+      betTypes: [
+        { name: '正波', value: 1 },
+        { name: '反波', value: 2 }
+      ],
+      unbetConfirm: '是否要撤单',
+      unbetSuccess: '撤单成功',
+      unbetFailed: '撤单失败'
+    },
+    commissionStrategy: {
+      name: '优惠名称',
+      commissionStrategyType: '优惠类型',
+      commissionLevel: '返佣层级',
+      automaticDistribution: '自动发放',
+      commissionStrategyTypes: [
+        { name: '下注返佣', value: 1 },
+        { name: '盈利返佣', value: 2 },
+        { name: '充值返佣', value: 3 }
+      ],
+      automaticDistributions: [
+        { name: '自动', value: 1 },
+        { name: '手动', value: 2 }
+      ],
     }
   },
   page: {
+    edit: '修改',
     player: {
       username: '账号',
       pwd: '密码',
@@ -190,30 +263,103 @@ export default {
       promoteIncome: '推广收入',
       cumulativeQr: '累计打码量',
       needQr: '所需总打码量',
-      edit: '修改',
       editPwd: '修改密码',
       editPayPwd: '改支付密码',
       editBalance: '上分',
       editBalanceOut: '改出款打码量',
       balanceLog: '账变记录',
       setParent: '设置上级'
+    },
+    game: {
+      gameStatus: '赛事状态',
+      top: '置顶',
+      hot: '热门',
+      even: '保本',
+      recount: '重算',
+      rollback: '回滚',
+      status: '状态',
+      allianceName: '联盟名称',
+      allianceLogo: '联盟Logo',
+      mainName: '主队名字',
+      mainLogo: '主队Logo',
+      guestName: '客队名字',
+      guestLogo: '客队Logo',
+      startTime: '开赛时间',
+      score: '比分',
+      gameStatusArr: [
+        { name: '未开始', value: 1 },
+        { name: '进行中', value: 2 },
+        { name: '已结束', value: 3 }
+      ],
+      topStatusArr: [
+        { name: '置顶', value: 1 },
+        { name: '未置顶', value: 2 }
+      ],
+      hotStatusArr: [
+        { name: '热门', value: 1 },
+        { name: '非热门', value: 2 }
+      ],
+      evenStatusArr: [
+        { name: '保本', value: 1 },
+        { name: '弃保', value: 2 }
+      ],
+      statusArr: [
+        { name: '启用', value: 1 },
+        { name: '禁用', value: 2 }
+      ]
+    },
+    odds: {
+      gameId: '赛事ID',
+      id: '赔率ID',
+      score: '比分',
+      scoreHome: '主场比分',
+      scoreAway: '客场比分',
+      gameType: '比赛类型',
+      lossPerCent: '正波赔率',
+      antiPerCent: '反波赔率',
+      createdAt: '创建时间',
+      updatedAt: '修改时间',
+      even: '保本状态',
+      status: '状态'
+    },
+    bets: {
+      orderNo: '订单号',
+      remark: '下注信息',
+      betMoney: '下注金额',
+      handMoney: '手续费',
+      winningAmount: '中奖金额',
+      status: '结算状态',
+      betType: '波胆',
     }
   },
   balanceChange: {
     changeTypes: [
-      { name: '充值', value: 1 },
+      { name: '线上充值', value: 1 },
       { name: '提现', value: 2 },
       { name: '下注', value: 3 },
-      { name: '赢', value: 4 },
-      { name: '佣金', value: 5 },
-      { name: '人工', value: 6 }
-    ]
+      { name: '投注盈利', value: 4 },
+      { name: '促销反利', value: 5 },
+      { name: '人工加款', value: 6 },
+      { name: '投注撤消', value: 7 },
+      { name: '人工减款', value: 8 },
+      { name: '投注返奖扣除', value: 9 },
+      { name: '充值撤消', value: 10 },
+      { name: '线下充值', value: 11 },
+      { name: '提现退回', value: 12 },
+      { name: '投注退回', value: 13 },
+      { name: '投注回滚', value: 14 },
+      { name: '注册赠送', value: 15 },
+      { name: '分享赠送', value: 16 },
+      { name: 'VIP礼金', value: 17 },
+      { name: '活动礼金', value: 18 },
+      { name: '充值赠送', value: 19 }
+    ],
+    initMoney: '变动前余额',
+    changeMoney: '变动金额',
+    dnedMoney: '变动后金额',
+    balanceChangeType: '变动类型',
+    createdAt: '创建时间',
+    remark: '备注',
   },
-  initMoney: '变动前余额',
-  changeMoney: '变动金额',
-  dnedMoney: '变动后金额',
-  balanceChangeType: '变动类型',
-  createdAt: '创建时间',
-  remark: '备注',
   role: [{ 'id': 10, 'label': '会员管理', 'children': [{ 'id': 11, 'label': '会员管理', 'children': [{ 'id': 13, 'label': '增加' }, { 'id': 14, 'label': '修改' }, { 'id': 15, 'label': '查看' }, { 'id': 16, 'label': '账变记录' }, { 'id': 17, 'label': '更改密码' }, { 'id': 18, 'label': '更改支付密码' }, { 'id': 19, 'label': '禁/启用' }, { 'id': 20, 'label': '上分' }, { 'id': 21, 'label': '修改出款打码量' }] }, { 'id': 12, 'label': '会员账务汇总' }] }, { 'id': 22, 'label': '赛事管理', 'children': [{ 'id': 23, 'label': '赛事管理', 'children': [{ 'id': 24, 'label': '修改' }, { 'id': 25, 'label': '禁/启用' }, { 'id': 26, 'label': '置顶' }, { 'id': 27, 'label': '热门' }, { 'id': 28, 'label': '保本' }, { 'id': 29, 'label': '查看' }] }, { 'id': 30, 'label': '赔率管理', 'children': [{ 'id': 31, 'label': '查看' }, { 'id': 32, 'label': '修改' }, { 'id': 33, 'label': '禁/启用' }, { 'id': 34, 'label': '弃保' }] }, { 'id': 35, 'label': '赛事结算管理', 'children': [{ 'id': 36, 'label': '重算' }, { 'id': 37, 'label': '回滚' }, { 'id': 38, 'label': '查看' }] }] }, { 'id': 39, 'label': '报表管理', 'children': [{ 'id': 40, 'label': '数据总览' }, { 'id': 41, 'label': '运营总报表' }, { 'id': 42, 'label': '代理报表', 'children': [{ 'id': 43, 'label': '查首充' }, { 'id': 44, 'label': '查取款用户' }, { 'id': 45, 'label': '查注册用户' }, { 'id': 46, 'label': '查投注报表' }] }, { 'id': 47, 'label': '账变报表' }, { 'id': 48, 'label': '会员日报表' }, { 'id': 49, 'label': '下注报表' }, { 'id': 50, 'label': '充提报表' }, { 'id': 51, 'label': '充值渠道' }, { 'id': 52, 'label': '赛事报表' }] }, { 'id': 53, 'label': '订单管理', 'children': [{ 'id': 54, 'label': '足球订单', 'children': [{ 'id': 55, 'label': '查看' }, { 'id': 56, 'label': '撤单' }, { 'id': 57, 'label': '导出' }] }] }, { 'id': 58, 'label': '策略配置', 'children': [{ 'id': 59, 'label': '存款优惠', 'children': [{ 'id': 60, 'label': '增加' }, { 'id': 61, 'label': '修改' }, { 'id': 62, 'label': '删除' }] }, { 'id': 63, 'label': '返佣策略', 'children': [{ 'id': 64, 'label': '增加' }, { 'id': 65, 'label': '修改' }, { 'id': 66, 'label': '删除' }] }] }, { 'id': 67, 'label': '账务管理', 'children': [{ 'id': 68, 'label': '支付管理', 'children': [{ 'id': 69, 'label': '增加' }, { 'id': 70, 'label': '修改' }, { 'id': 71, 'label': '禁/启用' }, { 'id': 72, 'label': '查看' }, { 'id': 73, 'label': '删除' }] }, { 'id': 74, 'label': '提现方式管理', 'children': [{ 'id': 75, 'label': '增加' }, { 'id': 76, 'label': '修改' }, { 'id': 77, 'label': '禁/启用' }, { 'id': 78, 'label': '查看' }, { 'id': 79, 'label': '删除' }] }, { 'id': 80, 'label': '绑卡审核', 'children': [{ 'id': 81, 'label': '查看' }, { 'id': 82, 'label': '修改' }, { 'id': 83, 'label': '禁/启用' }, { 'id': 84, 'label': '导出' }] }, { 'id': 85, 'label': '线下充值', 'children': [{ 'id': 86, 'label': '查看' }, { 'id': 87, 'label': '导出' }] }, { 'id': 88, 'label': '线上充值', 'children': [{ 'id': 89, 'label': '查看' }, { 'id': 90, 'label': '上分' }, { 'id': 91, 'label': '导出' }] }, { 'id': 92, 'label': '提现管理', 'children': [{ 'id': 93, 'label': '查看' }, { 'id': 94, 'label': '审核' }, { 'id': 95, 'label': '导出' }] }, { 'id': 96, 'label': '上分记录', 'children': [{ 'id': 97, 'label': '导出' }] }] }, { 'id': 98, 'label': '运营管理', 'children': [{ 'id': 99, 'label': 'Banner管理', 'children': [{ 'id': 100, 'label': '增加' }, { 'id': 101, 'label': '修改' }, { 'id': 102, 'label': '禁/启用' }, { 'id': 103, 'label': '查看' }, { 'id': 104, 'label': '删除' }] }, { 'id': 105, 'label': '轮播公告', 'children': [{ 'id': 106, 'label': '增加' }, { 'id': 107, 'label': '修改' }, { 'id': 108, 'label': '禁/启用' }, { 'id': 109, 'label': '查看' }, { 'id': 110, 'label': '删除' }] }, { 'id': 111, 'label': '系统公告', 'children': [{ 'id': 112, 'label': '增加' }, { 'id': 113, 'label': '修改' }, { 'id': 114, 'label': '禁/启用' }, { 'id': 115, 'label': '查看' }, { 'id': 116, 'label': '删除' }] }] }, { 'id': 117, 'label': '商户配置', 'children': [{ 'id': 118, 'label': '参数配置', 'children': [{ 'id': 119, 'label': '系统配置' }, { 'id': 120, 'label': '注册/登录' }, { 'id': 121, 'label': '客服配置' }, { 'id': 122, 'label': '财务配置' }, { 'id': 123, 'label': '风控配置' }, { 'id': 124, 'label': '运营配置' }, { 'id': 125, 'label': '推广配置' }] }, { 'id': 126, 'label': 'VIP配置', 'children': [{ 'id': 127, 'label': '增加' }, { 'id': 128, 'label': '修改' }, { 'id': 129, 'label': '查看' }, { 'id': 130, 'label': '删除' }] }, { 'id': 131, 'label': '后台白名单', 'children': [{ 'id': 132, 'label': '增加' }, { 'id': 133, 'label': '修改' }, { 'id': 134, 'label': '禁/启用' }, { 'id': 135, 'label': '查看' }, { 'id': 136, 'label': '删除' }] }, { 'id': 137, 'label': '前端黑名单', 'children': [{ 'id': 138, 'label': '增加' }, { 'id': 139, 'label': '修改' }, { 'id': 140, 'label': '禁/启用' }, { 'id': 141, 'label': '查看' }, { 'id': 142, 'label': '删除' }] }] }, { 'id': 143, 'label': '日志管理', 'children': [{ 'id': 144, 'label': '下注日志' }, { 'id': 145, 'label': '登录日志' }, { 'id': 146, 'label': '操作日志' }, { 'id': 147, 'label': '代理迁移' }] }, { 'id': 9, 'label': '系统管理', 'children': [{ 'id': 1, 'label': '用户管理', 'children': [{ 'id': 2, 'label': '增加' }, { 'id': 3, 'label': '修改' }, { 'id': 4, 'label': '删除' }] }, { 'id': 5, 'label': '角色管理', 'children': [{ 'id': 6, 'label': '增加' }, { 'id': 7, 'label': '修改' }, { 'id': 8, 'label': '删除' }] }] }]
 }

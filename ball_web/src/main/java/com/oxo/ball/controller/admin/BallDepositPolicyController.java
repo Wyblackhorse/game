@@ -36,21 +36,21 @@ public class BallDepositPolicyController {
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("增加失败~");
+        return insert.getId()!=null?BaseResponse.successWithData(insert):BaseResponse.failedWithMsg("add error");
     }
     @PostMapping("edit")
     public Object editSave(@RequestBody BallDepositPolicy ballPlayer){
         Boolean aBoolean = depositPolicyService.edit(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("edit error");
     }
     @PostMapping("status")
     public Object status(@RequestBody BallDepositPolicy ballPlayer){
         Boolean aBoolean = depositPolicyService.status(ballPlayer);
-        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("修改失败~");
+        return  aBoolean?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("edit error");
     }
     @GetMapping("del")
     public Object del(@RequestParam("id") Long id){
         Boolean delete = depositPolicyService.delete(id);
-        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("删除失败~");
+        return delete?BaseResponse.SUCCESS:BaseResponse.failedWithMsg("del error");
     }
 }
